@@ -7,7 +7,7 @@ export const getUsers = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `users`,
+      uri: `tests`,
       beforeCallType: "GET_USER_INFO_REQUEST",
       successType: "GET_USER_INFO_SUCCESS",
       afterSuccess: next,

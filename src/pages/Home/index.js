@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { getUsers } from "redux/action/user";
+import ReactMarkdown from "react-markdown";
 function mapStateToProps(state) {
   return {
     store: {
@@ -34,7 +35,13 @@ class HomePage extends Component {
     return (
       <ul>
         {listUser.map((item, index) => {
-          return <li key={index}>{item.username}</li>;
+          return (
+            <li key={index}>
+              {item.title}
+              <br />
+              <ReactMarkdown source={item.content} escapeHtml={false} />
+            </li>
+          );
         })}
       </ul>
     );
