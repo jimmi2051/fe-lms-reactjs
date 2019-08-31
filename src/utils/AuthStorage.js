@@ -9,30 +9,12 @@ class AuthStorage extends Storage {
     return this.value && this.value.token;
   }
 
-  get organizationId() {
-    return this.value && this.value.organizationId;
-  }
-
-  get status() {
-    return this.value && this.value.status;
+  get userInfo() {
+    return this.value && this.value.user;
   }
 
   get role() {
-    return this.value && this.value.role;
-  }
-
-  get plan() {
-    return this.value && this.value.plan;
-  }
-
-  get username() {
-    return this.value && this.value.username;
-  }
-  get isAuthen() {
-    return this.value && this.value.isAuthen;
-  }
-  get isSuperAdmin(){
-    return this.value && this.value.isSuperAdmin;
+    return this.value && this.value.user.role.name;
   }
 }
 

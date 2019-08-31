@@ -11,19 +11,10 @@ const API_URL = process.env.REACT_APP_URL_API;
 export const fetching = (url, option) =>
   fetch(url, option)
     .then(response => {
-      if (response.status === 401) {
-        response.detail = "Invalid token.";
-        return response;
-      }
-      return response.status === 204 ? {} : response.json();
+      return response.json();
     })
     .then(json => {
-      if (json.error) {
-        throw json.error;
-      } else {
-        return json;
-      }
-      // return json;
+      return json;
     })
     .catch(error => {
       throw error;
@@ -51,7 +42,7 @@ export default function*({
   const options = merge(defaultOption, opt);
   //set Token
   if (AuthStorage.loggedIn) {
-    options.headers.Authorization = ` Token ${AuthStorage.token}`;
+    options.headers.Authorization = ` Bearer ${AuthStorage.token}`;
   }
 
   let url = uri;
