@@ -6,6 +6,10 @@ export const initialState = {
   registerUser: {
     data: {},
     loading: true
+  },
+  roles: {
+    data: {},
+    loading: true
   }
 };
 
@@ -22,6 +26,10 @@ export default (state = initialState, action) => {
         ...state,
         registerUser: { data: action.payload, loading: false }
       };
+    case "GET_ROLES_REQUEST":
+      return { ...state, roles: { ...initialState.roles } };
+    case "GET_ROLES_SUCCESS":
+      return { ...state, roles: { data: action.payload, loading: false } };
     default:
       return state;
   }

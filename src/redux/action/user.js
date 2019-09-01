@@ -51,3 +51,16 @@ export const registerUser = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getRoles = (payload, next, nextErr) => {
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `users-permissions/roles`,
+      beforeCallType: "GET_ROLES_REQUEST",
+      successType: "GET_ROLES_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};

@@ -1,36 +1,44 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { registerUser } from "redux/action/user";
+import { registerUser, getRoles } from "redux/action/user";
 import Header from "components/Layout/Header";
 import AuthStorage from "utils/AuthStorage";
 import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
+import DateTimePicker from "react-datetime-picker";
+
 function mapStateToProps(state) {
   return {
     store: {
       auth: state.auth,
       registerUser: state.user.registerUser.data,
-      loading: state.user.registerUser.loading
+      loading: state.user.registerUser.loading,
+      roles: state.user.roles.data,
+      loadingRoles: state.user.roles.loading
     }
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ registerUser }, dispatch)
+    action: bindActionCreators({ getRoles, registerUser }, dispatch)
   };
 };
 
 class Register extends Component {
+  maxDate = new Date();
   state = {
     errors: {},
-    isSuccess: false
+    isSuccess: false,
+    date: new Date()
   };
+
   componentDidMount() {
     if (AuthStorage && AuthStorage.loggedIn) {
       this.props.history.push("/");
     }
+    this.handleGetRoles();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,10 +47,33 @@ class Register extends Component {
     }
   }
 
+  handleGetRoles = () => {
+    const payload = {};
+    const { getRoles } = this.props.action;
+    getRoles(payload, () => {});
+  };
+
   handleRegister = e => {
     e.preventDefault();
-    const { email, password, firstName, lastName, tel, role } = this.refs;
-    if (this.handleValidation(email.value, password.value)) {
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      tel,
+      role,
+      confirmPassword
+    } = this.refs;
+    const { date } = this.state;
+    if (
+      this.handleValidation(
+        email.value,
+        password.value,
+        confirmPassword.value,
+        tel.value,
+        date
+      )
+    ) {
       const { registerUser } = this.props.action;
       const payload = {
         username: email.value,
@@ -51,14 +82,13 @@ class Register extends Component {
         lastName: lastName.value,
         tel: tel.value,
         role: role.value,
-        dateOfBirth: "1997-08-19T17:00:00.000Z",
+        dateOfBirth: date,
         password: password.value
       };
       registerUser(
         payload,
         () => {
           const { registerUser } = this.props.store;
-          console.log("registerUser", registerUser);
           if (registerUser && registerUser.jwt) {
             this.setState({ isSuccess: true });
           }
@@ -75,7 +105,8 @@ class Register extends Component {
       );
     }
   };
-  handleValidation = (username, password) => {
+  handleValidation = (username, password, confirmPassword, telephone, date) => {
+    let reg = /^\d+$/;
     let formIsValid = true;
     let errors = {};
     //Validate username
@@ -106,14 +137,38 @@ class Register extends Component {
       formIsValid = false;
       errors["password"] = "This field is required";
     }
-
+    if (!telephone) {
+      formIsValid = false;
+      errors["tel"] = "This field is required";
+    }
+    if (!reg.test(telephone)) {
+      formIsValid = false;
+      errors["tel"] = "Phone is incorrect";
+    }
+    if (!confirmPassword) {
+      formIsValid = false;
+      errors["confirmPassword"] = "This field is required";
+    }
+    if (password !== confirmPassword) {
+      formIsValid = false;
+      errors["confirmPassword"] = "Password isn't match";
+    }
+    const currentDate = new Date();
+    if (date > currentDate) {
+      formIsValid = false;
+      errors["date"] = "Birthday is invalid";
+    }
     this.setState({ errors: errors });
     return formIsValid;
   };
   handleRefeshError = () => {
     this.setState({ errors: {} });
   };
+  onChangeDate = date => {
+    this.setState({ date });
+  };
   render() {
+    const { loadingRoles, roles } = this.props.store;
     return (
       <div className="page-header">
         <Header titleHeader="Register Page" />
@@ -143,6 +198,7 @@ class Register extends Component {
                       id="emailLogin"
                       placeholder="Enter email"
                       ref="email"
+                      maxLength="50"
                       onClick={this.handleRefeshError}
                     />
                     {this.state.errors["username"] && (
@@ -161,8 +217,9 @@ class Register extends Component {
                       type="password"
                       className="form-control"
                       id="passwordLogin"
-                      placeholder="Password"
+                      placeholder="Enter password"
                       ref="password"
+                      maxLength="50"
                       onClick={this.handleRefeshError}
                     />
                     {this.state.errors["password"] && (
@@ -172,6 +229,29 @@ class Register extends Component {
                         htmlFor="id_password"
                       >
                         {this.state.errors["password"]}
+                      </label>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="confirmPasswordLogin">
+                      Confirm password
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="confirmPasswordLogin"
+                      placeholder="Enter confirm password"
+                      ref="confirmPassword"
+                      maxLength="50"
+                      onClick={this.handleRefeshError}
+                    />
+                    {this.state.errors["confirmPassword"] && (
+                      <label
+                        id="id_password-error"
+                        className="error"
+                        htmlFor="id_password"
+                      >
+                        {this.state.errors["confirmPassword"]}
                       </label>
                     )}
                   </div>
@@ -190,6 +270,7 @@ class Register extends Component {
                         id="id_password-error"
                         className="error"
                         htmlFor="id_password"
+                        maxLength="100"
                       >
                         {this.state.errors["firstName"]}
                       </label>
@@ -204,6 +285,7 @@ class Register extends Component {
                       placeholder="Enter last name"
                       ref="lastName"
                       onClick={this.handleRefeshError}
+                      maxLength="100"
                     />
                     {this.state.errors["lastName"] && (
                       <label
@@ -224,6 +306,7 @@ class Register extends Component {
                       placeholder="Enter your phone"
                       ref="tel"
                       onClick={this.handleRefeshError}
+                      maxLength="12"
                     />
                     {this.state.errors["tel"] && (
                       <label
@@ -236,13 +319,35 @@ class Register extends Component {
                     )}
                   </div>
                   <div className="form-group">
+                    <label>Birth date</label>
+                    <DateTimePicker
+                      onChange={this.onChangeDate}
+                      value={this.state.date}
+                      className="form-control"
+                      maxDate={this.maxDate}
+                    />
+                    {this.state.errors["date"] && (
+                      <label
+                        id="id_password-error"
+                        className="error"
+                        htmlFor="id_password"
+                      >
+                        {this.state.errors["date"]}
+                      </label>
+                    )}
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="role">Role</label>
                     <select ref="role" className="form-control" id="role">
                       <option value="-1">Select role</option>
-                      <option value="5d6a13a6b51a2c3ebdb69b6e">
-                        INSTRUCTOR
-                      </option>
-                      <option value="5d6a164cb51a2c3ebdb69bbe">STUDENT</option>
+                      {!loadingRoles &&
+                        roles.roles.map((item, index) => {
+                          return (
+                            <option key={index} value={item._id}>
+                              {item.name}
+                            </option>
+                          );
+                        })}
                     </select>
                     {this.state.errors["role"] && (
                       <label
