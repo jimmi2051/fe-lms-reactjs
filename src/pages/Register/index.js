@@ -6,7 +6,8 @@ import Header from "components/Layout/Header";
 import AuthStorage from "utils/AuthStorage";
 import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
-import DateTimePicker from "react-datetime-picker";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function mapStateToProps(state) {
   return {
@@ -180,7 +181,7 @@ class Register extends Component {
                   Register success. Click <Link to="/login">here</Link> to Login
                 </h4>
               ) : (
-                <form onSubmit={this.handleRegister}>
+                <form onSubmit={this.handleRegister} className="form-sign-in">
                   {this.state.errors["token"] && (
                     <label
                       id="id_password-error"
@@ -320,11 +321,12 @@ class Register extends Component {
                   </div>
                   <div className="form-group">
                     <label>Birth date</label>
-                    <DateTimePicker
-                      onChange={this.onChangeDate}
-                      value={this.state.date}
+                    <DatePicker
+                      onChange={date => this.onChangeDate(date)}
+                      selected={this.state.date}
                       className="form-control"
-                      maxDate={this.maxDate}
+                      dateFormat="dd/MM/yyyy"
+                      maxDate={Date.now()}
                     />
                     {this.state.errors["date"] && (
                       <label
