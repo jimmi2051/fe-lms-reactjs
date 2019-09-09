@@ -9,6 +9,8 @@ import HomePage from "pages/Home";
 import LoginPage from "pages/Login";
 import RegisterPage from "pages/Register";
 import CoursePage from "pages/Course";
+import AdminCoursePage from "pages/CourseManage";
+import AdminNewTraining from "pages/NewTraining";
 export default function RootRoute() {
   return (
     <>
@@ -17,6 +19,8 @@ export default function RootRoute() {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/register" component={RegisterPage} />
         <Route exact path="/course" component={CoursePage} />
+        <Route exact path="/admin/course" component={AdminCoursePage} />
+        <Route exact path="/admin/new-training" component={AdminNewTraining} />
       </Switch>
     </>
   );
