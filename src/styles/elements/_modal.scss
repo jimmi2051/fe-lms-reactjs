@@ -1,0 +1,31 @@
+@media (min-width: 1200px) {
+  .modal-xl {
+    max-width: 1140px;
+  }
+}
+@media (min-width: 992px) {
+  .modal-lg,
+  .modal-xl {
+    max-width: 800px;
+  }
+}
+
+// .modal {
+//   display: block !important; /* I added this to see the modal, you don't need this */
+// }
+
+/* Important part */
+.modal-dialog {
+  overflow-y: initial !important;
+}
+.modal-body {
+  height: 550px;
+  overflow-y: auto;
+  @media screen and (max-height: 800px) {
+    height: 500px;
+  }
+}
+
+.fade {
+  background: rgba(62, 62, 62, 0.3);
+}
