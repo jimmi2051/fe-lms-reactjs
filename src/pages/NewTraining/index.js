@@ -60,15 +60,23 @@ class NewTraining extends Component {
 
           <div className="row">
             <div className="col-xl-4">
-              <div className="card text-white bg-primary mb-3">
-                <div className="card-header">Create Training</div>
+              <div className="card mb-3">
+                <div className="card-header text-white  bg-root">
+                  Create Training
+                </div>
                 <div className="card-body">
                   <h5 className="card-title">Step by step</h5>
                   <p className="card-text">
                     <ul>
-                      <li>Description</li>
-                      <li>Learning Path Manage</li>
-                      <li>Activities</li>
+                      <li className={`${this.state.step === 1 && "bg-root"}`}>
+                        Description
+                      </li>
+                      <li className={`${this.state.step === 2 && "bg-root"}`}>
+                        Learning Path Manage
+                      </li>
+                      <li className={`${this.state.step === 3 && "bg-root"}`}>
+                        Activities
+                      </li>
                     </ul>
                   </p>
                 </div>
@@ -81,7 +89,7 @@ class NewTraining extends Component {
                     <div className="form-group" style={{ width: "30%" }}>
                       <button
                         type="button"
-                        className="form-control btn btn-info"
+                        className="form-control btn bg-root"
                         onClick={this.handleShowPopup}
                       >
                         Add new content
@@ -100,22 +108,17 @@ class NewTraining extends Component {
                         <tr>
                           <td>TEST MODULE 1</td>
                           <td>
-                            <button className="btn btn-info mr-3">
+                            <button className="btn bg-root mr-3">
                               Show content choosen
                             </button>
-                            <button className="btn btn-info">
-                              Add content
-                            </button>
+                            <button className="btn bg-root">Add content</button>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div className="form-group col-xl-12">
-                    <button
-                      className="btn btn-success"
-                      style={{ width: "100%" }}
-                    >
+                    <button className="btn bg-root" style={{ width: "100%" }}>
                       DONE
                     </button>
                   </div>
@@ -127,7 +130,7 @@ class NewTraining extends Component {
                     <div className="form-group" style={{ width: "30%" }}>
                       <button
                         type="button"
-                        className="form-control btn btn-info"
+                        className="form-control btn bg-root"
                         onClick={this.handleShowPopup}
                       >
                         Add new module
@@ -158,7 +161,7 @@ class NewTraining extends Component {
                   </div>
                   <div className="form-group col-xl-12">
                     <button
-                      className="btn btn-success"
+                      className="btn bg-root"
                       style={{ width: "100%" }}
                       onClick={this.handleStepTwo}
                     >
@@ -219,7 +222,7 @@ class NewTraining extends Component {
                   </div>
                   <div className="form-group col-xl-12">
                     <button
-                      className="btn btn-success"
+                      className="btn bg-root"
                       style={{ width: "100%" }}
                       onClick={this.handleStepOne}
                     >
