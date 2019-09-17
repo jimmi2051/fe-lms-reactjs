@@ -5,26 +5,45 @@ import Header from "components/Layout/Header";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import PopupNewModule from "pages/NewTraining/PopupNewModule";
+import { createTraining } from "redux/action/training";
 function mapStateToProps(state) {
   return {
-    store: {}
+    store: {
+      isCreatedTraining: state.isCreatedTraining.isCreatedTraining.data,
+      loadingCreatedTraining: state.isCreatedTraining.isCreatedTraining.loading
+    }
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({}, dispatch)
+    action: bindActionCreators({ createTraining }, dispatch)
   };
 };
 
 class NewTraining extends Component {
   state = {
     step: 1,
-    isShow: false
+    isShow: false,
+    description: ""
   };
   componentDidMount() {}
+
+  handleCreateTraining = (name, level, description) => {
+    const payload = { name, level, description };
+    const { createTraining } = this.props.action;
+    createTraining(payload, () => {
+      console.log(this.props.store);
+      return true;
+    });
+  };
+
   handleStepOne = () => {
-    this.setState({ step: 2 });
+    const { title } = this.refs;
+    const { description } = this.state;
+    if (this.handleCreateTraining(title.value, "1", description)) {
+      this.setState({ step: 2 });
+    }
   };
   handleStepTwo = () => {
     this.setState({ step: 3 });
@@ -33,6 +52,11 @@ class NewTraining extends Component {
     const { isShow } = this.state;
     this.setState({ isShow: !isShow });
   };
+
+  handleChangeDescription = data => {
+    this.setState({ description: data });
+  };
+
   render() {
     const { isShow } = this.state;
     return (
@@ -179,6 +203,7 @@ class NewTraining extends Component {
                         type="text"
                         className="form-control"
                         placeholder="Enter training title here"
+                        ref="title"
                       />
                     </div>
                     <div className="form-group">
@@ -187,12 +212,14 @@ class NewTraining extends Component {
                         className="form-control"
                         editor={ClassicEditor}
                         data="<p>Hello from CKEditor 5!</p>"
+                        ref="description"
                         onInit={editor => {
                           // You can store the "editor" and use when it is needed.
                           console.log("Editor is ready to use!", editor);
                         }}
                         onChange={(event, editor) => {
                           const data = editor.getData();
+                          this.handleChangeDescription(data);
                           console.log({ event, editor, data });
                         }}
                         onBlur={(event, editor) => {
