@@ -4,7 +4,7 @@
 import { SINGLE_API } from "./type";
 
 export const createTraining = (payload, next, nextErr) => {
-  const { name, level, description } = payload;
+  const { name, level, description, thumbnail } = payload;
   const isActive = true;
   return {
     type: SINGLE_API,
@@ -21,7 +21,8 @@ export const createTraining = (payload, next, nextErr) => {
         name,
         isActive,
         level,
-        description
+        description,
+        thumbnail
       }
     }
   };

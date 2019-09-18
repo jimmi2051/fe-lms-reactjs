@@ -6,6 +6,7 @@ import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import PopupNewModule from "pages/NewTraining/PopupNewModule";
 import { createTraining } from "redux/action/training";
+import { UploadFile } from "utils/UploadImage.js";
 function mapStateToProps(state) {
   return {
     store: {
@@ -25,12 +26,20 @@ class NewTraining extends Component {
   state = {
     step: 1,
     isShow: false,
-    description: ""
+    description: "",
+    fileToUpload: []
   };
   componentDidMount() {}
 
-  handleCreateTraining = (name, level, description) => {
-    const payload = { name, level, description };
+  fileSelectHandler = e => {
+    let files = e.target.files;
+    let { fileToUpload } = this.state;
+    fileToUpload.push(files[0]);
+    this.setState({ fileToUpload: fileToUpload });
+  };
+
+  handleCreateTraining = (name, level, description, thumbnail) => {
+    const payload = { name, level, description, thumbnail };
     const { createTraining } = this.props.action;
     createTraining(payload, () => {
       console.log(this.props.store);
@@ -38,10 +47,20 @@ class NewTraining extends Component {
     });
   };
 
-  handleStepOne = () => {
+  handleStepOne = async () => {
     const { title } = this.refs;
-    const { description } = this.state;
-    if (this.handleCreateTraining(title.value, "1", description)) {
+    const { description, fileToUpload } = this.state;
+    let thumbnail = {};
+    let data = new FormData();
+    data.append("files", fileToUpload[0]);
+    await UploadFile(data)
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        thumbnail = result;
+      });
+    if (this.handleCreateTraining(title.value, "1", description, thumbnail)) {
       this.setState({ step: 2 });
     }
   };
@@ -236,6 +255,7 @@ class NewTraining extends Component {
                         type="file"
                         className="form-control"
                         placeholder="Enter training title here"
+                        onChange={this.fileSelectHandler}
                       />
                     </div>
                     <div className="form-group">
