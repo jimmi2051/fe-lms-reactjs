@@ -33,7 +33,7 @@ const mapDispatchToProps = dispatch => {
 
 class NewTraining extends Component {
   state = {
-    step: 2,
+    step: 1,
     isShow: false,
     description: "",
     fileToUpload: [],
@@ -204,7 +204,7 @@ class NewTraining extends Component {
               {this.state.step === 2 && (
                 <div className="row">
                   <div className="col-xl-12">
-                    {!createdModule && (
+                    {createdModule && (
                       <h3 className="alert-success">
                         MODULE HAVE BEEN CREATED
                       </h3>
