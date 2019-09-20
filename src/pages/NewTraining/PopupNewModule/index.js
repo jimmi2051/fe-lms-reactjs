@@ -1,26 +1,59 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { getUsers } from "redux/action/user";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 function mapStateToProps(state) {
   return {
     store: {
-      listUser: state.user.user.data,
-      loading: state.user.user.loading
+      isCreatedModule: state.isCreatedModule.isCreatedModule.data,
+      loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading
     }
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ getUsers }, dispatch)
+    action: bindActionCreators({}, dispatch)
   };
 };
 
 class PopupNewModule extends Component {
+  state = {
+    description: "",
+    fileToUpload: []
+  };
   componentDidMount() {}
+
+  fileSelectHandler = e => {
+    let files = e.target.files;
+    let { fileToUpload } = this.state;
+    fileToUpload.push(files[0]);
+    this.setState({ fileToUpload: fileToUpload });
+  };
+
+  handleNewModule = async () => {
+    const { title } = this.refs;
+    const { description, fileToUpload } = this.state;
+    let thumbnail = {};
+    let data = new FormData();
+    data.append("files", fileToUpload[0]);
+    await this.props
+      .UploadFile(data)
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        thumbnail = result;
+      });
+    this.props.handleCreateModule(title.value, description, thumbnail);
+    this.props.handleShowPopup();
+  };
+
+  handleChangeDescription = data => {
+    this.setState({ description: data });
+  };
+
   render() {
     const { isShow } = this.props;
     return (
@@ -62,6 +95,7 @@ class PopupNewModule extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter module title here"
+                  ref="title"
                 />
               </div>
               <div className="form-group">
@@ -76,6 +110,7 @@ class PopupNewModule extends Component {
                   }}
                   onChange={(event, editor) => {
                     const data = editor.getData();
+                    this.handleChangeDescription(data);
                     console.log({ event, editor, data });
                   }}
                   onBlur={(event, editor) => {
@@ -92,10 +127,15 @@ class PopupNewModule extends Component {
                   type="file"
                   className="form-control"
                   placeholder="Enter training title here"
+                  onChange={this.fileSelectHandler}
                 />
               </div>
               <div className="form-group">
-                <button type="button" className="btn btn-info form-control">
+                <button
+                  type="button"
+                  className="btn btn-info form-control"
+                  onClick={this.handleNewModule}
+                >
                   Add
                 </button>
               </div>

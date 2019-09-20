@@ -5,12 +5,17 @@ import roles, { initialState as initRoles } from "./user";
 import isCreatedTraining, {
   initialState as initCreatedTraining
 } from "./training";
+import isCreatedModule, { initialState as initCreatedModule } from "./module";
+import listModule, { initialState as initListModule } from "./module";
+
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
   registerUser: initRegisterUser,
   roles: initRoles,
-  isCreatedTraining: initCreatedTraining
+  isCreatedTraining: initCreatedTraining,
+  isCreatedModule: initCreatedModule,
+  listModule: initListModule
 };
 
 export default {
@@ -18,5 +23,7 @@ export default {
   auth,
   registerUser,
   roles,
-  isCreatedTraining
+  isCreatedTraining,
+  isCreatedModule,
+  listModule
 };

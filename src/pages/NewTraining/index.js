@@ -7,43 +7,75 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import PopupNewModule from "pages/NewTraining/PopupNewModule";
 import { createTraining } from "redux/action/training";
 import { UploadFile } from "utils/UploadImage.js";
+import { createModule, getModule } from "redux/action/module.js";
+import _ from "lodash";
 function mapStateToProps(state) {
   return {
     store: {
       isCreatedTraining: state.isCreatedTraining.isCreatedTraining.data,
-      loadingCreatedTraining: state.isCreatedTraining.isCreatedTraining.loading
+      loadingCreatedTraining: state.isCreatedTraining.isCreatedTraining.loading,
+      isCreatedModule: state.isCreatedModule.isCreatedModule.data,
+      loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading,
+      listModule: state.isCreatedModule.listModule.data,
+      loadingListModule: state.isCreatedModule.listModule.loading
     }
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ createTraining }, dispatch)
+    action: bindActionCreators(
+      { createTraining, createModule, getModule },
+      dispatch
+    )
   };
 };
 
 class NewTraining extends Component {
   state = {
-    step: 1,
+    step: 2,
     isShow: false,
     description: "",
-    fileToUpload: []
+    fileToUpload: [],
+    createdModule: false
   };
-  componentDidMount() {}
-
+  componentDidMount() {
+    this.handleGetListModule();
+  }
+  //Handle get list module
+  handleGetListModule = () => {
+    const payload = {};
+    const { getModule } = this.props.action;
+    getModule(payload, () => {});
+  };
+  //Handle selectfile
   fileSelectHandler = e => {
     let files = e.target.files;
     let { fileToUpload } = this.state;
     fileToUpload.push(files[0]);
     this.setState({ fileToUpload: fileToUpload });
   };
-
+  //Must improve level without hardcode
   handleCreateTraining = (name, level, description, thumbnail) => {
     const payload = { name, level, description, thumbnail };
     const { createTraining } = this.props.action;
     createTraining(payload, () => {
-      console.log(this.props.store);
-      return true;
+      const { isCreatedTraining } = this.props.store;
+      if (!_.isUndefined(isCreatedTraining.id)) {
+        this.setState({ step: 2 });
+      }
+    });
+  };
+  //Handle create new module
+  handleCreateModule = (name, description, thumbnail) => {
+    const payload = { name, description, thumbnail };
+    const { createModule } = this.props.action;
+    createModule(payload, () => {
+      const { isCreatedModule } = this.props.store;
+      if (!_.isUndefined(isCreatedModule.id)) {
+        this.handleGetListModule();
+        this.setState({ createdModule: true });
+      }
     });
   };
 
@@ -60,9 +92,7 @@ class NewTraining extends Component {
       .then(result => {
         thumbnail = result;
       });
-    if (this.handleCreateTraining(title.value, "1", description, thumbnail)) {
-      this.setState({ step: 2 });
-    }
+    this.handleCreateTraining(title.value, "1", description, thumbnail);
   };
   handleStepTwo = () => {
     this.setState({ step: 3 });
@@ -77,13 +107,17 @@ class NewTraining extends Component {
   };
 
   render() {
-    const { isShow } = this.state;
+    const { isShow, createdModule } = this.state;
+    const { listModule, loadingListModule } = this.props.store;
+
     return (
       <div className="page-header">
         <Header titleHeader="Course Page" />
         <PopupNewModule
           isShow={isShow}
           handleShowPopup={this.handleShowPopup}
+          handleCreateModule={this.handleCreateModule}
+          UploadFile={UploadFile}
         />
         <div className="container">
           <div className="row">
@@ -170,6 +204,11 @@ class NewTraining extends Component {
               {this.state.step === 2 && (
                 <div className="row">
                   <div className="col-xl-12">
+                    {!createdModule && (
+                      <h3 className="alert-success">
+                        MODULE HAVE BEEN CREATED
+                      </h3>
+                    )}
                     <div className="form-group" style={{ width: "30%" }}>
                       <button
                         type="button"
@@ -183,9 +222,14 @@ class NewTraining extends Component {
                   <div className="col-xl-5">
                     <label>List module available</label>
                     <ul>
-                      <li>Module 1</li>
-                      <li>Module 2</li>
-                      <li>Module 3</li>
+                      {!loadingListModule &&
+                        listModule.map((item, index) => {
+                          return (
+                            <li key={index} value={item.id}>
+                              {item.name}
+                            </li>
+                          );
+                        })}
                     </ul>
                   </div>
                   <div className="form-group col-xl-2">

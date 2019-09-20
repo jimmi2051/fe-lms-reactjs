@@ -15,7 +15,7 @@ export default (state = initialState, action) => {
     case "CREATE_TRAINING_SUCCESS":
       return {
         ...state,
-        isCreatedTraining: { isCreatedTraining: action.payload, loading: false }
+        isCreatedTraining: { data: action.payload, loading: false }
       };
     default:
       return state;
