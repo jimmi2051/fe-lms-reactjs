@@ -7,7 +7,8 @@ import isCreatedTraining, {
 } from "./training";
 import isCreatedModule, { initialState as initCreatedModule } from "./module";
 import listModule, { initialState as initListModule } from "./module";
-
+import isCreatedCourse, { initialState as initCreatedCourse } from "./course";
+import listCourse, { initialState as initListCourse } from "./course";
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -15,7 +16,9 @@ export const exampleInitialState = {
   roles: initRoles,
   isCreatedTraining: initCreatedTraining,
   isCreatedModule: initCreatedModule,
-  listModule: initListModule
+  listModule: initListModule,
+  isCreatedCourse: initCreatedCourse,
+  listCourse: initListCourse
 };
 
 export default {
@@ -25,5 +28,7 @@ export default {
   roles,
   isCreatedTraining,
   isCreatedModule,
-  listModule
+  listModule,
+  isCreatedCourse,
+  listCourse
 };

@@ -6,8 +6,8 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 function mapStateToProps(state) {
   return {
     store: {
-      isCreatedModule: state.isCreatedModule.isCreatedModule.data,
-      loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading
+      isCreatedCourse: state.isCreatedCourse.isCreatedCourse.data,
+      loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading
     }
   };
 }
@@ -18,7 +18,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-class PopupNewModule extends Component {
+class PopupNewCourse extends Component {
   state = {
     description: "",
     fileToUpload: []
@@ -32,7 +32,7 @@ class PopupNewModule extends Component {
     this.setState({ fileToUpload: fileToUpload });
   };
 
-  handleNewModule = async () => {
+  handleNewCourse = async () => {
     const { title } = this.refs;
     const { description, fileToUpload } = this.state;
     let thumbnail = {};
@@ -48,7 +48,7 @@ class PopupNewModule extends Component {
           thumbnail = result;
         });
     }
-    this.props.handleCreateModule(title.value, description, thumbnail);
+    this.props.handleCreateCourse(title.value, description, thumbnail);
     this.props.handleShowPopup();
   };
 
@@ -79,7 +79,7 @@ class PopupNewModule extends Component {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                Add new module
+                Add new Course
               </h5>
               <button
                 type="button"
@@ -96,7 +96,7 @@ class PopupNewModule extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Enter module title here"
+                  placeholder="Enter Course title here"
                   ref="title"
                 />
               </div>
@@ -136,7 +136,7 @@ class PopupNewModule extends Component {
                 <button
                   type="button"
                   className="btn btn-info form-control"
-                  onClick={this.handleNewModule}
+                  onClick={this.handleNewCourse}
                 >
                   Add
                 </button>
@@ -162,4 +162,4 @@ class PopupNewModule extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PopupNewModule);
+)(PopupNewCourse);

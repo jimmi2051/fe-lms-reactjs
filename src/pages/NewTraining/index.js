@@ -8,7 +8,10 @@ import PopupNewModule from "pages/NewTraining/PopupNewModule";
 import { createTraining } from "redux/action/training";
 import { UploadFile } from "utils/UploadImage.js";
 import { createModule, getModule } from "redux/action/module.js";
+import { createCourse, getCourse } from "redux/action/course.js";
 import _ from "lodash";
+import Step1 from "pages/NewTraining/Step1";
+import Step2 from "pages/NewTraining/Step2";
 function mapStateToProps(state) {
   return {
     store: {
@@ -17,7 +20,11 @@ function mapStateToProps(state) {
       isCreatedModule: state.isCreatedModule.isCreatedModule.data,
       loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading,
       listModule: state.isCreatedModule.listModule.data,
-      loadingListModule: state.isCreatedModule.listModule.loading
+      loadingListModule: state.isCreatedModule.listModule.loading,
+      isCreatedCourse: state.isCreatedCourse.isCreatedCourse.data,
+      loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading,
+      listCourse: state.isCreatedCourse.listCourse.data,
+      loadingListCourse: state.isCreatedCourse.listCourse.loading
     }
   };
 }
@@ -25,7 +32,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators(
-      { createTraining, createModule, getModule },
+      { createTraining, createModule, getModule, createCourse, getCourse },
       dispatch
     )
   };
@@ -37,24 +44,29 @@ class NewTraining extends Component {
     isShow: false,
     description: "",
     fileToUpload: [],
-    createdModule: false
+    createdModule: false,
+    listModuleChoosen: [],
+    moduleActived: {},
+    moduleChoosenActived: {},
+    createdCourse: false
   };
   componentDidMount() {
     this.handleGetListModule();
   }
+  //#region Handle redux
   //Handle get list module
   handleGetListModule = () => {
     const payload = {};
     const { getModule } = this.props.action;
     getModule(payload, () => {});
   };
-  //Handle selectfile
-  fileSelectHandler = e => {
-    let files = e.target.files;
-    let { fileToUpload } = this.state;
-    fileToUpload.push(files[0]);
-    this.setState({ fileToUpload: fileToUpload });
+  //Handle get list Course
+  handleGetListCourse = () => {
+    const payload = {};
+    const { getCourse } = this.props.action;
+    getCourse(payload, () => {});
   };
+
   //Must improve level without hardcode
   handleCreateTraining = (name, level, description, thumbnail) => {
     const payload = { name, level, description, thumbnail };
@@ -79,21 +91,47 @@ class NewTraining extends Component {
     });
   };
 
-  handleStepOne = async () => {
-    const { title } = this.refs;
+  //Handle create new module
+  handleCreateCourse = (name, description, thumbnail) => {
+    const payload = { name, description, thumbnail };
+    const { createCourse } = this.props.action;
+    createCourse(payload, () => {
+      const { isCreatedCourse } = this.props.store;
+      if (!_.isUndefined(isCreatedCourse.id)) {
+        this.handleGetListCourse();
+        this.setState({ createdCourse: true });
+      }
+    });
+  };
+
+  //#endregion
+
+  //Handle selectfile
+  fileSelectHandler = e => {
+    let files = e.target.files;
+    let { fileToUpload } = this.state;
+    fileToUpload.push(files[0]);
+    this.setState({ fileToUpload: fileToUpload });
+  };
+
+  //#region Helper
+  handleStepOne = async title => {
     const { description, fileToUpload } = this.state;
     let thumbnail = {};
-    let data = new FormData();
-    data.append("files", fileToUpload[0]);
-    await UploadFile(data)
-      .then(res => {
-        return res.json();
-      })
-      .then(result => {
-        thumbnail = result;
-      });
-    this.handleCreateTraining(title.value, "1", description, thumbnail);
+    if (fileToUpload.length > 0) {
+      let data = new FormData();
+      data.append("files", fileToUpload[0]);
+      await UploadFile(data)
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          thumbnail = result;
+        });
+    }
+    this.handleCreateTraining(title, "1", description, thumbnail);
   };
+
   handleStepTwo = () => {
     this.setState({ step: 3 });
   };
@@ -106,8 +144,71 @@ class NewTraining extends Component {
     this.setState({ description: data });
   };
 
+  handleAddModuleToPath = () => {
+    let { listModuleChoosen, moduleActived } = this.state;
+    const index = _.findIndex(listModuleChoosen, item =>
+      _.isEqual(item, moduleActived)
+    );
+    if (index === -1) {
+      listModuleChoosen.push(moduleActived);
+      this.setState({
+        listModuleChoosen: listModuleChoosen,
+        moduleActived: {}
+      });
+    }
+  };
+
+  handleRemoveModuleToPath = () => {
+    let { listModuleChoosen, moduleChoosenActived } = this.state;
+    const index = _.findIndex(listModuleChoosen, item =>
+      _.isEqual(item, moduleChoosenActived)
+    );
+    if (index > -1) {
+      listModuleChoosen.splice(index, 1);
+      this.setState({
+        listModuleChoosen: listModuleChoosen,
+        moduleChoosenActived: {}
+      });
+    }
+  };
+
+  handleActiveModule = module => {
+    this.setState({ moduleActived: module });
+  };
+
+  handleActiveModuleChoosen = module => {
+    this.setState({ moduleChoosenActived: module });
+  };
+
+  handleUpModule = () => {
+    let { listModuleChoosen, moduleChoosenActived } = this.state;
+    const index = _.findIndex(listModuleChoosen, item =>
+      _.isEqual(item, moduleChoosenActived)
+    );
+    if (index > 0) {
+      const moduleTemp = listModuleChoosen[index];
+      listModuleChoosen[index] = listModuleChoosen[index - 1];
+      listModuleChoosen[index - 1] = moduleTemp;
+      this.setState({ listModuleChoosen: listModuleChoosen });
+    }
+  };
+
+  handleDownModule = () => {
+    let { listModuleChoosen, moduleChoosenActived } = this.state;
+    const index = _.findIndex(listModuleChoosen, item =>
+      _.isEqual(item, moduleChoosenActived)
+    );
+    if (index < listModuleChoosen.length - 1) {
+      const moduleTemp = listModuleChoosen[index];
+      listModuleChoosen[index] = listModuleChoosen[index + 1];
+      listModuleChoosen[index + 1] = moduleTemp;
+      this.setState({ listModuleChoosen: listModuleChoosen });
+    }
+  };
+  //#endregion
+
   render() {
-    const { isShow, createdModule } = this.state;
+    const { isShow, createdModule, listModuleChoosen } = this.state;
     const { listModule, loadingListModule } = this.props.store;
 
     return (
@@ -143,19 +244,19 @@ class NewTraining extends Component {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title">Step by step</h5>
-                  <p className="card-text">
-                    <ul>
-                      <li className={`${this.state.step === 1 && "bg-root"}`}>
-                        Description
-                      </li>
-                      <li className={`${this.state.step === 2 && "bg-root"}`}>
-                        Learning Path Manage
-                      </li>
-                      <li className={`${this.state.step === 3 && "bg-root"}`}>
-                        Activities
-                      </li>
-                    </ul>
-                  </p>
+                  {/* <p className="card-text"> */}
+                  <ul className="card-text">
+                    <li className={`${this.state.step === 1 && "bg-root"}`}>
+                      Description
+                    </li>
+                    <li className={`${this.state.step === 2 && "bg-root"}`}>
+                      Learning Path Manage
+                    </li>
+                    <li className={`${this.state.step === 3 && "bg-root"}`}>
+                      Activities
+                    </li>
+                  </ul>
+                  {/* </p> */}
                 </div>
               </div>
             </div>
@@ -202,125 +303,120 @@ class NewTraining extends Component {
                 </div>
               )}
               {this.state.step === 2 && (
-                <div className="row">
-                  <div className="col-xl-12">
-                    {createdModule && (
-                      <h3 className="alert-success">
-                        MODULE HAVE BEEN CREATED
-                      </h3>
-                    )}
-                    <div className="form-group" style={{ width: "30%" }}>
-                      <button
-                        type="button"
-                        className="form-control btn bg-root"
-                        onClick={this.handleShowPopup}
-                      >
-                        Add new module
-                      </button>
-                    </div>
-                  </div>
-                  <div className="col-xl-5">
-                    <label>List module available</label>
-                    <ul>
-                      {!loadingListModule &&
-                        listModule.map((item, index) => {
-                          return (
-                            <li key={index} value={item.id}>
-                              {item.name}
-                            </li>
-                          );
-                        })}
-                    </ul>
-                  </div>
-                  <div className="form-group col-xl-2">
-                    <button className="form-control">Add</button>
-                    <button className="form-control">Remove</button>
-                    <button className="form-control">Up</button>
-                    <button className="form-control">Down</button>
-                  </div>
-                  <div className="col-xl-5">
-                    <label>Module choosen</label>
-                    <ul>
-                      <li>Module 1</li>
-                      <li>Module 2</li>
-                      <li>Module 3</li>
-                    </ul>
-                  </div>
-                  <div className="form-group col-xl-12">
-                    <button
-                      className="btn bg-root"
-                      style={{ width: "100%" }}
-                      onClick={this.handleStepTwo}
-                    >
-                      CONTINUE
-                    </button>
-                  </div>
-                </div>
+                <Step2 />
+                // This is for module->>>
+                // <div className="row">
+                //   <div className="col-xl-12">
+                //     {createdModule && (
+                //       <h3 className="alert-success pl-3">
+                //         MODULE HAVE BEEN CREATED
+                //       </h3>
+                //     )}
+                //     <div className="form-group" style={{ width: "30%" }}>
+                //       <button
+                //         type="button"
+                //         className="form-control btn bg-root"
+                //         onClick={this.handleShowPopup}
+                //       >
+                //         Add new module
+                //       </button>
+                //     </div>
+                //   </div>
+                //   <div className="col-xl-5">
+                //     <label>List module available</label>
+                //     <ul>
+                //       {!loadingListModule &&
+                //         listModule.map((item, index) => {
+                //           return (
+                //             <li
+                //               key={index}
+                //               onClick={() => {
+                //                 this.handleActiveModule(item);
+                //               }}
+                //               style={{ cursor: "pointer" }}
+                //               className={
+                //                 _.isEqual(this.state.moduleActived, item) &&
+                //                 "alert-success"
+                //               }
+                //             >
+                //               {item.name}
+                //             </li>
+                //           );
+                //         })}
+                //     </ul>
+                //   </div>
+                //   <div className="form-group col-xl-2">
+                //     <button
+                //       className="form-control"
+                //       type="button"
+                //       onClick={this.handleAddModuleToPath}
+                //     >
+                //       Add
+                //     </button>
+                //     <button
+                //       className="form-control"
+                //       type="button"
+                //       onClick={this.handleRemoveModuleToPath}
+                //     >
+                //       Remove
+                //     </button>
+                //     <button
+                //       className="form-control"
+                //       type="button"
+                //       onClick={this.handleUpModule}
+                //     >
+                //       Up
+                //     </button>
+                //     <button
+                //       className="form-control"
+                //       type="button"
+                //       onClick={this.handleDownModule}
+                //     >
+                //       Down
+                //     </button>
+                //   </div>
+                //   <div className="col-xl-5">
+                //     <label>Module choosen</label>
+                //     <ul>
+                //       {listModuleChoosen.length > 0 &&
+                //         listModuleChoosen.map((item, index) => {
+                //           return (
+                //             <li
+                //               key={index}
+                //               onClick={() => {
+                //                 this.handleActiveModuleChoosen(item);
+                //               }}
+                //               className={
+                //                 _.isEqual(
+                //                   this.state.moduleChoosenActived,
+                //                   item
+                //                 ) && "alert-success"
+                //               }
+                //               style={{ cursor: "pointer" }}
+                //             >
+                //               {item.name}
+                //             </li>
+                //           );
+                //         })}
+                //     </ul>
+                //   </div>
+                //   <div className="form-group col-xl-12">
+                //     <button
+                //       className="btn bg-root"
+                //       style={{ width: "100%" }}
+                //       onClick={this.handleStepTwo}
+                //     >
+                //       CONTINUE
+                //     </button>
+                //   </div>
+                // </div>
               )}
               {this.state.step === 1 && (
-                <div className="row no-gutters">
-                  <div className="col-xl-12">
-                    <div className="form-group">
-                      <label>Title (*)</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter training title here"
-                        ref="title"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Description</label>
-                      <CKEditor
-                        className="form-control"
-                        editor={ClassicEditor}
-                        data="<p>Hello from CKEditor 5!</p>"
-                        ref="description"
-                        onInit={editor => {
-                          // You can store the "editor" and use when it is needed.
-                          console.log("Editor is ready to use!", editor);
-                        }}
-                        onChange={(event, editor) => {
-                          const data = editor.getData();
-                          this.handleChangeDescription(data);
-                          console.log({ event, editor, data });
-                        }}
-                        onBlur={(event, editor) => {
-                          console.log("Blur.", editor);
-                        }}
-                        onFocus={(event, editor) => {
-                          console.log("Focus.", editor);
-                        }}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Image </label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        placeholder="Enter training title here"
-                        onChange={this.fileSelectHandler}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Required Training</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder=""
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group col-xl-12">
-                    <button
-                      className="btn bg-root"
-                      style={{ width: "100%" }}
-                      onClick={this.handleStepOne}
-                    >
-                      CONTINUE
-                    </button>
-                  </div>
-                </div>
+                <Step1
+                  handleChangeDescription={this.handleChangeDescription}
+                  fileSelectHandler={this.fileSelectHandler}
+                  handleStepOne={this.handleStepOne}
+                />
               )}
             </div>
           </div>
