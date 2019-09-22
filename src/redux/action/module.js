@@ -4,7 +4,7 @@
 import { SINGLE_API } from "./type";
 
 export const createModule = (payload, next, nextErr) => {
-  const { name, description, thumbnail } = payload;
+  const { name, description, thumbnail, users } = payload;
   return {
     type: SINGLE_API,
     payload: {
@@ -19,7 +19,8 @@ export const createModule = (payload, next, nextErr) => {
       params: {
         name,
         description,
-        thumbnail
+        thumbnail,
+        users: [users]
       }
     }
   };
@@ -32,6 +33,20 @@ export const getModule = (payload, next, nextErr) => {
       uri: `modules`,
       beforeCallType: "GET_MODULE_REQUEST",
       successType: "GET_MODULE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};
+
+export const getModuleByUser = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `modules?users._id=${id}`,
+      beforeCallType: "GET_MODULE_BY_USER_REQUEST",
+      successType: "GET_MODULE_BY_USER_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
     }

@@ -9,6 +9,14 @@ import isCreatedModule, { initialState as initCreatedModule } from "./module";
 import listModule, { initialState as initListModule } from "./module";
 import isCreatedCourse, { initialState as initCreatedCourse } from "./course";
 import listCourse, { initialState as initListCourse } from "./course";
+import isCreatedLearningPath, {
+  initialState as initCreatedLearningPath
+} from "./training";
+import listCourseFitler, {
+  initialState as initListCourseFilter
+} from "./course";
+import listCourseByUser, { initialState as initListCourseUser } from "./course";
+import listModuleByUser, { initialState as initListModuleUser } from "./course";
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -18,7 +26,11 @@ export const exampleInitialState = {
   isCreatedModule: initCreatedModule,
   listModule: initListModule,
   isCreatedCourse: initCreatedCourse,
-  listCourse: initListCourse
+  listCourse: initListCourse,
+  isCreatedLearningPath: initCreatedLearningPath,
+  listCourseFitler: initListCourseFilter,
+  listCourseByUser: initListCourseUser,
+  listModuleByUser: initListModuleUser
 };
 
 export default {
@@ -30,5 +42,9 @@ export default {
   isCreatedModule,
   listModule,
   isCreatedCourse,
-  listCourse
+  listCourse,
+  isCreatedLearningPath,
+  listCourseFitler,
+  listCourseByUser,
+  listModuleByUser
 };

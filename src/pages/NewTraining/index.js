@@ -2,16 +2,23 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import PopupNewModule from "pages/NewTraining/PopupNewModule";
 import { createTraining } from "redux/action/training";
 import { UploadFile } from "utils/UploadImage.js";
-import { createModule, getModule } from "redux/action/module.js";
-import { createCourse, getCourse } from "redux/action/course.js";
+import {
+  createModule,
+  getModule,
+  getModuleByUser
+} from "redux/action/module.js";
+import {
+  createCourse,
+  getCourse,
+  getCourseByUser
+} from "redux/action/course.js";
 import _ from "lodash";
 import Step1 from "pages/NewTraining/Step1";
 import Step2 from "pages/NewTraining/Step2";
+import Step3 from "pages/NewTraining/Step3";
+import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
     store: {
@@ -19,12 +26,8 @@ function mapStateToProps(state) {
       loadingCreatedTraining: state.isCreatedTraining.isCreatedTraining.loading,
       isCreatedModule: state.isCreatedModule.isCreatedModule.data,
       loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading,
-      listModule: state.isCreatedModule.listModule.data,
-      loadingListModule: state.isCreatedModule.listModule.loading,
       isCreatedCourse: state.isCreatedCourse.isCreatedCourse.data,
-      loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading,
-      listCourse: state.isCreatedCourse.listCourse.data,
-      loadingListCourse: state.isCreatedCourse.listCourse.loading
+      loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading
     }
   };
 }
@@ -32,7 +35,15 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators(
-      { createTraining, createModule, getModule, createCourse, getCourse },
+      {
+        createTraining,
+        createModule,
+        getModule,
+        createCourse,
+        getCourse,
+        getCourseByUser,
+        getModuleByUser
+      },
       dispatch
     )
   };
@@ -45,14 +56,9 @@ class NewTraining extends Component {
     description: "",
     fileToUpload: [],
     createdModule: false,
-    listModuleChoosen: [],
-    moduleActived: {},
-    moduleChoosenActived: {},
     createdCourse: false
   };
-  componentDidMount() {
-    this.handleGetListModule();
-  }
+  componentDidMount() {}
   //#region Handle redux
   //Handle get list module
   handleGetListModule = () => {
@@ -67,9 +73,21 @@ class NewTraining extends Component {
     getCourse(payload, () => {});
   };
 
+  handleGetListCourseByUser = userId => {
+    const payload = { id: userId };
+    const { getCourseByUser } = this.props.action;
+    getCourseByUser(payload, () => {});
+  };
+
+  handleGetListModuleByUser = userId => {
+    const payload = { id: userId };
+    const { getModuleByUser } = this.props.action;
+    getModuleByUser(payload, () => {});
+  };
+
   //Must improve level without hardcode
-  handleCreateTraining = (name, level, description, thumbnail) => {
-    const payload = { name, level, description, thumbnail };
+  handleCreateTraining = (name, level, description, thumbnail, users) => {
+    const payload = { name, level, description, thumbnail, users };
     const { createTraining } = this.props.action;
     createTraining(payload, () => {
       const { isCreatedTraining } = this.props.store;
@@ -79,26 +97,26 @@ class NewTraining extends Component {
     });
   };
   //Handle create new module
-  handleCreateModule = (name, description, thumbnail) => {
-    const payload = { name, description, thumbnail };
+  handleCreateModule = (name, description, thumbnail, users) => {
+    const payload = { name, description, thumbnail, users };
     const { createModule } = this.props.action;
     createModule(payload, () => {
       const { isCreatedModule } = this.props.store;
       if (!_.isUndefined(isCreatedModule.id)) {
-        this.handleGetListModule();
+        this.handleGetListModuleByUser(AuthStorage.userInfo.id);
         this.setState({ createdModule: true });
       }
     });
   };
 
   //Handle create new module
-  handleCreateCourse = (name, description, thumbnail) => {
-    const payload = { name, description, thumbnail };
+  handleCreateCourse = (name, description, thumbnail, user) => {
+    const payload = { name, description, thumbnail, user };
     const { createCourse } = this.props.action;
     createCourse(payload, () => {
       const { isCreatedCourse } = this.props.store;
       if (!_.isUndefined(isCreatedCourse.id)) {
-        this.handleGetListCourse();
+        this.handleGetListCourseByUser(AuthStorage.userInfo.id);
         this.setState({ createdCourse: true });
       }
     });
@@ -129,7 +147,13 @@ class NewTraining extends Component {
           thumbnail = result;
         });
     }
-    this.handleCreateTraining(title, "1", description, thumbnail);
+    this.handleCreateTraining(
+      title,
+      "1",
+      description,
+      thumbnail,
+      AuthStorage.userInfo
+    );
   };
 
   handleStepTwo = () => {
@@ -144,82 +168,12 @@ class NewTraining extends Component {
     this.setState({ description: data });
   };
 
-  handleAddModuleToPath = () => {
-    let { listModuleChoosen, moduleActived } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleActived)
-    );
-    if (index === -1) {
-      listModuleChoosen.push(moduleActived);
-      this.setState({
-        listModuleChoosen: listModuleChoosen,
-        moduleActived: {}
-      });
-    }
-  };
-
-  handleRemoveModuleToPath = () => {
-    let { listModuleChoosen, moduleChoosenActived } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleChoosenActived)
-    );
-    if (index > -1) {
-      listModuleChoosen.splice(index, 1);
-      this.setState({
-        listModuleChoosen: listModuleChoosen,
-        moduleChoosenActived: {}
-      });
-    }
-  };
-
-  handleActiveModule = module => {
-    this.setState({ moduleActived: module });
-  };
-
-  handleActiveModuleChoosen = module => {
-    this.setState({ moduleChoosenActived: module });
-  };
-
-  handleUpModule = () => {
-    let { listModuleChoosen, moduleChoosenActived } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleChoosenActived)
-    );
-    if (index > 0) {
-      const moduleTemp = listModuleChoosen[index];
-      listModuleChoosen[index] = listModuleChoosen[index - 1];
-      listModuleChoosen[index - 1] = moduleTemp;
-      this.setState({ listModuleChoosen: listModuleChoosen });
-    }
-  };
-
-  handleDownModule = () => {
-    let { listModuleChoosen, moduleChoosenActived } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleChoosenActived)
-    );
-    if (index < listModuleChoosen.length - 1) {
-      const moduleTemp = listModuleChoosen[index];
-      listModuleChoosen[index] = listModuleChoosen[index + 1];
-      listModuleChoosen[index + 1] = moduleTemp;
-      this.setState({ listModuleChoosen: listModuleChoosen });
-    }
-  };
   //#endregion
 
   render() {
-    const { isShow, createdModule, listModuleChoosen } = this.state;
-    const { listModule, loadingListModule } = this.props.store;
-
     return (
       <div className="page-header">
         <Header titleHeader="Course Page" />
-        <PopupNewModule
-          isShow={isShow}
-          handleShowPopup={this.handleShowPopup}
-          handleCreateModule={this.handleCreateModule}
-          UploadFile={UploadFile}
-        />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -253,7 +207,10 @@ class NewTraining extends Component {
                       Learning Path Manage
                     </li>
                     <li className={`${this.state.step === 3 && "bg-root"}`}>
-                      Activities
+                      Manage Module of Course
+                    </li>
+                    <li className={`${this.state.step === 4 && "bg-root"}`}>
+                      Activites
                     </li>
                   </ul>
                   {/* </p> */}
@@ -261,7 +218,7 @@ class NewTraining extends Component {
               </div>
             </div>
             <div className="col-xl-8">
-              {this.state.step === 3 && (
+              {this.state.step === 4 && (
                 <div className="row">
                   <div className="col-xl-12">
                     <div className="form-group" style={{ width: "30%" }}>
@@ -302,114 +259,20 @@ class NewTraining extends Component {
                   </div>
                 </div>
               )}
+              {this.state.step === 3 && (
+                <Step3
+                  handleCreateModule={this.handleCreateModule}
+                  handleGetListModule={this.handleGetListModule}
+                  handleGetListModuleByUser={this.handleGetListModuleByUser}
+                />
+              )}
               {this.state.step === 2 && (
-                <Step2 />
-                // This is for module->>>
-                // <div className="row">
-                //   <div className="col-xl-12">
-                //     {createdModule && (
-                //       <h3 className="alert-success pl-3">
-                //         MODULE HAVE BEEN CREATED
-                //       </h3>
-                //     )}
-                //     <div className="form-group" style={{ width: "30%" }}>
-                //       <button
-                //         type="button"
-                //         className="form-control btn bg-root"
-                //         onClick={this.handleShowPopup}
-                //       >
-                //         Add new module
-                //       </button>
-                //     </div>
-                //   </div>
-                //   <div className="col-xl-5">
-                //     <label>List module available</label>
-                //     <ul>
-                //       {!loadingListModule &&
-                //         listModule.map((item, index) => {
-                //           return (
-                //             <li
-                //               key={index}
-                //               onClick={() => {
-                //                 this.handleActiveModule(item);
-                //               }}
-                //               style={{ cursor: "pointer" }}
-                //               className={
-                //                 _.isEqual(this.state.moduleActived, item) &&
-                //                 "alert-success"
-                //               }
-                //             >
-                //               {item.name}
-                //             </li>
-                //           );
-                //         })}
-                //     </ul>
-                //   </div>
-                //   <div className="form-group col-xl-2">
-                //     <button
-                //       className="form-control"
-                //       type="button"
-                //       onClick={this.handleAddModuleToPath}
-                //     >
-                //       Add
-                //     </button>
-                //     <button
-                //       className="form-control"
-                //       type="button"
-                //       onClick={this.handleRemoveModuleToPath}
-                //     >
-                //       Remove
-                //     </button>
-                //     <button
-                //       className="form-control"
-                //       type="button"
-                //       onClick={this.handleUpModule}
-                //     >
-                //       Up
-                //     </button>
-                //     <button
-                //       className="form-control"
-                //       type="button"
-                //       onClick={this.handleDownModule}
-                //     >
-                //       Down
-                //     </button>
-                //   </div>
-                //   <div className="col-xl-5">
-                //     <label>Module choosen</label>
-                //     <ul>
-                //       {listModuleChoosen.length > 0 &&
-                //         listModuleChoosen.map((item, index) => {
-                //           return (
-                //             <li
-                //               key={index}
-                //               onClick={() => {
-                //                 this.handleActiveModuleChoosen(item);
-                //               }}
-                //               className={
-                //                 _.isEqual(
-                //                   this.state.moduleChoosenActived,
-                //                   item
-                //                 ) && "alert-success"
-                //               }
-                //               style={{ cursor: "pointer" }}
-                //             >
-                //               {item.name}
-                //             </li>
-                //           );
-                //         })}
-                //     </ul>
-                //   </div>
-                //   <div className="form-group col-xl-12">
-                //     <button
-                //       className="btn bg-root"
-                //       style={{ width: "100%" }}
-                //       onClick={this.handleStepTwo}
-                //     >
-                //       CONTINUE
-                //     </button>
-                //   </div>
-                // </div>
+                <Step2
+                  handleCreateCourse={this.handleCreateCourse}
+                  handleStepTwo={this.handleStepTwo}
+                  handleGetListCourse={this.handleGetListCourse}
+                  handleGetListCourseByUser={this.handleGetListCourseByUser}
+                />
               )}
               {this.state.step === 1 && (
                 <Step1

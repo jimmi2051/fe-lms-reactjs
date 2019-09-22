@@ -1,27 +1,30 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import PopupNewCourse from "pages/NewTraining/PopupNewCourse";
+import { UploadFile } from "utils/UploadImage.js";
 import _ from "lodash";
+import { addLearningPath } from "redux/action/training";
+import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
     store: {
       isCreatedTraining: state.isCreatedTraining.isCreatedTraining.data,
       loadingCreatedTraining: state.isCreatedTraining.isCreatedTraining.loading,
-      isCreatedModule: state.isCreatedModule.isCreatedModule.data,
-      loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading,
-      listModule: state.isCreatedModule.listModule.data,
-      loadingListModule: state.isCreatedModule.listModule.loading,
       isCreatedCourse: state.isCreatedCourse.isCreatedCourse.data,
       loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading,
-      listCourse: state.isCreatedCourse.listCourse.data,
-      loadingListCourse: state.isCreatedCourse.listCourse.loading
+      listCourseByUser: state.isCreatedCourse.listCourseByUser.data,
+      loadingListCourseUser: state.isCreatedCourse.listCourseByUser.loading,
+      isCreatedLearningPath: state.isCreatedTraining.isCreatedLearningPath.data,
+      loadingCreatedLearningPath:
+        state.isCreatedTraining.isCreatedLearningPath.loading
     }
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({}, dispatch)
+    action: bindActionCreators({ addLearningPath }, dispatch)
   };
 };
 class Step2 extends Component {
@@ -32,12 +35,31 @@ class Step2 extends Component {
     listCourseChoosen: [],
     courseChoosenActived: {}
   };
+  componentDidMount() {
+    // this.props.handleGetListCourse();
+    this.props.handleGetListCourseByUser(AuthStorage.userInfo.id);
+  }
   componentWillReceiveProps(nextProps) {
     const { isCreatedCourse } = nextProps.store;
     if (!this.state.createdCourse && !_.isUndefined(isCreatedCourse.id)) {
       this.setState({ createdCourse: true });
     }
   }
+
+  handleAddLearningPath = (
+    trainings,
+    courses,
+    position,
+    markForCourse,
+    isRequired
+  ) => {
+    const { addLearningPath } = this.props.action;
+    const payload = { trainings, courses, position, markForCourse, isRequired };
+    addLearningPath(payload, () => {
+      console.log(this.props.store);
+    });
+  };
+
   handleSubmit = () => {
     const { title } = this.refs;
     this.props.handleStepOne(title.value);
@@ -50,10 +72,14 @@ class Step2 extends Component {
   handleAddCourseToPath = () => {
     let { listCourseChoosen, courseActived } = this.state;
     const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item, courseActived)
+      _.isEqual(item.course, courseActived)
     );
     if (index === -1) {
-      listCourseChoosen.push(courseActived);
+      listCourseChoosen.push({
+        course: courseActived,
+        mark: 0,
+        required: false
+      });
       this.setState({
         listCourseChoosen: listCourseChoosen,
         courseActived: {}
@@ -64,7 +90,7 @@ class Step2 extends Component {
   handleRemoveCourseToPath = () => {
     let { listCourseChoosen, courseChoosenActived } = this.state;
     const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item, courseChoosenActived)
+      _.isEqual(item.course, courseChoosenActived)
     );
     if (index > -1) {
       listCourseChoosen.splice(index, 1);
@@ -86,7 +112,7 @@ class Step2 extends Component {
   handleUpCourse = () => {
     let { listCourseChoosen, courseChoosenActived } = this.state;
     const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item, courseChoosenActived)
+      _.isEqual(item.course, courseChoosenActived)
     );
     if (index > 0) {
       const courseTemp = listCourseChoosen[index];
@@ -96,10 +122,10 @@ class Step2 extends Component {
     }
   };
 
-  handleDownModule = () => {
+  handleDownCourse = () => {
     let { listCourseChoosen, courseChoosenActived } = this.state;
     const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item, courseChoosenActived)
+      _.isEqual(item.course, courseChoosenActived)
     );
     if (index < listCourseChoosen.length - 1) {
       const courseTemp = listCourseChoosen[index];
@@ -108,11 +134,65 @@ class Step2 extends Component {
       this.setState({ listCourseChoosen: listCourseChoosen });
     }
   };
+
+  handleStepTwo = () => {
+    const { listCourseChoosen } = this.state;
+    const { isCreatedTraining } = this.props.store;
+    if (_.isUndefined(isCreatedTraining)) {
+    } else {
+      const trainings = [isCreatedTraining];
+      listCourseChoosen.map((item, index) => {
+        const position = index + 1;
+        const markForCourse = item.mark;
+        const isRequired = item.required;
+        const courses = [item.course];
+        this.handleAddLearningPath(
+          trainings,
+          courses,
+          position,
+          markForCourse,
+          isRequired
+        );
+      });
+      this.props.handleStepTwo();
+    }
+  };
+
+  handleInputMark = (index, mark) => {
+    let { listCourseChoosen } = this.state;
+    listCourseChoosen[index].mark = mark;
+    this.setState({ listCourseChoosen: listCourseChoosen }, () => {
+      // console.log(listCourseChoosen);
+    });
+  };
+
+  handleCheckRequired = (index, checked) => {
+    let { listCourseChoosen } = this.state;
+    listCourseChoosen[index].required = checked;
+    this.setState({ listCourseChoosen: listCourseChoosen }, () => {
+      // console.log(listCourseChoosen);
+    });
+  };
+
+  handeChangleMark = (e, index) => {
+    this.handleInputMark(index, e.target.value);
+  };
+
+  handleChangeRequired = (e, index) => {
+    this.handleCheckRequired(index, e.target.checked);
+  };
+
   render() {
-    const { createdCourse, listCourseChoosen } = this.state;
-    const { listCourse, loadingListCourse } = this.props.store;
+    const { createdCourse, listCourseChoosen, isShow } = this.state;
+    const { listCourseByUser, loadingListCourseUser } = this.props.store;
     return (
       <div className="row">
+        <PopupNewCourse
+          isShow={isShow}
+          UploadFile={UploadFile}
+          handleCreateCourse={this.props.handleCreateCourse}
+          handleShowPopup={this.handleShowPopup}
+        />
         <div className="col-xl-12">
           {createdCourse && (
             <h3 className="alert-success pl-3">COURSE HAVE BEEN CREATED</h3>
@@ -130,8 +210,8 @@ class Step2 extends Component {
         <div className="col-xl-5">
           <label>List course available</label>
           <ul>
-            {!loadingListCourse &&
-              listCourse.map((item, index) => {
+            {!loadingListCourseUser &&
+              listCourseByUser.map((item, index) => {
                 return (
                   <li
                     key={index}
@@ -140,8 +220,9 @@ class Step2 extends Component {
                     }}
                     style={{ cursor: "pointer" }}
                     className={
-                      _.isEqual(this.state.courseActived, item) &&
-                      "alert-success"
+                      _.isEqual(this.state.courseActived, item)
+                        ? "alert-success"
+                        : ""
                     }
                   >
                     {item.name}
@@ -189,15 +270,30 @@ class Step2 extends Component {
                   <li
                     key={index}
                     onClick={() => {
-                      this.handleActiveCourseChoosen(item);
+                      this.handleActiveCourseChoosen(item.course);
                     }}
                     className={
-                      _.isEqual(this.state.courseChoosenActived, item) &&
-                      "alert-success"
+                      _.isEqual(this.state.courseChoosenActived, item.course)
+                        ? "alert-success"
+                        : ""
                     }
                     style={{ cursor: "pointer" }}
                   >
-                    {item.name}
+                    {item.course.name}
+                    <input
+                      placeholder="Enter mark for this course"
+                      onChange={e => this.handeChangleMark(e, index)}
+                    />
+                    <div className="checkbox">
+                      <label>
+                        <input
+                          type="checkbox"
+                          defaultChecked={false}
+                          onChange={e => this.handleChangeRequired(e, index)}
+                        />
+                        Required
+                      </label>
+                    </div>
                   </li>
                 );
               })}

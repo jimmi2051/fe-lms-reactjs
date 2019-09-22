@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
     store: {
@@ -48,7 +49,12 @@ class PopupNewModule extends Component {
           thumbnail = result;
         });
     }
-    this.props.handleCreateModule(title.value, description, thumbnail);
+    this.props.handleCreateModule(
+      title.value,
+      description,
+      thumbnail,
+      AuthStorage.userInfo
+    );
     this.props.handleShowPopup();
   };
 

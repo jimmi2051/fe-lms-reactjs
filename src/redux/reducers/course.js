@@ -6,6 +6,14 @@ export const initialState = {
   listCourse: {
     data: {},
     loading: true
+  },
+  listCourseFitler: {
+    data: {},
+    loading: true
+  },
+  listCourseByUser: {
+    data: {},
+    loading: true
   }
 };
 
@@ -25,6 +33,27 @@ export default (state = initialState, action) => {
       return { ...state, listCourse: { ...initialState.listCourse } };
     case "GET_COURSE_SUCCESS":
       return { ...state, listCourse: { data: action.payload, loading: false } };
+    case "FILTER_COURSE_BY_TRAINING_REQUEST":
+      return {
+        ...state,
+        listCourseFitler: { ...initialState.listCourseFitler }
+      };
+    case "FILTER_COURSE_BY_TRAINING_SUCCESS":
+      return {
+        ...state,
+        listCourseFitler: { data: action.payload, loading: false }
+      };
+    case "GET_COURSE_BY_USER_REQUEST":
+      return {
+        ...state,
+        listCourseByUser: { ...initialState.listCourseByUser }
+      };
+    case "GET_COURSE_BY_USER_SUCCESS":
+      return {
+        ...state,
+        listCourseByUser: { data: action.payload, loading: false }
+      };
+
     default:
       return state;
   }

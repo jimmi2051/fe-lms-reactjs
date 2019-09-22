@@ -6,6 +6,10 @@ export const initialState = {
   listModule: {
     data: {},
     loading: true
+  },
+  listModuleByUser: {
+    data: {},
+    loading: true
   }
 };
 
@@ -25,6 +29,16 @@ export default (state = initialState, action) => {
       return { ...state, listModule: { ...initialState.listModule } };
     case "GET_MODULE_SUCCESS":
       return { ...state, listModule: { data: action.payload, loading: false } };
+    case "GET_MODULE_BY_USER_REQUEST":
+      return {
+        ...state,
+        listModuleByUser: { ...initialState.listModuleByUser }
+      };
+    case "GET_MODULE_BY_USER_SUCCESS":
+      return {
+        ...state,
+        listModuleByUser: { data: action.payload, loading: false }
+      };
     default:
       return state;
   }
