@@ -10,6 +10,10 @@ export const initialState = {
   listModuleByUser: {
     data: {},
     loading: true
+  },
+  filterModuleByCourse: {
+    data: {},
+    loading: true
   }
 };
 
@@ -38,6 +42,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         listModuleByUser: { data: action.payload, loading: false }
+      };
+    case "FILTER_MODULE_BY_COURSE_REQUEST":
+      return {
+        ...state,
+        filterModuleByCourse: { ...initialState.filterModuleByCourse }
+      };
+    case "FILTER_MODULE_BY_COURSE_SUCCESS":
+      return {
+        ...state,
+        filterModuleByCourse: { data: action.payload, loading: false }
       };
     default:
       return state;

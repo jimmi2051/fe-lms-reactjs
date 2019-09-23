@@ -18,6 +18,7 @@ import _ from "lodash";
 import Step1 from "pages/NewTraining/Step1";
 import Step2 from "pages/NewTraining/Step2";
 import Step3 from "pages/NewTraining/Step3";
+import Step4 from "pages/NewTraining/Step4";
 import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
@@ -51,7 +52,7 @@ const mapDispatchToProps = dispatch => {
 
 class NewTraining extends Component {
   state = {
-    step: 1,
+    step: 4,
     isShow: false,
     description: "",
     fileToUpload: [],
@@ -102,8 +103,8 @@ class NewTraining extends Component {
     const { createModule } = this.props.action;
     createModule(payload, () => {
       const { isCreatedModule } = this.props.store;
-      if (!_.isUndefined(isCreatedModule.id)) {
-        this.handleGetListModuleByUser(AuthStorage.userInfo.id);
+      if (!_.isUndefined(isCreatedModule._id)) {
+        this.handleGetListModuleByUser(AuthStorage.userInfo._id);
         this.setState({ createdModule: true });
       }
     });
@@ -116,7 +117,7 @@ class NewTraining extends Component {
     createCourse(payload, () => {
       const { isCreatedCourse } = this.props.store;
       if (!_.isUndefined(isCreatedCourse.id)) {
-        this.handleGetListCourseByUser(AuthStorage.userInfo.id);
+        this.handleGetListCourseByUser(AuthStorage.userInfo._id);
         this.setState({ createdCourse: true });
       }
     });
@@ -158,6 +159,9 @@ class NewTraining extends Component {
 
   handleStepTwo = () => {
     this.setState({ step: 3 });
+  };
+  handleStepThree = () => {
+    this.setState({ step: 4 });
   };
   handleShowPopup = () => {
     const { isShow } = this.state;
@@ -218,52 +222,13 @@ class NewTraining extends Component {
               </div>
             </div>
             <div className="col-xl-8">
-              {this.state.step === 4 && (
-                <div className="row">
-                  <div className="col-xl-12">
-                    <div className="form-group" style={{ width: "30%" }}>
-                      <button
-                        type="button"
-                        className="form-control btn bg-root"
-                        onClick={this.handleShowPopup}
-                      >
-                        Add new content
-                      </button>
-                    </div>
-                  </div>
-                  <div className="col-xl-12">
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <td>Module</td>
-                          <td>Action</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>TEST MODULE 1</td>
-                          <td>
-                            <button className="btn bg-root mr-3">
-                              Show content choosen
-                            </button>
-                            <button className="btn bg-root">Add content</button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="form-group col-xl-12">
-                    <button className="btn bg-root" style={{ width: "100%" }}>
-                      DONE
-                    </button>
-                  </div>
-                </div>
-              )}
+              {this.state.step === 4 && <Step4 />}
               {this.state.step === 3 && (
                 <Step3
                   handleCreateModule={this.handleCreateModule}
                   handleGetListModule={this.handleGetListModule}
                   handleGetListModuleByUser={this.handleGetListModuleByUser}
+                  handleStepThree={this.handleStepThree}
                 />
               )}
               {this.state.step === 2 && (

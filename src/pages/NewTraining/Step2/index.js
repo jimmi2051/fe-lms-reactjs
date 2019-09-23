@@ -37,11 +37,12 @@ class Step2 extends Component {
   };
   componentDidMount() {
     // this.props.handleGetListCourse();
-    this.props.handleGetListCourseByUser(AuthStorage.userInfo.id);
+    console.log("AuthStorage>>>>", AuthStorage.userInfo);
+    this.props.handleGetListCourseByUser(AuthStorage.userInfo._id);
   }
   componentWillReceiveProps(nextProps) {
     const { isCreatedCourse } = nextProps.store;
-    if (!this.state.createdCourse && !_.isUndefined(isCreatedCourse.id)) {
+    if (!this.state.createdCourse && !_.isUndefined(isCreatedCourse._id)) {
       this.setState({ createdCourse: true });
     }
   }
@@ -56,7 +57,7 @@ class Step2 extends Component {
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
     addLearningPath(payload, () => {
-      console.log(this.props.store);
+      // console.log(this.props.store);
     });
   };
 

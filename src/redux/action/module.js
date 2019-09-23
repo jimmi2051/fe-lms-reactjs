@@ -52,3 +52,17 @@ export const getModuleByUser = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getModuleByCourse = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `relationcoursemodules?courses._id=${id}`,
+      beforeCallType: "FILTER_MODULE_BY_COURSE_REQUEST",
+      successType: "FILTER_MODULE_BY_COURSE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};

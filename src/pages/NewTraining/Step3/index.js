@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import PopupNewModule from "pages/NewTraining/PopupNewModule";
 import { UploadFile } from "utils/UploadImage.js";
 import _ from "lodash";
-import { getCourseByTraining } from "redux/action/course";
+import { getCourseByTraining, addCourseModule } from "redux/action/course";
 import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
@@ -16,14 +16,18 @@ function mapStateToProps(state) {
       listModuleByUser: state.isCreatedModule.listModuleByUser.data,
       loadingListModuleByUser: state.isCreatedModule.listModuleByUser.loading,
       listCourseFitler: state.listCourseFitler.listCourseFitler.data,
-      loadingListCourseFilter: state.listCourseFitler.listCourseFitler.loading
+      loadingListCourseFilter: state.listCourseFitler.listCourseFitler.loading,
+      isCreatedCourseModule: state.listCourseFitler.isCreatedCourseModule.data
     }
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ getCourseByTraining }, dispatch)
+    action: bindActionCreators(
+      { getCourseByTraining, addCourseModule },
+      dispatch
+    )
   };
 };
 class Step3 extends Component {
@@ -37,10 +41,10 @@ class Step3 extends Component {
   };
 
   componentDidMount() {
-    this.props.handleGetListModuleByUser(AuthStorage.userInfo.id);
+    this.props.handleGetListModuleByUser(AuthStorage.userInfo._id);
     const { isCreatedTraining } = this.props.store;
     if (_.isUndefined(isCreatedTraining)) {
-      this.handleFilterListCourse("5d879c4bc077dc0017034b09");
+      console.log("Error>>>> your training is invalid");
     } else {
       //this is hardcode must to fix
       this.handleFilterListCourse(isCreatedTraining.id);
@@ -49,7 +53,7 @@ class Step3 extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { isCreatedModule } = nextProps.store;
-    if (!this.state.createdModule && !_.isUndefined(isCreatedModule.id)) {
+    if (!this.state.createdModule && !_.isUndefined(isCreatedModule._id)) {
       this.setState({ createdModule: true });
     }
   }
@@ -62,6 +66,12 @@ class Step3 extends Component {
         currentCourse: this.props.store.listCourseFitler[0].courses[0]
       });
     });
+  };
+
+  handleCreateCourseModule = (courses, position, modules) => {
+    const { addCourseModule } = this.props.action;
+    const payload = { courses, position, modules };
+    addCourseModule(payload, () => {});
   };
 
   handleSubmit = () => {
@@ -137,6 +147,17 @@ class Step3 extends Component {
 
   handleChangeCourse = course => {
     this.setState({ currentCourse: course });
+  };
+
+  handleStepThree = () => {
+    const { listModuleChoosen, currentCourse } = this.state;
+    const courses = [currentCourse];
+    listModuleChoosen.map((item, index) => {
+      const position = index + 1;
+      const modules = [item];
+      this.handleCreateCourseModule(courses, position, modules);
+    });
+    this.props.handleStepThree();
   };
 
   render() {
@@ -287,7 +308,7 @@ class Step3 extends Component {
           <button
             className="btn bg-root"
             style={{ width: "100%" }}
-            onClick={this.handleStepTwo}
+            onClick={this.handleStepThree}
           >
             CONTINUE
           </button>

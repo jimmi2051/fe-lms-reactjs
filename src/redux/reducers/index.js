@@ -17,6 +17,12 @@ import listCourseFitler, {
 } from "./course";
 import listCourseByUser, { initialState as initListCourseUser } from "./course";
 import listModuleByUser, { initialState as initListModuleUser } from "./course";
+import isCreatedCourseModule, {
+  initialState as initCreatedCourseModule
+} from "./course";
+import filterModuleByCourse, {
+  initialState as initFilterModuleCourse
+} from "./module";
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -30,7 +36,9 @@ export const exampleInitialState = {
   isCreatedLearningPath: initCreatedLearningPath,
   listCourseFitler: initListCourseFilter,
   listCourseByUser: initListCourseUser,
-  listModuleByUser: initListModuleUser
+  listModuleByUser: initListModuleUser,
+  isCreatedCourseModule: initCreatedCourseModule,
+  filterModuleByCourse: initFilterModuleCourse
 };
 
 export default {
@@ -46,5 +54,7 @@ export default {
   isCreatedLearningPath,
   listCourseFitler,
   listCourseByUser,
-  listModuleByUser
+  listModuleByUser,
+  isCreatedCourseModule,
+  filterModuleByCourse
 };

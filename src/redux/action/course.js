@@ -69,16 +69,24 @@ export const getCourseByUser = (payload, next, nextErr) => {
   };
 };
 
-// export const getModuleByCourse = (payload, next, nextErr) => {
-//   const { id } = payload;
-//   return {
-//     type: SINGLE_API,
-//     payload: {
-//       uri: `learningpaths?trainings._id=${id}`,
-//       beforeCallType: "FILTER_COURSE_BY_TRAINING_REQUEST",
-//       successType: "FILTER_COURSE_BY_TRAINING_SUCCESS",
-//       afterSuccess: next,
-//       afterError: nextErr
-//     }
-//   };
-// };
+export const addCourseModule = (payload, next, nextErr) => {
+  const { courses, position, modules } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `relationcoursemodules`,
+      beforeCallType: "ADD_COURSE_MODULE_REQUEST",
+      successType: "ADD_COURSE_MODULE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "POST"
+      },
+      params: {
+        courses,
+        position,
+        modules
+      }
+    }
+  };
+};
