@@ -23,6 +23,10 @@ import isCreatedCourseModule, {
 import filterModuleByCourse, {
   initialState as initFilterModuleCourse
 } from "./module";
+import listContent, { initialState as initListContent } from "./content";
+import listContentByModule, {
+  initialState as initListContentByModule
+} from "./content";
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -38,7 +42,9 @@ export const exampleInitialState = {
   listCourseByUser: initListCourseUser,
   listModuleByUser: initListModuleUser,
   isCreatedCourseModule: initCreatedCourseModule,
-  filterModuleByCourse: initFilterModuleCourse
+  filterModuleByCourse: initFilterModuleCourse,
+  listContent: initListContent,
+  listContentByModule: initListContentByModule
 };
 
 export default {
@@ -56,5 +62,7 @@ export default {
   listCourseByUser,
   listModuleByUser,
   isCreatedCourseModule,
-  filterModuleByCourse
+  filterModuleByCourse,
+  listContent,
+  listContentByModule
 };
