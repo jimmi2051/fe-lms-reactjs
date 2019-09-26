@@ -157,7 +157,6 @@ class Step3 extends Component {
       const modules = [item];
       this.handleCreateCourseModule(courses, position, modules);
     });
-    this.props.handleStepThree();
   };
 
   render() {
@@ -281,6 +280,7 @@ class Step3 extends Component {
           </button>
         </div>
         <div className="col-xl-5">
+          {/* Must improve ->>>> if exists module will be shown in here */}
           <label>Modules of Course "{currentCourse.name}"</label>
           <ul>
             {listModuleChoosen.length > 0 &&
@@ -309,6 +309,13 @@ class Step3 extends Component {
             className="btn bg-root"
             style={{ width: "100%" }}
             onClick={this.handleStepThree}
+          >
+            UPDATE
+          </button>
+          <button
+            className="btn bg-root"
+            style={{ width: "100%" }}
+            onClick={this.props.handleStepThree}
           >
             CONTINUE
           </button>

@@ -5,6 +5,7 @@ import _ from "lodash";
 import { getCourseByTraining, addCourseModule } from "redux/action/course";
 import { getModuleByCourse } from "redux/action/module";
 import { getContent, getContentByModule } from "redux/action/content";
+import ListContent from "pages/NewTraining/PopupListContent";
 import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
@@ -41,7 +42,8 @@ const mapDispatchToProps = dispatch => {
 class Step4 extends Component {
   state = {
     currentCourse: {},
-    currentModule: {}
+    currentModule: {},
+    isShow: false
   };
   componentDidMount() {
     const { listCourseFitler, loadingListCourseFilter } = this.props.store;
@@ -79,6 +81,10 @@ class Step4 extends Component {
     this.setState({ currentModule: module });
   };
 
+  handleShowListContent = module => {
+    this.setState({ isShow: !this.state.isShow, currentModule: module });
+  };
+
   render() {
     const {
       listCourseFitler,
@@ -90,8 +96,10 @@ class Step4 extends Component {
       listContentByModule,
       loadingListContentByModule
     } = this.props.store;
+    const { isShow, currentModule } = this.state;
     return (
       <div className="row">
+        <ListContent isShow={isShow} currentModule={currentModule} />
         <div className="col-xl-12">
           <div className="form-group" style={{ width: "30%" }}>
             <button
@@ -147,16 +155,25 @@ class Step4 extends Component {
                 filterModuleByCourse.map((item, index) => {
                   return (
                     <tr key={index}>
-                      <td>{item.name}</td>
+                      <td>{item.modules[0].name}</td>
                       <td>
                         <button
                           type="button"
-                          onClick={this.handleShowContent(item)}
+                          onClick={() =>
+                            this.handleShowContent(item.modules[0])
+                          }
                           className="btn bg-root mr-3"
                         >
                           Show content choosen
                         </button>
-                        <button className="btn bg-root">Add content</button>
+                        <button
+                          onClick={() =>
+                            this.handleShowListContent(item.modules[0])
+                          }
+                          className="btn bg-root"
+                        >
+                          Add content
+                        </button>
                       </td>
                     </tr>
                   );
@@ -173,7 +190,7 @@ class Step4 extends Component {
             </thead>
             <tbody>
               {!loadingListContentByModule &&
-                listContentByModule.modules.map((item, index) => {
+                listContentByModule.map((item, index) => {
                   return (
                     <tr key={index}>
                       <td>{item.name}</td>
