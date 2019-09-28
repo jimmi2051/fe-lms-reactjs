@@ -13,26 +13,26 @@ function* authorize(payload, next, nextErr) {
   });
   if (response && response.jwt) {
     // const isAuthen = payload.mfa_code ? true : false;
-    // const newUser = {
-    //   address: response.user.address,
-    //   blocked: response.user.blocked,
-    //   confirmed: response.user.cornfirmed,
-    //   dateOfBirth: response.user.dateOfBirth,
-    //   username: response.user.username,
-    //   firstName: response.user.firstName,
-    //   lastName: response.user.lastName,
-    //   email: response.user.email,
-    //   tel: response.user.tel,
-    //   _id: response.user._id,
-    //   role: response.user.role,
-    //   createdAt: response.user.createdAt,
-    //   updatedAt: response.user.updateAt,
-    //   provider: response.user.provider,
-    //   id: response.user.id
-    // };
+    const newUser = {
+      address: response.user.address,
+      blocked: response.user.blocked,
+      confirmed: response.user.cornfirmed,
+      dateOfBirth: response.user.dateOfBirth,
+      username: response.user.username,
+      firstName: response.user.firstName,
+      lastName: response.user.lastName,
+      email: response.user.email,
+      tel: response.user.tel,
+      _id: response.user._id,
+      role: response.user.role,
+      createdAt: response.user.createdAt,
+      updatedAt: response.user.updateAt,
+      provider: response.user.provider,
+      id: response.user.id
+    };
     const data = {
       token: response.jwt,
-      user: response.user
+      user: newUser
     };
 
     AuthStorage.value = data;

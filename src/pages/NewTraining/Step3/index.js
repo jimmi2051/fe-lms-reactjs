@@ -5,6 +5,7 @@ import PopupNewModule from "pages/NewTraining/PopupNewModule";
 import { UploadFile } from "utils/UploadImage.js";
 import _ from "lodash";
 import { getCourseByTraining, addCourseModule } from "redux/action/course";
+import { getModuleByCourse, removeModuleByCourse } from "redux/action/module";
 import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
@@ -17,7 +18,9 @@ function mapStateToProps(state) {
       loadingListModuleByUser: state.isCreatedModule.listModuleByUser.loading,
       listCourseFitler: state.listCourseFitler.listCourseFitler.data,
       loadingListCourseFilter: state.listCourseFitler.listCourseFitler.loading,
-      isCreatedCourseModule: state.listCourseFitler.isCreatedCourseModule.data
+      isCreatedCourseModule: state.listCourseFitler.isCreatedCourseModule.data,
+      filterModuleByCourse: state.listModule.filterModuleByCourse.data,
+      loadingModuleByCourse: state.listModule.filterModuleByCourse.loading
     }
   };
 }
@@ -25,7 +28,12 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators(
-      { getCourseByTraining, addCourseModule },
+      {
+        getCourseByTraining,
+        addCourseModule,
+        getModuleByCourse,
+        removeModuleByCourse
+      },
       dispatch
     )
   };
@@ -37,17 +45,20 @@ class Step3 extends Component {
     moduleActived: {},
     listModuleChoosen: [],
     moduleChoosenActived: {},
-    currentCourse: {}
+    currentCourse: {},
+    listModuleRemove: [],
+    moduleChoosenActivedExist: {}
   };
 
   componentDidMount() {
     this.props.handleGetListModuleByUser(AuthStorage.userInfo._id);
     const { isCreatedTraining } = this.props.store;
-    if (_.isUndefined(isCreatedTraining)) {
+    if (_.isUndefined(isCreatedTraining._id)) {
       console.log("Error>>>> your training is invalid");
+      this.handleFilterListCourse("5d879c4bc077dc0017034b09");
     } else {
       //this is hardcode must to fix
-      this.handleFilterListCourse(isCreatedTraining.id);
+      this.handleFilterListCourse(isCreatedTraining._id);
     }
   }
 
@@ -85,10 +96,22 @@ class Step3 extends Component {
 
   handleAddModuleToPath = () => {
     let { listModuleChoosen, moduleActived } = this.state;
+    const { filterModuleByCourse, loadingModuleByCourse } = this.props.store;
+    let indexChoosen = -2;
+    if (!loadingModuleByCourse) {
+      indexChoosen = _.findIndex(filterModuleByCourse, item =>
+        _.isEqual(item.modules[0]._id, moduleActived._id)
+      );
+    }
+
     const index = _.findIndex(listModuleChoosen, item =>
       _.isEqual(item, moduleActived)
     );
-    if (index === -1) {
+
+    if (
+      ((indexChoosen !== -2 && indexChoosen === -1) || indexChoosen === -2) &&
+      index === -1
+    ) {
       listModuleChoosen.push(moduleActived);
       this.setState({
         listModuleChoosen: listModuleChoosen,
@@ -97,8 +120,18 @@ class Step3 extends Component {
     }
   };
 
+  handleGetModuleByCourse = course_id => {
+    const { getModuleByCourse } = this.props.action;
+    const payload = { id: course_id };
+    getModuleByCourse(payload);
+  };
+
   handleRemoveModuleToPath = () => {
-    let { listModuleChoosen, moduleChoosenActived } = this.state;
+    let {
+      listModuleChoosen,
+      moduleChoosenActived,
+      moduleChoosenActivedExist
+    } = this.state;
     const index = _.findIndex(listModuleChoosen, item =>
       _.isEqual(item, moduleChoosenActived)
     );
@@ -109,6 +142,7 @@ class Step3 extends Component {
         moduleChoosenActived: {}
       });
     }
+    this.handleRemoveModuleExists(moduleChoosenActivedExist);
   };
 
   handleActiveModule = module => {
@@ -146,6 +180,8 @@ class Step3 extends Component {
   };
 
   handleChangeCourse = course => {
+    this.handleGetModuleByCourse(course._id);
+
     this.setState({ currentCourse: course });
   };
 
@@ -157,6 +193,30 @@ class Step3 extends Component {
       const modules = [item];
       this.handleCreateCourseModule(courses, position, modules);
     });
+    let { listModuleRemove } = this.state;
+    if (listModuleRemove.length > 0) {
+      const { removeModuleByCourse } = this.props.action;
+      listModuleRemove.map((item, index) => {
+        const payload = { id: item._id };
+        removeModuleByCourse(payload, () => {});
+      });
+    }
+  };
+
+  handleRemoveModuleExists = moduleByCourse => {
+    console.log("debug>>>>", moduleByCourse);
+    let { listModuleRemove } = this.state;
+    const index = _.findIndex(listModuleRemove, item =>
+      _.isEqual(item, moduleByCourse)
+    );
+    if (index === -1) {
+      listModuleRemove.push(moduleByCourse);
+    }
+    this.setState({ listModuleRemove });
+  };
+
+  handleActiveModuleChoosenExist = moduleChoosenActivedExist => {
+    this.setState({ moduleChoosenActivedExist });
   };
 
   render() {
@@ -164,13 +224,17 @@ class Step3 extends Component {
       createdModule,
       listModuleChoosen,
       isShow,
-      currentCourse
+      currentCourse,
+      listModuleRemove,
+      moduleChoosenActivedExist
     } = this.state;
     const {
       listModuleByUser,
       loadingListModuleByUser,
       listCourseFitler,
-      loadingListCourseFilter
+      loadingListCourseFilter,
+      filterModuleByCourse,
+      loadingModuleByCourse
     } = this.props.store;
     return (
       <div className="row">
@@ -283,6 +347,32 @@ class Step3 extends Component {
           {/* Must improve ->>>> if exists module will be shown in here */}
           <label>Modules of Course "{currentCourse.name}"</label>
           <ul>
+            {!loadingModuleByCourse &&
+              filterModuleByCourse.map((item, index) => {
+                if (
+                  _.findIndex(listModuleRemove, moduleRemove =>
+                    _.isEqual(moduleRemove, item)
+                  ) > -1
+                ) {
+                  return <></>;
+                }
+                return (
+                  <li
+                    key={index}
+                    onClick={() => {
+                      this.handleActiveModuleChoosenExist(item);
+                    }}
+                    className={
+                      _.isEqual(this.state.moduleChoosenActivedExist, item)
+                        ? "alert-success"
+                        : ""
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
+                    {item.modules[0].name}
+                  </li>
+                );
+              })}
             {listModuleChoosen.length > 0 &&
               listModuleChoosen.map((item, index) => {
                 return (

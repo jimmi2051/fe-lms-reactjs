@@ -91,15 +91,17 @@ class Step4 extends Component {
       loadingListCourseFilter,
       loadingModuleByCourse,
       filterModuleByCourse,
-      listContent,
-      loadingListContent,
       listContentByModule,
       loadingListContentByModule
     } = this.props.store;
     const { isShow, currentModule } = this.state;
     return (
       <div className="row">
-        <ListContent isShow={isShow} currentModule={currentModule} />
+        <ListContent
+          isShow={isShow}
+          currentModule={currentModule}
+          handleShowListContent={this.handleShowListContent}
+        />
         <div className="col-xl-12">
           <div className="form-group" style={{ width: "30%" }}>
             <button

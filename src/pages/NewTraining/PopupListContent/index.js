@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import AuthStorage from "utils/AuthStorage";
+import { updateContent } from "redux/action/content";
 function mapStateToProps(state) {
   return {
     store: {
@@ -15,7 +16,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({}, dispatch)
+    action: bindActionCreators({ updateContent }, dispatch)
   };
 };
 
@@ -24,47 +25,24 @@ class PopupListContent extends Component {
     description: "",
     fileToUpload: []
   };
-  //   componentDidMount() {}
-
-  //   fileSelectHandler = e => {
-  //     let files = e.target.files;
-  //     let { fileToUpload } = this.state;
-  //     fileToUpload.push(files[0]);
-  //     this.setState({ fileToUpload: fileToUpload });
-  //   };
-
-  //   handleNewCourse = async () => {
-  //     const { title } = this.refs;
-  //     const { description, fileToUpload } = this.state;
-  //     let thumbnail = {};
-  //     if (fileToUpload.length > 0) {
-  //       let data = new FormData();
-  //       data.append("files", fileToUpload[0]);
-  //       await this.props
-  //         .UploadFile(data)
-  //         .then(res => {
-  //           return res.json();
-  //         })
-  //         .then(result => {
-  //           thumbnail = result;
-  //         });
-  //     }
-  //     this.props.handleCreateCourse(
-  //       title.value,
-  //       description,
-  //       thumbnail,
-  //       AuthStorage.userInfo
-  //     );
-  //     this.props.handleShowPopup();
-  //   };
-
-  //   handleChangeDescription = data => {
-  //     this.setState({ description: data });
-  //   };
   handleUpdateContent = content => {
     console.log("this is props>>>", this.props);
-    console.log("content>>>>", content);
+    const { currentModule } = this.props;
+    let modules = content.modules;
+    modules.push(currentModule);
+    const payload = {
+      id: content._id,
+      modules: modules
+    };
+    const { updateContent } = this.props.action;
+    updateContent(payload);
+    // console.log("content>>>>", content);
   };
+
+  handleClosePopup = () => {
+    this.props.handleShowListContent(this.props.currentModule);
+  };
+
   render() {
     const { isShow } = this.props;
     const { listContent, loadingListContent } = this.props.store;
@@ -96,6 +74,7 @@ class PopupListContent extends Component {
                 className="close"
                 data-dismiss="modal"
                 aria-label="Close"
+                onClick={this.handleClosePopup}
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -113,7 +92,7 @@ class PopupListContent extends Component {
                   {!loadingListContent &&
                     listContent.map((item, index) => {
                       return (
-                        <tr>
+                        <tr key={index}>
                           <td>{item.name}</td>
                           <td>{item.type}</td>
                           <td>
@@ -137,7 +116,7 @@ class PopupListContent extends Component {
                 type="button"
                 className="btn btn-secondary"
                 data-dismiss="modal"
-                onClick={this.props.handleShowPopup}
+                onClick={this.handleClosePopup}
               >
                 Close
               </button>

@@ -29,3 +29,23 @@ export const getContentByModule = (payload, next, nextErr) => {
     }
   };
 };
+
+export const updateContent = (payload, next, nextErr) => {
+  const { id, modules } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `contents/${id}`,
+      beforeCallType: "UPDATE_CONTENT_REQUEST",
+      successType: "UPDATE_CONTENT_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "PUT"
+      },
+      params: {
+        modules
+      }
+    }
+  };
+};

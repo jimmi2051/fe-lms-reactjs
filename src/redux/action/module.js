@@ -66,3 +66,20 @@ export const getModuleByCourse = (payload, next, nextErr) => {
     }
   };
 };
+
+export const removeModuleByCourse = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `relationcoursemodules/${id}`,
+      beforeCallType: "REMOVE_MODULE_BY_COURSE_REQUEST",
+      successType: "REMOVE_MODULE_BY_COURSE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "DELETE"
+      }
+    }
+  };
+};
