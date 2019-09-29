@@ -56,9 +56,54 @@ class CoursePage extends Component {
               </div>
             </div>
             <div className="col-xl-8">
-              <div className="row no-gutters">
-                <div className="col-xl-6">Training 1</div>
-                <div className="col-xl-6">Training 2</div>
+              <div className="featured-courses courses-wrap">
+                <div className="row mx-m-25">
+                  <div className="col-12 col-md-6 px-25">
+                    <div className="course-content">
+                      <figure className="course-thumbnail">
+                        <a href="#">
+                          <img src="/static/images/1.jpg" alt="" />
+                        </a>
+                      </figure>
+
+                      <div className="course-content-wrap">
+                        <header className="entry-header">
+                          <h2 className="entry-title">
+                            <a href="#">
+                              The Complete Android Developer Course
+                            </a>
+                          </h2>
+
+                          <div className="entry-meta flex flex-wrap align-items-center">
+                            <div className="course-author">
+                              <a href="#">Ms. Lara Croft </a>
+                            </div>
+
+                            <div className="course-date">July 21, 2018</div>
+                          </div>
+                        </header>
+
+                        <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
+                          <div className="course-cost">
+                            $45 <span className="price-drop">$68</span>
+                          </div>
+
+                          <div className="course-ratings flex justify-content-end align-items-center">
+                            <span className="fa fa-star checked"></span>
+                            <span className="fa fa-star checked"></span>
+                            <span className="fa fa-star checked"></span>
+                            <span className="fa fa-star checked"></span>
+                            <span className="fa fa-star-o"></span>
+
+                            <span className="course-ratings-count">
+                              (4 votes)
+                            </span>
+                          </div>
+                        </footer>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="row no-gutters">
                 <div className="col-xl-12">

@@ -52,3 +52,17 @@ export const addLearningPath = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getTrainingByUser = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `trainings`,
+      beforeCallType: "GET_TRAINING_REQUEST",
+      successType: "GET_TRAINING_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};

@@ -6,6 +6,10 @@ export const initialState = {
   isCreatedLearningPath: {
     data: {},
     loading: true
+  },
+  listTraining: {
+    data: {},
+    loading: true
   }
 };
 
@@ -31,6 +35,17 @@ export default (state = initialState, action) => {
         ...state,
         isCreatedLearningPath: { data: action.payload, loading: false }
       };
+    case "GET_TRAINING_REQUEST":
+      return {
+        ...state,
+        listTraining: { ...initialState.listTraining }
+      };
+    case "GET_TRAINING_SUCCESS":
+      return {
+        ...state,
+        listTraining: { data: action.payload, loading: false }
+      };
+
     default:
       return state;
   }

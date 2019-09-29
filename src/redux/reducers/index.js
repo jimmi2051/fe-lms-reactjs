@@ -27,6 +27,9 @@ import listContent, { initialState as initListContent } from "./content";
 import listContentByModule, {
   initialState as initListContentByModule
 } from "./content";
+
+import listTraining, { initialState as initListTraining } from "./training";
+
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -44,7 +47,8 @@ export const exampleInitialState = {
   isCreatedCourseModule: initCreatedCourseModule,
   filterModuleByCourse: initFilterModuleCourse,
   listContent: initListContent,
-  listContentByModule: initListContentByModule
+  listContentByModule: initListContentByModule,
+  listTraining: initListTraining
 };
 
 export default {
@@ -64,5 +68,6 @@ export default {
   isCreatedCourseModule,
   filterModuleByCourse,
   listContent,
-  listContentByModule
+  listContentByModule,
+  listTraining
 };

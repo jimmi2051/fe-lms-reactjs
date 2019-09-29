@@ -11,6 +11,7 @@ import RegisterPage from "pages/Register";
 import CoursePage from "pages/Course";
 import AdminCoursePage from "pages/CourseManage";
 import AdminNewTraining from "pages/NewTraining";
+import AdminListTraining from "pages/ListTraining";
 export default function RootRoute() {
   return (
     <>
@@ -21,6 +22,7 @@ export default function RootRoute() {
         <Route exact path="/course" component={CoursePage} />
         <Route exact path="/admin/course" component={AdminCoursePage} />
         <Route exact path="/admin/new-training" component={AdminNewTraining} />
+        <Route exact path="/admin/training" component={AdminListTraining} />
       </Switch>
     </>
   );
