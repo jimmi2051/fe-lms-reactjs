@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { getTrainingByUser } from "redux/action/training";
+import { getCourseByTraining } from "redux/action/course";
+import { getModuleByCourse } from "redux/action/module";
+import { getContentByModule } from "redux/action/content";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
@@ -12,8 +14,14 @@ const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 function mapStateToProps(state) {
   return {
     store: {
-      listTraining: state.listTraining.listTraining.data,
-      loadingListTraining: state.listTraining.listTraining.loading
+      listCourseFitler: state.listCourseFitler.listCourseFitler.data,
+      loadingListCourse: state.listCourseFitler.listCourseFitler.loading,
+      filterModuleByCourse:
+        state.filterModuleByCourse.filterModuleByCourse.data,
+      loadingListModule:
+        state.filterModuleByCourse.filterModuleByCourse.loading,
+      listContentByModule: state.listContentByModule.listContentByModule.data,
+      loadingListContent: state.listContentByModule.listContentByModule.loading
     }
   };
 }
@@ -22,7 +30,9 @@ const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators(
       {
-        getTrainingByUser
+        getCourseByTraining,
+        getModuleByCourse,
+        getContentByModule
       },
       dispatch
     )
@@ -31,15 +41,50 @@ const mapDispatchToProps = dispatch => {
 
 class TrainingDetail extends Component {
   componentDidMount() {
-    console.log("this is props>>>", this.props);
+    // console.log("this is props>>>", this.props.match.params.id);
+    const { id } = this.props.match.params;
+    this.handleGetCourseByTraining(id);
   }
-  handleGetTrainig = userId => {
-    const payload = { id: userId };
-    const { getTrainingByUser } = this.props.action;
-    getTrainingByUser(payload);
+
+  handleGetCourseByTraining = trainingId => {
+    const payload = { id: trainingId };
+    const { getCourseByTraining } = this.props.action;
+    getCourseByTraining(payload, () => {
+      const { listCourseFitler } = this.props.store;
+      if (listCourseFitler.length > 0) {
+        this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+      }
+    });
   };
+
+  handleGetModuleByCourse = courseId => {
+    const payload = { id: courseId };
+    const { getModuleByCourse } = this.props.action;
+    getModuleByCourse(payload, () => {
+      const { filterModuleByCourse } = this.props.store;
+      if (filterModuleByCourse.length > 0) {
+        this.handleGetContentByModule(filterModuleByCourse[0].modules[0]._id);
+      }
+    });
+  };
+
+  handleGetContentByModule = moduleId => {
+    const payload = { id: moduleId };
+    const { getContentByModule } = this.props.action;
+    getContentByModule(payload);
+  };
+
   render() {
-    const { loadingListTraining, listTraining } = this.props.store;
+    const {
+      listCourseFitler,
+      loadingListCourse,
+      loadingListModule,
+      filterModuleByCourse,
+      loadingListContent,
+      listContentByModule
+    } = this.props.store;
+
+    console.log(listContentByModule);
     return (
       <div className="page-header">
         <Header titleHeader="Course Page" />
@@ -67,8 +112,17 @@ class TrainingDetail extends Component {
                   <h5 className="card-title">Learning Path</h5>
                   <p className="card-text">
                     <ul>
-                      <li>Course 1</li>
-                      <li>Course 2</li>
+                      {!loadingListCourse &&
+                        listCourseFitler.map((item, index) => {
+                          return <li>{item.courses[0].name}</li>;
+                        })}
+                    </ul>
+                    <label>Module by Course</label>
+                    <ul>
+                      {!loadingListModule &&
+                        filterModuleByCourse.map((item, index) => {
+                          return <li>{item.modules[0].name}</li>;
+                        })}
                     </ul>
                   </p>
                 </div>
@@ -76,14 +130,16 @@ class TrainingDetail extends Component {
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
-                <iframe
-                  width="560"
-                  height="315"
-                  src="https://www.youtube.com/embed/PkZNo7MFNFg"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                ></iframe>
+                {!loadingListContent && listContentByModule && (
+                  <iframe
+                    width="560"
+                    height="315"
+                    src={`${listContentByModule[0].relationData.data.url}`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                )}
               </div>
             </div>
           </div>

@@ -58,7 +58,7 @@ export const getTrainingByUser = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `trainings`,
+      uri: `trainings?users._id=${id}`,
       beforeCallType: "GET_TRAINING_REQUEST",
       successType: "GET_TRAINING_SUCCESS",
       afterSuccess: next,
