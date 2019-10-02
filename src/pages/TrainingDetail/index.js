@@ -8,7 +8,7 @@ import { getContentByModule } from "redux/action/content";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
-
+import VideoNormal from "h5p/VideoNormal";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -40,38 +40,54 @@ const mapDispatchToProps = dispatch => {
 };
 
 class TrainingDetail extends Component {
+  trainingPath = {};
+  processData = false;
   componentDidMount() {
     // console.log("this is props>>>", this.props.match.params.id);
     const { id } = this.props.match.params;
+    this.trainingPath["id"] = id;
     this.handleGetCourseByTraining(id);
   }
 
   handleGetCourseByTraining = trainingId => {
+    this.processData = true;
     const payload = { id: trainingId };
     const { getCourseByTraining } = this.props.action;
     getCourseByTraining(payload, () => {
-      const { listCourseFitler } = this.props.store;
-      if (listCourseFitler.length > 0) {
-        this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
-      }
+      let { listCourseFitler } = this.props.store;
+      listCourseFitler.map((item, index) => {
+        item.courses = {
+          ...item.courses[0]
+        };
+        this.handleGetModuleByCourse(item.courses._id, item.courses);
+      });
+      this.trainingPath["pathCourse"] = listCourseFitler;
     });
   };
 
-  handleGetModuleByCourse = courseId => {
+  handleGetModuleByCourse = (courseId, course) => {
     const payload = { id: courseId };
     const { getModuleByCourse } = this.props.action;
     getModuleByCourse(payload, () => {
       const { filterModuleByCourse } = this.props.store;
-      if (filterModuleByCourse.length > 0) {
-        this.handleGetContentByModule(filterModuleByCourse[0].modules[0]._id);
-      }
+      filterModuleByCourse.map((itemModule, indexModule) => {
+        itemModule.modules = { ...itemModule.modules[0] };
+        this.handleGetContentByModule(
+          itemModule.modules._id,
+          itemModule.modules
+        );
+      });
+      course["pathModule"] = filterModuleByCourse;
     });
   };
 
-  handleGetContentByModule = moduleId => {
+  handleGetContentByModule = (moduleId, module) => {
     const payload = { id: moduleId };
     const { getContentByModule } = this.props.action;
-    getContentByModule(payload);
+    getContentByModule(payload, () => {
+      const { listContentByModule } = this.props.store;
+      module["content"] = listContentByModule;
+    });
   };
 
   render() {
@@ -84,7 +100,7 @@ class TrainingDetail extends Component {
       listContentByModule
     } = this.props.store;
 
-    console.log(listContentByModule);
+    console.log("Render>>>", this.trainingPath);
     return (
       <div className="page-header">
         <Header titleHeader="Course Page" />
@@ -110,36 +126,76 @@ class TrainingDetail extends Component {
                 <div className="card-header">TRAINING "NAME_TRAINING"</div>
                 <div className="card-body">
                   <h5 className="card-title">Learning Path</h5>
-                  <p className="card-text">
-                    <ul>
-                      {!loadingListCourse &&
-                        listCourseFitler.map((item, index) => {
-                          return <li>{item.courses[0].name}</li>;
-                        })}
-                    </ul>
-                    <label>Module by Course</label>
-                    <ul>
-                      {!loadingListModule &&
-                        filterModuleByCourse.map((item, index) => {
-                          return <li>{item.modules[0].name}</li>;
-                        })}
-                    </ul>
-                  </p>
+                  <ul>
+                    {!loadingListCourse &&
+                      !loadingListModule &&
+                      this.trainingPath &&
+                      this.trainingPath.pathCourse &&
+                      this.trainingPath.pathCourse.map((path, index) => {
+                        return (
+                          <li key={index}>
+                            {path.courses.name}
+                            <ul>
+                              {path.courses.pathModule &&
+                                path.courses.pathModule.map(
+                                  (itemCourse, indexCourse) => {
+                                    return (
+                                      <li key={indexCourse}>
+                                        {itemCourse.modules.name}
+                                        <ul>
+                                          {itemCourse.modules.content &&
+                                            itemCourse.modules.content.map(
+                                              (itemContent, indexContent) => {
+                                                return (
+                                                  <li key={indexContent}>
+                                                    {itemContent.name}
+                                                  </li>
+                                                );
+                                              }
+                                            )}
+                                        </ul>
+                                      </li>
+                                    );
+                                  }
+                                )}
+                            </ul>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                  {/* <ul>
+                    {!loadingListCourse &&
+                      listCourseFitler.map((item, index) => {
+                        return <li key={index}>{item.courses.name}</li>;
+                      })}
+                  </ul>
+                  <label>Module by Course</label>
+                  <ul>
+                    {!loadingListModule &&
+                      filterModuleByCourse.map((item, index) => {
+                        return <li key={index}>{item.modules.name}</li>;
+                      })}
+                  </ul> */}
                 </div>
               </div>
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
-                {!loadingListContent && listContentByModule && (
-                  <iframe
-                    width="560"
-                    height="315"
-                    src={`${listContentByModule[0].relationData.data.url}`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                )}
+                {!loadingListContent &&
+                  listContentByModule &&
+                  listContentByModule[0].type === "Video" && (
+                    <>
+                      <p className="text-success">
+                        {listContentByModule[0].relationData.data.title}
+                      </p>
+                      <p className="text-success">
+                        {listContentByModule[0].relationData.data.description}
+                      </p>
+                      <VideoNormal
+                        src={listContentByModule[0].relationData.media.url}
+                      />
+                    </>
+                  )}
               </div>
             </div>
           </div>

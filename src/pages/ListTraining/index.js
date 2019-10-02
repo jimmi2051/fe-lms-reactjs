@@ -78,7 +78,6 @@ class ListTraining extends Component {
               <div className="featured-courses courses-wrap">
                 {!loadingListTraining &&
                   listTraining.map((item, index) => {
-                    console.log("Item>>>>", item);
                     return (
                       <div className="row mx-m-25">
                         <div className="col-12 col-md-6 px-25">
@@ -129,7 +128,7 @@ class ListTraining extends Component {
                                     (4 votes)
                                   </span>
                                 </div> */}
-                                <p> Comming soon !!!  </p>
+                                <p> Comming soon !!! </p>
                               </footer>
                             </div>
                           </div>
