@@ -7,7 +7,11 @@
   border: none !important;
 }
 .bg-root {
-  background-color: #19c880 !important;
+  background-color: #19c880;
+  color: white;
+}
+.bg-danger {
+  background-color: red !important;
   color: white;
 }
 ul {

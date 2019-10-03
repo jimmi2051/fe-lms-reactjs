@@ -5,12 +5,11 @@ import Header from "components/Layout/Header";
 import { getCourseByTraining } from "redux/action/course";
 import { getModuleByCourse } from "redux/action/module";
 import { getContentByModule } from "redux/action/content";
-import _ from "lodash";
-import AuthStorage from "utils/AuthStorage";
-import moment from "moment";
 import VideoNormal from "h5p/VideoNormal";
+import TextNormal from "h5p/TextNormal";
+import TextToTest from "h5p/TextToTest";
+import _ from "lodash";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
-
 function mapStateToProps(state) {
   return {
     store: {
@@ -42,8 +41,12 @@ const mapDispatchToProps = dispatch => {
 class TrainingDetail extends Component {
   trainingPath = {};
   processData = false;
+  state = {
+    currentContent: {},
+    currentCourse: {},
+    trainingPath: {}
+  };
   componentDidMount() {
-    // console.log("this is props>>>", this.props.match.params.id);
     const { id } = this.props.match.params;
     this.trainingPath["id"] = id;
     this.handleGetCourseByTraining(id);
@@ -62,6 +65,8 @@ class TrainingDetail extends Component {
         this.handleGetModuleByCourse(item.courses._id, item.courses);
       });
       this.trainingPath["pathCourse"] = listCourseFitler;
+      this.setState({ currentCourse: listCourseFitler[0] });
+      this.trainingPath["training"] = listCourseFitler[0].trainings[0];
     });
   };
 
@@ -88,19 +93,20 @@ class TrainingDetail extends Component {
       const { listContentByModule } = this.props.store;
       module["content"] = listContentByModule;
     });
+    this.setState({ trainingPath: { ...this.trainingPath } });
   };
 
-  render() {
-    const {
-      listCourseFitler,
-      loadingListCourse,
-      loadingListModule,
-      filterModuleByCourse,
-      loadingListContent,
-      listContentByModule
-    } = this.props.store;
+  handleChangeContent = currentContent => {
+    this.setState({ currentContent });
+  };
 
-    console.log("Render>>>", this.trainingPath);
+  // handleChangeCourse = currentCourse => {
+  //   this.setState({ currentCourse });
+  // };
+
+  render() {
+    const { loadingListCourse, loadingListModule } = this.props.store;
+    const { currentContent, currentCourse, trainingPath } = this.state;
     return (
       <div className="page-header">
         <Header titleHeader="Course Page" />
@@ -123,17 +129,32 @@ class TrainingDetail extends Component {
           <div className="row">
             <div className="col-xl-4">
               <div className="card text-white bg-primary mb-3">
-                <div className="card-header">TRAINING "NAME_TRAINING"</div>
+                <div className="card-header">
+                  TRAINING {trainingPath.training && trainingPath.training.name}{" "}
+                  {trainingPath.training && (
+                    <div
+                      className="text"
+                      dangerouslySetInnerHTML={{
+                        __html: trainingPath.training.description
+                      }}
+                    />
+                  )}
+                </div>
                 <div className="card-body">
                   <h5 className="card-title">Learning Path</h5>
-                  <ul>
+                  <ul className="learning-path">
                     {!loadingListCourse &&
                       !loadingListModule &&
-                      this.trainingPath &&
-                      this.trainingPath.pathCourse &&
-                      this.trainingPath.pathCourse.map((path, index) => {
+                      trainingPath &&
+                      trainingPath.pathCourse &&
+                      trainingPath.pathCourse.map((path, index) => {
                         return (
-                          <li key={index}>
+                          <li
+                            key={index}
+                            // onClick={() => {
+                            //   this.handleChangeCourse(path);
+                            // }}
+                          >
                             {path.courses.name}
                             <ul>
                               {path.courses.pathModule &&
@@ -147,7 +168,14 @@ class TrainingDetail extends Component {
                                             itemCourse.modules.content.map(
                                               (itemContent, indexContent) => {
                                                 return (
-                                                  <li key={indexContent}>
+                                                  <li
+                                                    key={indexContent}
+                                                    onClick={() =>
+                                                      this.handleChangeContent(
+                                                        itemContent
+                                                      )
+                                                    }
+                                                  >
                                                     {itemContent.name}
                                                   </li>
                                                 );
@@ -163,39 +191,36 @@ class TrainingDetail extends Component {
                         );
                       })}
                   </ul>
-                  {/* <ul>
-                    {!loadingListCourse &&
-                      listCourseFitler.map((item, index) => {
-                        return <li key={index}>{item.courses.name}</li>;
-                      })}
-                  </ul>
-                  <label>Module by Course</label>
-                  <ul>
-                    {!loadingListModule &&
-                      filterModuleByCourse.map((item, index) => {
-                        return <li key={index}>{item.modules.name}</li>;
-                      })}
-                  </ul> */}
                 </div>
               </div>
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
-                {!loadingListContent &&
-                  listContentByModule &&
-                  listContentByModule[0].type === "Video" && (
-                    <>
-                      <p className="text-success">
-                        {listContentByModule[0].relationData.data.title}
-                      </p>
-                      <p className="text-success">
-                        {listContentByModule[0].relationData.data.description}
-                      </p>
+                {!_.isEmpty(currentContent) && (
+                  <div>
+                    <p className="text-success">
+                      {currentContent.relationData.data.title}
+                    </p>
+                    <p className="text-success">
+                      {currentContent.relationData.data.description}
+                    </p>
+                    {currentContent.type === "Video" && (
                       <VideoNormal
-                        src={listContentByModule[0].relationData.media.url}
+                        src={currentContent.relationData.media.url}
                       />
-                    </>
-                  )}
+                    )}
+                    {currentContent.type === "Text" && (
+                      <TextNormal
+                        context={currentContent.relationData.data.content}
+                      />
+                    )}
+                    {currentContent.type === "TextTest" && (
+                      <TextToTest
+                        content={currentContent.relationData.data.content}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
