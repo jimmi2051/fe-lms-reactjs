@@ -8,6 +8,8 @@ import { getContentByModule } from "redux/action/content";
 import VideoNormal from "h5p/VideoNormal";
 import TextNormal from "h5p/TextNormal";
 import TextToTest from "h5p/TextToTest";
+import Question from "h5p/Question";
+import Slide from "h5p/Slide";
 import _ from "lodash";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 function mapStateToProps(state) {
@@ -217,6 +219,19 @@ class TrainingDetail extends Component {
                     {currentContent.type === "TextTest" && (
                       <TextToTest
                         content={currentContent.relationData.data.content}
+                      />
+                    )}
+                     {currentContent.type === "Question" && (
+                      <Question
+                        question={currentContent.relationData.data.question}
+                        answer={currentContent.relationData.data.answer}
+                      />
+                    )}
+                   {currentContent.type === "Slider" && (
+                      <Slide
+                        // question={currentContent.relationData.data.question}
+                        // answer={currentContent.relationData.data.answer}
+                        slideItem={currentContent.relationData.data.slideItem}
                       />
                     )}
                   </div>
