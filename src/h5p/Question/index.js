@@ -1,46 +1,100 @@
 import React, { Component } from "react";
 import _ from "lodash";
 class Question extends Component {
-
   state = {
-      result : "",
-      status: -1,
-      answer: {}
-  }
-  handleChooseAnswer = (answer) =>{
-      
-     this.setState({answer,status: -1})
-  }
-  handleSubmit = () =>{
-    const {answer} =this.state;
-    if(answer.result)
-    {
-        this.setState({result:"You're correct.",status:1})
+    result: "",
+    status: -1,
+    listAnswer: []
+  };
+  handleChooseAnswer = (question, answer) => {
+    let { listAnswer } = this.state;
+    const findIndex = _.findIndex(listAnswer, item =>
+      _.isEqual(item.question, question)
+    );
+    if (findIndex > -1) {
+      listAnswer[findIndex].answer = answer;
+    } else {
+      let objQuestion = {
+        question,
+        answer
+      };
+      listAnswer.push(objQuestion);
     }
-    else{
-        this.setState({result:"You're wrong.",status:0})
+    this.setState({ listAnswer, status: -1 });
+  };
+  handleSubmit = () => {
+    const { listAnswer } = this.state;
+    let check = true;
+    listAnswer.map((item, index) => {
+      if (!item.answer.result) {
+        this.setState({ result: "You're wrong.", status: 0 });
+        check = false;
+      }
+    });
+    if (check) {
+      this.setState({ result: "You're correct.", status: 1 });
     }
-  }
+  };
   render() {
-      const {result,status} = this.state;
+    const { result, status, listAnswer } = this.state;
+    const { question } = this.props;
     return (
-     <div>
-         {status !== -1 && (
-             <label className={`${status===0?"text-danger":"text-success"}`}>{result}</label>
-         )}
-         <br/>
-         <label>{this.props.question}</label>
-         <br/>
-        {this.props.answer && this.props.answer.map((item,index)=>{
-            console.log("Render>>>",this.state.answer);
+      <div>
+        {status !== -1 && (
+          <label className={`${status === 0 ? "text-danger" : "text-success"}`}>
+            {result}
+          </label>
+        )}
+        <br />
+        {question &&
+          question.map((item, index) => {
             return (
-                <div className={` ${status===0 && _.isEqual(this.state.answer,item)?"bg-danger":""} ${_.isEqual(this.state.answer,item)?"bg-root":""}`} key={index} onClick={()=>this.handleChooseAnswer(item)} style={{cursor:"pointer"}}>
-                    Answer {index+1}: {item.ans1}
-                </div>
-            )
-        })}
-        <button type="button" onClick={this.handleSubmit} className="btn btn-success">Submit</button>
-     </div>
+              <div key={index}>
+                <label>
+                  Question {index + 1}: {item.question}
+                </label>
+                {item.answer &&
+                  item.answer.map((answer, indexAnswer) => {
+                    const findIndex = _.findIndex(
+                      listAnswer,
+                      itemAnswer =>
+                        _.isEqual(itemAnswer.answer, answer) &&
+                        _.isEqual(itemAnswer.question, item)
+                    );
+                    let check;
+                    if (findIndex > -1) {
+                      check =
+                        listAnswer[findIndex].answer === answer &&
+                        listAnswer[findIndex].question === item
+                          ? true
+                          : false;
+                    } else {
+                      check = false;
+                    }
+                    return (
+                      <div
+                        className={` ${
+                          status === 0 && check ? "bg-danger" : ""
+                        } ${check ? "bg-root" : ""}`}
+                        key={indexAnswer}
+                        onClick={() => this.handleChooseAnswer(item, answer)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        Answer {indexAnswer + 1}: {answer.ans1}
+                      </div>
+                    );
+                  })}
+              </div>
+            );
+          })}
+        <button
+          type="button"
+          onClick={this.handleSubmit}
+          className="btn btn-success"
+        >
+          Submit
+        </button>
+      </div>
     );
   }
 }

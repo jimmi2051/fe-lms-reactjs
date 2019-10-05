@@ -1,7 +1,7 @@
 /**
  * @author Thanh Ly
  */
-import { SINGLE_API } from "./type";
+import { SINGLE_API, GRAPHQL } from "./type";
 
 export const createTraining = (payload, next, nextErr) => {
   const { name, level, description, thumbnail, users } = payload;
@@ -61,6 +61,20 @@ export const getTrainingByUser = (payload, next, nextErr) => {
       uri: `trainings?users._id=${id}`,
       beforeCallType: "GET_TRAINING_REQUEST",
       successType: "GET_TRAINING_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};
+
+export const getTrainingById = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: GRAPHQL,
+    payload: {
+      id: id,
+      beforeCallType: "GET_TRAINING_BY_ID_REQUEST",
+      successType: "GET_TRAINING_BY_ID_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
     }

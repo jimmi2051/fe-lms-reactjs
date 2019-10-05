@@ -10,6 +10,10 @@ export const initialState = {
   listTraining: {
     data: {},
     loading: true
+  },
+  training: {
+    data: {},
+    loading: true
   }
 };
 
@@ -44,6 +48,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         listTraining: { data: action.payload, loading: false }
+      };
+    case "GET_TRAINING_BY_ID_REQUEST":
+      return {
+        ...state,
+        training: { ...initialState.training }
+      };
+    case "GET_TRAINING_BY_ID_SUCCESS":
+      return {
+        ...state,
+        training: { data: action.payload, loading: false }
       };
 
     default:
