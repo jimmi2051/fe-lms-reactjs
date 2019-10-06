@@ -37,7 +37,7 @@ class Question extends Component {
   };
   render() {
     const { result, status, listAnswer } = this.state;
-    const { question } = this.props;
+    const { questions } = this.props;
     return (
       <div>
         {status !== -1 && (
@@ -46,15 +46,15 @@ class Question extends Component {
           </label>
         )}
         <br />
-        {question &&
-          question.map((item, index) => {
+        {questions &&
+          questions.map((item, index) => {
             return (
               <div key={index}>
                 <label>
                   Question {index + 1}: {item.question}
                 </label>
-                {item.answer &&
-                  item.answer.map((answer, indexAnswer) => {
+                {item.answers &&
+                  item.answers.map((answer, indexAnswer) => {
                     const findIndex = _.findIndex(
                       listAnswer,
                       itemAnswer =>
@@ -80,7 +80,7 @@ class Question extends Component {
                         onClick={() => this.handleChooseAnswer(item, answer)}
                         style={{ cursor: "pointer" }}
                       >
-                        Answer {indexAnswer + 1}: {answer.ans1}
+                        Answer {indexAnswer + 1}: {answer.anw}
                       </div>
                     );
                   })}

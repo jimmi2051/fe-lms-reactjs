@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import CKEditor from "components/CKEditor";
 import AuthStorage from "utils/AuthStorage";
 function mapStateToProps(state) {
   return {
@@ -109,24 +108,7 @@ class PopupNewCourse extends Component {
               <div className="form-group">
                 <label>Description</label>
                 <CKEditor
-                  className="form-control"
-                  editor={ClassicEditor}
-                  data="<p>Hello from CKEditor 5!</p>"
-                  onInit={editor => {
-                    // You can store the "editor" and use when it is needed.
-                    console.log("Editor is ready to use!", editor);
-                  }}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    this.handleChangeDescription(data);
-                    console.log({ event, editor, data });
-                  }}
-                  onBlur={(event, editor) => {
-                    console.log("Blur.", editor);
-                  }}
-                  onFocus={(event, editor) => {
-                    console.log("Focus.", editor);
-                  }}
+                  handleChangeDescription={this.handleChangeDescription}
                 />
               </div>
               <div className="form-group">

@@ -14,7 +14,7 @@ class Slider extends Component {
           slideItem.map((item, index) => {
             return (
               <div key={index}>
-                <img src={`${REACT_APP_URL_API}${item.imgPath}`} alt="" />
+                <img src={`${REACT_APP_URL_API}${item.imgUrl}`} alt="" />
                 <p className="legend">{item.title}</p>
                 <p className="legend">{item.content}</p>
               </div>

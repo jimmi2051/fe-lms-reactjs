@@ -10,49 +10,62 @@ class TextToTest extends Component {
     isSubmit: false
   };
   componentDidMount() {
-    this.processData(this.props.content);
+    this.processData(this.props.contents);
   }
-  processData = content => {
-    let listWord = content.split(" ");
+  processData = contents => {
     let result = [];
     let contentProcessed = [];
-    listWord.map((item, index) => {
-      if (item[0] === "*" && item[item.length - 1] === "*") {
-        item = item.slice(1, item.length - 1);
-        result.push(item);
-        contentProcessed.push(item);
-      } else {
-        contentProcessed.push(item);
-      }
-    });
+    contents.map((content, indexContent) => {
+      result[indexContent] = [];
+      contentProcessed[indexContent] = []
+      let listWord = content.content.split(" ");
+      listWord.map((word, indexWord) => {
+        if (word[0] === "*" && word[word.length - 1] === "*") {
+          word = word.slice(1, word.length - 1);
+          result[indexContent].push(word);
+          contentProcessed[indexContent].push(word);
+        } else {
+          contentProcessed[indexContent].push(word);
+        }
+      });
+    })
     this.setState({ result, content: contentProcessed });
   };
-  onChooseWord = word => {
+  onChooseWord = (indexQuestion, word) => {
     let { choosen } = this.state;
-    const indexWord = _.findIndex(choosen, item => item === word);
+    const indexWord = _.findIndex(choosen[indexQuestion], item => item === word);
     if (indexWord > -1) {
-      choosen.splice(indexWord, 1);
+      choosen[indexQuestion].splice(indexWord, 1);
     } else {
-      choosen.push(word);
+      if (!_.isArray(choosen[indexQuestion])) {
+        choosen[indexQuestion] = []
+      }
+      choosen[indexQuestion].push(word);
     }
-    this.setState({ choosen });
+    this.setState({ choosen,isSubmit: false, wrong: [] });
   };
 
   onSubmit = () => {
     const { result, choosen } = this.state;
-    let mark = 0;
+    let mark = [];
     let wrong = [];
     choosen.map((item, index) => {
-      const indexChoosen = _.findIndex(
-        result,
-        itemResult => itemResult === item
-      );
-      if (indexChoosen > -1) {
-        mark++;
-      } else {
-        wrong.push(item);
-      }
-    });
+      mark[index] = 0;
+      item.map((choose, indexChoose) => {
+        const indexChoosen = _.findIndex(
+          result[index],
+          itemResult => itemResult === choose
+        );
+        if (indexChoosen > -1) {
+          mark[index]++;
+        } else {
+          if (!_.isArray(wrong[index])) {
+            wrong[index] = []
+          }
+          wrong[index].push(choose);
+        }
+      });
+    })
     this.setState({ mark, isSubmit: true, wrong });
   };
 
@@ -62,32 +75,48 @@ class TextToTest extends Component {
       <div className="">
         {isSubmit && (
           <div>
-            <p>
-              Result: <br />
-              True: {mark}/{choosen.length}
-              <br /> False: {wrong.length}/{choosen.length}
-            </p>
+             <label>
+             Result: <br />
+             </label>
+              {choosen.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <p>True: {mark[index]}/{item?item.length:"0"}
+                      <br />
+                      False: {wrong[index]?wrong[index].length:"0"}/{item?item.length:"0"}
+                      </p>
+                  </div>
+                )
+              })}
           </div>
         )}
         {content.map((item, index) => {
-          const findIndex = _.findIndex(choosen, word => word === item);
-          const findIndexWrong = _.findIndex(wrong, word => word === item);
           return (
-            <span>
-              {" "}
-              <span
-                onClick={() => {
-                  this.onChooseWord(item);
-                }}
-                style={{ cursor: "pointer" }}
-                className={`${findIndex > -1 ? "bg-root" : ""} ${
-                  findIndexWrong > -1 ? "bg-danger" : ""
-                }`}
-              >
-                {item}
-              </span>{" "}
-            </span>
-          );
+            <div key={index}>
+              {
+                item.map((itemWord, indexWord) => {
+                  const findIndex = _.findIndex(choosen[index], word => word === itemWord);
+                  const findIndexWrong = _.findIndex(wrong[index], word => word === itemWord);
+                  return (
+                    <span key={indexWord}>
+                      {" "}
+                      <span
+                        onClick={() => {
+                          this.onChooseWord(index, itemWord);
+                        }}
+                        style={{ cursor: "pointer" }}
+                        className={`${findIndex > -1 ? "bg-root" : ""} ${
+                          findIndexWrong > -1 ? "bg-danger" : ""
+                          }`}
+                      >
+                        {itemWord}
+                      </span>{" "}
+                    </span>
+                  );
+                })
+              }
+            </div>
+          )
         })}
         <button
           type="button"

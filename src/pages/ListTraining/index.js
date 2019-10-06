@@ -76,11 +76,11 @@ class ListTraining extends Component {
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
-                {!loadingListTraining &&
-                  listTraining.map((item, index) => {
-                    return (
-                      <div className="row mx-m-25">
-                        <div className="col-12 col-md-6 px-25">
+                <div className="row mx-m-25">
+                  {!loadingListTraining &&
+                    listTraining.map((item, index) => {
+                      return (
+                        <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
                               <a href="#">
@@ -133,9 +133,9 @@ class ListTraining extends Component {
                             </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                </div>
               </div>
               <div className="row no-gutters">
                 <div className="col-xl-12">

@@ -197,20 +197,19 @@ class TrainingDetail extends Component {
                     )}
                     {currentContent.type === "TextTest" && (
                       <TextToTest
-                        content={currentContent.relationData.data.content}
+                        contents={currentContent.relationData.data.contents}
                       />
                     )}
                     {currentContent.type === "Question" && (
                       <Question
-                        question={currentContent.relationData.data.question}
-                        answer={currentContent.relationData.data.answer}
+                        questions={currentContent.relationData.data.questions}
                       />
                     )}
-                    {currentContent.type === "Slider" && (
+                    {currentContent.type === "Slide" && (
                       <Slide
                         // question={currentContent.relationData.data.question}
                         // answer={currentContent.relationData.data.answer}
-                        slideItem={currentContent.relationData.data.slideItem}
+                        slideItem={currentContent.relationData.data.slideItems}
                       />
                     )}
                   </div>
