@@ -1,5 +1,6 @@
+const API_URL = process.env.REACT_APP_URL_API;
 export const UploadFile = data => {
-  return fetch("http://35.224.2.121:8080/upload", {
+  return fetch(`${API_URL}upload`, {
     method: "POST",
     headers: {},
     body: data,

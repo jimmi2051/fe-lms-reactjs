@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import AuthStorage from "utils/AuthStorage";
 import { updateContent } from "redux/action/content";
 function mapStateToProps(state) {
   return {
