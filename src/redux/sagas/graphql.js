@@ -3,8 +3,6 @@
  */
 
 import { takeEvery, call, put } from "redux-saga/effects";
-// import AuthStorage from "utils/AuthStorage";
-import fetchApi from "utils/FetchApi";
 import { GRAPHQL } from "redux/action/type.js";
 import { showLoading, hideLoading } from "react-redux-loading-bar";
 import ApolloClient from "apollo-boost";
@@ -15,7 +13,7 @@ const client = new ApolloClient({
   uri: `${API_URL}graphql`
 });
 
-function* callApi(action) {
+function* callGraphQL(action) {
   if (action.type === GRAPHQL) {
     const {
       successType,
@@ -24,7 +22,7 @@ function* callApi(action) {
       afterSuccess,
       errorType,
       afterError,
-      id
+      query
     } = action.payload;
     if (beforeCallType) {
       yield put({ type: beforeCallType });
@@ -33,58 +31,8 @@ function* callApi(action) {
     yield put(showLoading());
     const response = yield call(client.query, {
       query: gql`
-        {
-            training(id:"${id}"){
-              id
-              name
-              numberOfCourse
-              description
-              numberOfStudent
-              level
-              thumbnail{
-                name
-                url
-              }
-              learningpaths{
-                id
-                position
-                markForCourse
-                courses{
-                  name
-                  numberOfSection
-                  thumbnail{
-                    name
-                    url
-                  }
-                  relationcoursemodules{
-                    position
-                    modules{
-                      name
-                      description
-                      numberOfLecture
-                      thumbnail{
-                        name
-                        url
-                      }
-                      contents{
-                        name
-                        type
-                        relationData{
-                          data
-                          struct
-                          media{
-                            name
-                            url
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `
+        ${query}
+      `
     });
     if (afterCallType) {
       yield put({ type: afterCallType });
@@ -117,5 +65,5 @@ function* callApi(action) {
 }
 
 export default function*() {
-  yield takeEvery("*", callApi);
+  yield takeEvery("*", callGraphQL);
 }

@@ -72,9 +72,92 @@ export const getTrainingById = (payload, next, nextErr) => {
   return {
     type: GRAPHQL,
     payload: {
-      id: id,
+      query: `{
+        training(id:"${id}"){
+          id
+          name
+          numberOfCourse
+          description
+          numberOfStudent
+          level
+          thumbnail{
+            name
+            url
+          }
+          learningpaths{
+            id
+            position
+            markForCourse
+            courses{
+              name
+              numberOfSection
+              thumbnail{
+                name
+                url
+              }
+              relationcoursemodules{
+                position
+                modules{
+                  name
+                  description
+                  numberOfLecture
+                  thumbnail{
+                    name
+                    url
+                  }
+                  contents{
+                    name
+                    type
+                    relationData{
+                      data
+                      struct
+                      media{
+                        name
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }`,
       beforeCallType: "GET_TRAINING_BY_ID_REQUEST",
       successType: "GET_TRAINING_BY_ID_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};
+
+export const getTrainingByCategory = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: GRAPHQL,
+    payload: {
+      query: `{
+        categorytrainings(where: {trainings:{users:{_id:"${id}"}}} )
+        {
+          name
+          trainings{
+            id
+            name
+            description
+            level
+            numberOfCourse
+            thumbnail{
+              name
+              url
+            }
+            users{
+              _id
+            }
+          }
+        }
+      }`,
+      beforeCallType: "GET_TRAINING_BY_CAT_REQUEST",
+      successType: "GET_TRAINING_BY_CAT_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
     }

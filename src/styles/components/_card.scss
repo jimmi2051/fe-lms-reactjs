@@ -1,0 +1,14 @@
+.courses-wrap {
+  &-custom {
+    .course-content {
+      margin-top: 0px;
+      margin-bottom: 30px;
+    }
+    .sidebar {
+      margin-top: 0px;
+      .cat-links {
+        margin-top: 0px;
+      }
+    }
+  }
+}

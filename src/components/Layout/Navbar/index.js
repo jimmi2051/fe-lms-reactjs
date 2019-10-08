@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import AuthStorage from "utils/AuthStorage";
 import { Link } from "react-router-dom";
 import { logoutRequest } from "redux/action/auth";
+import { withRouter } from "react-router";
 function mapStateToProps(state) {
   return {
     store: {
@@ -24,6 +25,9 @@ class Navbar extends Component {
     this.props.action.logoutRequest();
   };
   render() {
+    console.log(this.props);
+    const isActive = true;
+    const { pathname } = this.props.location;
     return (
       <header className="site-header">
         <div className="top-header-bar">
@@ -109,21 +113,54 @@ class Navbar extends Component {
                   style={{ width: "100%" }}
                 >
                   <ul className="flex flex-column flex-lg-row justify-content-lg-end align-content-center">
-                    <li className="current-menu-item">
-                      <Link to="/">Home</Link>
-                    </li>
-                    <li>
-                      <a href="#">About</a>
-                    </li>
-                    <li>
-                      <a href="#">Courses</a>
-                    </li>
-                    <li>
-                      <a href="#">blog</a>
-                    </li>
-                    <li>
-                      <a href="#">Contact</a>
-                    </li>
+                    {AuthStorage.loggedIn &&
+                    AuthStorage.userInfo.role.type === "creator" ? (
+                      <>
+                        <li
+                          className={
+                            pathname === "/" ? "current-menu-item" : ""
+                          }
+                        >
+                          <Link to="/">Home</Link>
+                        </li>
+                        <li
+                          className={
+                            pathname === "/admin/training"
+                              ? "current-menu-item"
+                              : ""
+                          }
+                        >
+                          <Link to="/admin/training">Manage Training</Link>
+                        </li>
+                        <li
+                          className={
+                            pathname === "/admin/new-training"
+                              ? "current-menu-item"
+                              : ""
+                          }
+                        >
+                          <Link to="/admin/new-training">New Training</Link>
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li className="current-menu-item">
+                          <Link to="/">Home</Link>
+                        </li>
+                        <li>
+                          <a href="#">About</a>
+                        </li>
+                        <li>
+                          <a href="#">Courses</a>
+                        </li>
+                        <li>
+                          <a href="#">blog</a>
+                        </li>
+                        <li>
+                          <a href="#">Contact</a>
+                        </li>
+                      </>
+                    )}
                   </ul>
 
                   <div className="hamburger-menu d-lg-none">
@@ -154,4 +191,4 @@ class Navbar extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Navbar);
+)(withRouter(Navbar));

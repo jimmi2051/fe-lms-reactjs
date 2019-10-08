@@ -14,6 +14,10 @@ export const initialState = {
   training: {
     data: {},
     loading: true
+  },
+  trainingByCat: {
+    data: {},
+    loading: true
   }
 };
 
@@ -59,7 +63,16 @@ export default (state = initialState, action) => {
         ...state,
         training: { data: action.payload, loading: false }
       };
-
+    case "GET_TRAINING_BY_CAT_REQUEST":
+      return {
+        ...state,
+        trainingByCat: { ...initialState.trainingByCat }
+      };
+    case "GET_TRAINING_BY_CAT_SUCCESS":
+      return {
+        ...state,
+        trainingByCat: { data: action.payload, loading: false }
+      };
     default:
       return state;
   }
