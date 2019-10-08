@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "ckeditor5-build-font-source";
+import ClassicEditor from "ckeditor5-build-class-font";
 const API_URL = process.env.REACT_APP_URL_API;
 class MyUploadAdapter {
   constructor(loader) {

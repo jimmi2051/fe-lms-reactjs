@@ -20,12 +20,11 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Navbar extends Component {
-  componentDidMount() {}
+  componentDidMount() { }
   logout = () => {
     this.props.action.logoutRequest();
   };
   render() {
-    console.log(this.props);
     const isActive = true;
     const { pathname } = this.props.location;
     return (
@@ -40,7 +39,7 @@ class Navbar extends Component {
                 </div>
                 <div className="header-bar-text lg-flex align-items-center">
                   <p>
-                    <i className="fa fa-phone"></i>001-1234-88888{" "}
+                    <i className="fa fa-phone"></i>0978-956-043{" "}
                   </p>
                 </div>
               </div>
@@ -74,19 +73,19 @@ class Navbar extends Component {
                         </li>
                       </>
                     ) : (
-                      <>
-                        <li>
-                          <Link to="/profile">
-                            {AuthStorage.userInfo.username}
+                        <>
+                          <li>
+                            <Link to="/profile">
+                              {AuthStorage.userInfo.username}
+                            </Link>
+                          </li>
+                          <li>
+                            <Link onClick={this.logout} to="/login">
+                              Log out
                           </Link>
-                        </li>
-                        <li>
-                          <Link onClick={this.logout} to="/login">
-                            Log out
-                          </Link>
-                        </li>
-                      </>
-                    )}
+                          </li>
+                        </>
+                      )}
                   </ul>
                 </div>
               </div>
@@ -100,9 +99,7 @@ class Navbar extends Component {
               <div className="col-9 col-lg-3">
                 <div className="site-branding">
                   <h1 className="site-title">
-                    <a href="index.html" rel="home">
-                      Ezu<span>ca</span>
-                    </a>
+                    <Link to="/"> Ezu<span>ca</span></Link>
                   </h1>
                 </div>
               </div>
@@ -114,53 +111,53 @@ class Navbar extends Component {
                 >
                   <ul className="flex flex-column flex-lg-row justify-content-lg-end align-content-center">
                     {AuthStorage.loggedIn &&
-                    AuthStorage.userInfo.role.type === "creator" ? (
-                      <>
-                        <li
-                          className={
-                            pathname === "/" ? "current-menu-item" : ""
-                          }
-                        >
-                          <Link to="/">Home</Link>
-                        </li>
-                        <li
-                          className={
-                            pathname === "/admin/training"
-                              ? "current-menu-item"
-                              : ""
-                          }
-                        >
-                          <Link to="/admin/training">Manage Training</Link>
-                        </li>
-                        <li
-                          className={
-                            pathname === "/admin/new-training"
-                              ? "current-menu-item"
-                              : ""
-                          }
-                        >
-                          <Link to="/admin/new-training">New Training</Link>
-                        </li>
-                      </>
-                    ) : (
-                      <>
-                        <li className="current-menu-item">
-                          <Link to="/">Home</Link>
-                        </li>
-                        <li>
-                          <a href="#">About</a>
-                        </li>
-                        <li>
-                          <a href="#">Courses</a>
-                        </li>
-                        <li>
-                          <a href="#">blog</a>
-                        </li>
-                        <li>
-                          <a href="#">Contact</a>
-                        </li>
-                      </>
-                    )}
+                      AuthStorage.userInfo.role.type === "creator" ? (
+                        <>
+                          <li
+                            className={
+                              pathname === "/" ? "current-menu-item" : ""
+                            }
+                          >
+                            <Link to="/">Home</Link>
+                          </li>
+                          <li
+                            className={
+                              pathname === "/admin/training"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                          >
+                            <Link to="/admin/training">Manage Training</Link>
+                          </li>
+                          <li
+                            className={
+                              pathname === "/admin/new-training"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                          >
+                            <Link to="/admin/new-training">New Training</Link>
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li className="current-menu-item">
+                            <Link to="/">Home</Link>
+                          </li>
+                          <li>
+                            <a href="#">About</a>
+                          </li>
+                          <li>
+                            <a href="#">Courses</a>
+                          </li>
+                          <li>
+                            <a href="#">blog</a>
+                          </li>
+                          <li>
+                            <a href="#">Contact</a>
+                          </li>
+                        </>
+                      )}
                   </ul>
 
                   <div className="hamburger-menu d-lg-none">

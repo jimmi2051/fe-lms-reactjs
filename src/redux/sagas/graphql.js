@@ -7,10 +7,18 @@ import { GRAPHQL } from "redux/action/type.js";
 import { showLoading, hideLoading } from "react-redux-loading-bar";
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
+import AuthStorage from "utils/AuthStorage";
 const API_URL = process.env.REACT_APP_URL_API;
 
 const client = new ApolloClient({
-  uri: `${API_URL}graphql`
+  uri: `${API_URL}graphql`,
+  request: (operation) => {
+    operation.setContext({
+      headers: {
+        authorization: AuthStorage.loggedIn ? `Bearer ${AuthStorage.token}` : ""
+      }
+    })
+  }
 });
 
 function* callGraphQL(action) {
@@ -64,6 +72,6 @@ function* callGraphQL(action) {
   }
 }
 
-export default function*() {
+export default function* () {
   yield takeEvery("*", callGraphQL);
 }

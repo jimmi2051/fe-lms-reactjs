@@ -49,7 +49,6 @@ class ListTraining extends Component {
     const payload = { id: userId };
     const { getTrainingByCategory } = this.props.action;
     getTrainingByCategory(payload, () => {
-      // console.log(this.props.store.trainingByCat);
     });
   };
   render() {

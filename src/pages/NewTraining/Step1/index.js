@@ -2,6 +2,13 @@ import React, { Component } from "react";
 import CKEditor from "components/CKEditor";
 
 class Step1 extends Component {
+  state = {
+    nameFile: ""
+  }
+  handleSelectFile = (e) => {
+    this.props.fileSelectHandler(e);
+    this.setState({ nameFile: e.target.files[0].name })
+  }
   handleSubmit = () => {
     const { title } = this.refs;
     this.props.handleStepOne(title.value);
@@ -26,17 +33,21 @@ class Step1 extends Component {
             />
           </div>
           <div className="form-group">
-            <label>Image </label>
-            <input
+            <label>Thumbnail </label>
+            <div className="custom-file">
+              <input type="file" class="custom-file-input" onChange={this.handleSelectFile} id="customFile" lang="en" />
+              <label class="custom-file-label" for="customFile">{this.state.nameFile !== "" ? this.state.nameFile : "Choose file"}</label>
+            </div>
+            {/* <input
               type="file"
-              className="form-control"
+              className="form-control-file"
               placeholder="Enter training title here"
-              onChange={this.props.fileSelectHandler}
-            />
+              
+            /> */}
           </div>
           <div className="form-group">
             <label>Required Training</label>
-            <input type="text" className="form-control" placeholder="" />
+            <input disabled type="text" className="form-control" placeholder="Feature will coming soon. " />
           </div>
         </div>
         <div className="form-group col-xl-12">
