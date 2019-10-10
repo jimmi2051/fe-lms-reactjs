@@ -6,6 +6,8 @@ import { UploadFile } from "utils/UploadImage.js";
 import _ from "lodash";
 import { addLearningPath } from "redux/action/training";
 import AuthStorage from "utils/AuthStorage";
+import { Link } from "react-router-dom"
+import PopupListCourse from "pages/NewTraining/PopupListCourse";
 function mapStateToProps(state) {
   return {
     store: {
@@ -33,11 +35,11 @@ class Step2 extends Component {
     isShow: false,
     courseActived: {},
     listCourseChoosen: [],
-    courseChoosenActived: {}
+    courseChoosenActived: {},
+    isShowListCourse: true,
   };
   componentDidMount() {
     // this.props.handleGetListCourse();
-    console.log("AuthStorage>>>>", AuthStorage.userInfo);
     this.props.handleGetListCourseByUser(AuthStorage.userInfo._id);
   }
   componentWillReceiveProps(nextProps) {
@@ -68,6 +70,11 @@ class Step2 extends Component {
   handleShowPopup = () => {
     const { isShow } = this.state;
     this.setState({ isShow: !isShow });
+  };
+
+  handleShowPopupListCourse = () => {
+    const { isShowListCourse } = this.state;
+    this.setState({ isShowListCourse: !isShowListCourse });
   };
 
   handleAddCourseToPath = () => {
@@ -154,8 +161,10 @@ class Step2 extends Component {
           markForCourse,
           isRequired
         );
+        if (index === listCourseChoosen.length - 1) {
+          this.props.handleStepTwo();
+        }
       });
-      this.props.handleStepTwo();
     }
   };
 
@@ -163,7 +172,6 @@ class Step2 extends Component {
     let { listCourseChoosen } = this.state;
     listCourseChoosen[index].mark = mark;
     this.setState({ listCourseChoosen: listCourseChoosen }, () => {
-      // console.log(listCourseChoosen);
     });
   };
 
@@ -184,7 +192,7 @@ class Step2 extends Component {
   };
 
   render() {
-    const { createdCourse, listCourseChoosen, isShow } = this.state;
+    const { createdCourse, listCourseChoosen, isShow, isShowListCourse } = this.state;
     const { listCourseByUser, loadingListCourseUser } = this.props.store;
     return (
       <div className="row">
@@ -194,9 +202,12 @@ class Step2 extends Component {
           handleCreateCourse={this.props.handleCreateCourse}
           handleShowPopup={this.handleShowPopup}
         />
+        {!loadingListCourseUser && (
+          <PopupListCourse isShow={isShowListCourse} listCourseByUser={listCourseByUser} handleShowPopup={this.handleShowPopupListCourse}/>
+        )}
         <div className="col-xl-12">
           {createdCourse && (
-            <h3 className="alert-success pl-3">COURSE HAVE BEEN CREATED</h3>
+            <h3 className="bg-root pl-3">COURSE HAVE BEEN CREATED</h3>
           )}
           <div className="form-group" style={{ width: "30%" }}>
             <button
@@ -206,6 +217,20 @@ class Step2 extends Component {
             >
               Add new course
             </button>
+          </div>
+        </div>
+        <div className="col-xl-12 new-training">
+          <div className="featured-courses courses-wrap">
+            <div className="row mx-m-25">
+              <div className="col-12 col-md-6 px-25">
+                <div className="course-content" onClick={this.handleShowPopupListCourse}>
+                  <div className="course-content-wrap">
+                    <i className="fa fa-plus"></i>
+                    <h3>Add new item</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="col-xl-5">

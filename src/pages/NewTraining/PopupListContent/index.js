@@ -23,7 +23,6 @@ class PopupListContent extends Component {
     fileToUpload: []
   };
   handleUpdateContent = content => {
-    console.log("this is props>>>", this.props);
     const { currentModule } = this.props;
     let modules = content.modules;
     modules.push(currentModule);
@@ -33,7 +32,6 @@ class PopupListContent extends Component {
     };
     const { updateContent } = this.props.action;
     updateContent(payload);
-    // console.log("content>>>>", content);
   };
 
   handleClosePopup = () => {
@@ -54,9 +52,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >

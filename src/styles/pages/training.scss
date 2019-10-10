@@ -1,0 +1,43 @@
+.new-training{
+    .course-content{
+        margin-top: 0px;
+        height: 300px;
+        border: 2px dashed black;
+        &:hover{
+            cursor: pointer;
+        }
+        &-wrap{
+            
+            text-align: center;
+            margin-top: auto;
+            height: 100%;
+            i{
+                margin-top: 30%;
+            }
+        }
+    }
+   
+}
+.popup-course{
+    .course-content{
+        margin-top: 0px;
+    }
+    .course-thumbnail
+    {
+      text-align: center;
+      position: relative;
+      height: 265px;
+      img{
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: 0 auto;
+      }
+    }
+    img{
+      height: auto;
+      width: auto;
+    }
+}

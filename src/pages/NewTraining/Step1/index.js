@@ -3,9 +3,20 @@ import CKEditor from "components/CKEditor";
 
 class Step1 extends Component {
   state = {
-    nameFile: ""
+    nameFile: "",
+    imgSrc: "",
   }
   handleSelectFile = (e) => {
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    const url = reader.readAsDataURL(file);
+
+    reader.onloadend = function (e) {
+      this.setState({
+        imgSrc: [reader.result]
+      })
+    }.bind(this);
+
     this.props.fileSelectHandler(e);
     this.setState({ nameFile: e.target.files[0].name })
   }
@@ -36,7 +47,7 @@ class Step1 extends Component {
             <label>Thumbnail </label>
             <div className="custom-file">
               <input type="file" class="custom-file-input" onChange={this.handleSelectFile} id="customFile" lang="en" />
-              <label class="custom-file-label" for="customFile">{this.state.nameFile !== "" ? this.state.nameFile : "Choose file"}</label>
+              <label className="custom-file-label" htmlFor="customFile">{this.state.nameFile !== "" ? this.state.nameFile : "Choose file"}</label>
             </div>
             {/* <input
               type="file"
@@ -44,6 +55,11 @@ class Step1 extends Component {
               placeholder="Enter training title here"
               
             /> */}
+            {this.state.imgSrc !== "" && (
+              <div className="mt-3 ">
+                <img src={this.state.imgSrc} />
+              </div>
+            )}
           </div>
           <div className="form-group">
             <label>Required Training</label>

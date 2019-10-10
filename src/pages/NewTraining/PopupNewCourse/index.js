@@ -21,15 +21,27 @@ const mapDispatchToProps = dispatch => {
 class PopupNewCourse extends Component {
   state = {
     description: "",
-    fileToUpload: []
+    fileToUpload: [],
+    nameFile: "",
+    imgSrc: ""
   };
-  componentDidMount() {}
+  componentDidMount() { }
 
   fileSelectHandler = e => {
     let files = e.target.files;
     let { fileToUpload } = this.state;
+    const reader = new FileReader();
+    const file = files[0];
+    const url = reader.readAsDataURL(file);
+
+    reader.onloadend = function (e) {
+      this.setState({
+        imgSrc: [reader.result]
+      })
+    }.bind(this);
+
     fileToUpload.push(files[0]);
-    this.setState({ fileToUpload: fileToUpload });
+    this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
   };
 
   handleNewCourse = async () => {
@@ -74,9 +86,9 @@ class PopupNewCourse extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -106,20 +118,29 @@ class PopupNewCourse extends Component {
                 />
               </div>
               <div className="form-group">
-                <label>Description</label>
+                <label>Description (*)</label>
                 <CKEditor
                   handleChangeDescription={this.handleChangeDescription}
                 />
               </div>
               <div className="form-group">
-                <label>Image </label>
-                <input
+                <label>Thumbnail</label>
+                <div className="custom-file">
+                  <input type="file" className="custom-file-input" onChange={this.fileSelectHandler} id="customFile" lang="en" />
+                  <label className="custom-file-label" htmlFor="customFile">{this.state.nameFile !== "" ? this.state.nameFile : "Choose file"}</label>
+                </div>
+                {/* <input
                   type="file"
                   className="form-control"
                   placeholder="Enter training title here"
                   onChange={this.fileSelectHandler}
-                />
+                /> */}
               </div>
+              {this.state.imgSrc !== "" && (
+                <div className="mt-3 text-center mb-3">
+                  <img src={this.state.imgSrc} />
+                </div>
+              )}
               <div className="form-group">
                 <button
                   type="button"
@@ -130,6 +151,7 @@ class PopupNewCourse extends Component {
                 </button>
               </div>
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"

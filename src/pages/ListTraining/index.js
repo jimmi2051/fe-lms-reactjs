@@ -112,30 +112,6 @@ class ListTraining extends Component {
                   </ul>
                 </div>
               </div>
-
-              {/* <div className="card text-white mb-3">
-                <div className="card-header bg-root border-white">
-                  List Training
-                </div>
-                <div className="card-body bg-root border-white">
-                  <h5 className="card-title">ALL TRAINING</h5>
-                  {!loadingTrainingByCat &&
-                    trainingByCat.data.categorytrainings.map((item, index) => {
-                      return (
-                        <div key={index}>
-                          <h5 className="card-title">{item.name}</h5>
-                          <ul className="card-text">
-                            {item.trainings.map((training, indexTraining) => {
-                              return (
-                                <li key={indexTraining}>{training.name}</li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div> */}
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
