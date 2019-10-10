@@ -58,6 +58,7 @@ class PopupListContent extends Component {
   render() {
     const { isShow, listCourseByUser } = this.props;
     const { listContent, loadingListContent } = this.props.store;
+    const {selectedOption} = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
