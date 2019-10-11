@@ -5,6 +5,8 @@ import { updateContent } from "redux/action/content";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import Select from 'react-select';
+import _ from "lodash"
+
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -23,17 +25,27 @@ const mapDispatchToProps = dispatch => {
 };
 
 const options = [
-  { value: 'chocolate', label: 'First Course by Thanh Ly' },
-  { value: 'strawberry', label: 'Two Course by Thanh Ly' },
-  { value: 'vanilla', label: 'Three Course by Thanh Ly' },
 ];
 
 class PopupListContent extends Component {
   state = {
     description: "",
-    fileToUpload: [],
     selectedOption: null,
+    courseSelected: {},
   };
+
+  componentDidMount() {
+    const { listCourseByUser } = this.props;
+    this.processData(listCourseByUser)
+  }
+
+  processData = (listCourseByUser) => {
+    listCourseByUser.map((item, index) => {
+      options.push({ value: item, label: item.name })
+    })
+    this.setState({ courseSelected: options[0].value })
+  }
+
   handleUpdateContent = content => {
     const { currentModule } = this.props;
     let modules = content.modules;
@@ -51,14 +63,24 @@ class PopupListContent extends Component {
   };
 
   handleChange = selectedOption => {
-    this.setState({ selectedOption });
-    console.log(`Option selected:`, selectedOption);
+    if (!_.isNull(selectedOption)) {
+      this.setState({ selectedOption, courseSelected: selectedOption.value });
+      console.log(`Option selected:`, selectedOption);
+    }
   };
+
+  handleSubmit = () => {
+    const { handleAddCourseToPath_ver2 } = this.props;
+    handleAddCourseToPath_ver2(this.state.courseSelected);
+    this.props.handleShowPopup();
+  }
 
   render() {
     const { isShow, listCourseByUser } = this.props;
     const { listContent, loadingListContent } = this.props.store;
-    const {selectedOption} = this.state;
+    const { selectedOption, courseSelected } = this.state;
+    console.log("courseSelected", courseSelected)
+    console.log(this.props);
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -94,22 +116,34 @@ class PopupListContent extends Component {
             </div>
             <div className="modal-body">
               <div className="row">
-                <div className="col-xl-4">
-                  <Select
-                    value={selectedOption}
-                    onChange={this.handleChange}
-                    options={options}
-                  />
+                <div className="col-xl-12">
+                  {options.length > 0 && (
+                    <Select
+                      // value={selectedOption}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      onChange={this.handleChange}
+                      options={options}
+                      defaultValue={options[0]}
+                      isClearable={true}
+                      noOptionsMessage={inputValue => "No course found"}
+                      placeholder="-- Select course --"
+                    />
+                  )}
+
                 </div>
-                <div className="col-xl-8 popup-course">
+                <div className="col-xl-12 popup-course mt-4">
                   <div className="featured-courses courses-wrap">
                     <div className="row mx-m-25">
-                      <div className="col-12 col-md-12 px-25">
+                      {!_.isEmpty(courseSelected) && (<div className="col-12 col-md-12 px-25">
                         <div className="course-content">
                           <figure className="course-thumbnail">
-                            <Link to={`/admin/training/${listCourseByUser[0]._id}`}>
+                            <Link to={`/admin/training/${courseSelected._id}`}>
                               <img
-                                src={`https://be-lms.tk/uploads/7c4a819ba68f460180ebc49637e1d326.jpg`}
+                                src={_.isEmpty(courseSelected.thumbnail) ?
+                                  "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png" :
+                                  `${REACT_APP_URL_API}${courseSelected.thumbnail.url}`}
                                 alt=""
                                 height="200px"
                               />
@@ -119,20 +153,20 @@ class PopupListContent extends Component {
                           <div className="course-content-wrap">
                             <header className="entry-header">
                               <h2 className="entry-title">
-                                <Link to={`/admin/training/${listCourseByUser[0]._id}`}>
-                                  {listCourseByUser[0].name}
+                                <Link to={`/admin/training/${courseSelected._id}`}>
+                                  {courseSelected.name}
                                 </Link>
                               </h2>
 
                               <div className="entry-meta flex flex-wrap align-items-center">
                                 <div className="course-author">
                                   <a href="#">
-                                    {listCourseByUser[0].users[0].firstName}{" "}
-                                    {listCourseByUser[0].users[0].lastName}{" "}
+                                    {courseSelected.users[0].firstName}{" "}
+                                    {courseSelected.users[0].lastName}{" "}
                                   </a>
                                 </div>
                                 <div className="course-date">
-                                  {moment(listCourseByUser[0].createdAt).format(
+                                  {moment(courseSelected.createdAt).format(
                                     "MMM. D, YYYY"
                                   )}
                                 </div>
@@ -140,7 +174,7 @@ class PopupListContent extends Component {
                             </header>
                           </div>
                         </div>
-                      </div>
+                      </div>)}
                     </div>
                   </div>
                 </div>
@@ -153,7 +187,7 @@ class PopupListContent extends Component {
                 type="button"
                 className="btn bg-root"
                 data-dismiss="modal"
-                onClick={this.handleClosePopup}
+                onClick={this.handleSubmit}
               >
                 OK
               </button>

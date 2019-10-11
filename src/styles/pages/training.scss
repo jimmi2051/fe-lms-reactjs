@@ -7,7 +7,6 @@
             cursor: pointer;
         }
         &-wrap{
-            
             text-align: center;
             margin-top: auto;
             height: 100%;
@@ -15,8 +14,31 @@
                 margin-top: 30%;
             }
         }
+        &-active{
+          border: none;
+          height: 100%;
+          .form-check-input{
+            height: 28px;
+          }
+          .form-check-label
+          {
+            line-height: 38px;
+          }
+          .course-content-wrap{
+            max-height: 100%;
+            height: auto;
+          } 
+          .btn-remove{
+            position: absolute;
+            right: 30px;
+            top: 5px;
+            &:hover{
+              cursor: pointer;
+            }
+          }
+        }
+        
     }
-   
 }
 .popup-course{
     .course-content{
