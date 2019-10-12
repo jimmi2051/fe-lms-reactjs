@@ -25,7 +25,7 @@ class PopupNewCourse extends Component {
     nameFile: "",
     imgSrc: ""
   };
-  componentDidMount() { }
+  componentDidMount() {}
 
   fileSelectHandler = e => {
     let files = e.target.files;
@@ -34,10 +34,10 @@ class PopupNewCourse extends Component {
     const file = files[0];
     const url = reader.readAsDataURL(file);
 
-    reader.onloadend = function (e) {
+    reader.onloadend = function(e) {
       this.setState({
         imgSrc: [reader.result]
-      })
+      });
     }.bind(this);
 
     fileToUpload.push(files[0]);
@@ -86,9 +86,9 @@ class PopupNewCourse extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -126,19 +126,23 @@ class PopupNewCourse extends Component {
               <div className="form-group">
                 <label>Thumbnail</label>
                 <div className="custom-file">
-                  <input type="file" className="custom-file-input" onChange={this.fileSelectHandler} id="customFile" lang="en" />
-                  <label className="custom-file-label" htmlFor="customFile">{this.state.nameFile !== "" ? this.state.nameFile : "Choose file"}</label>
+                  <input
+                    type="file"
+                    className="custom-file-input"
+                    onChange={this.fileSelectHandler}
+                    id="customFile"
+                    lang="en"
+                  />
+                  <label className="custom-file-label" htmlFor="customFile">
+                    {this.state.nameFile !== ""
+                      ? this.state.nameFile
+                      : "Choose file"}
+                  </label>
                 </div>
-                {/* <input
-                  type="file"
-                  className="form-control"
-                  placeholder="Enter training title here"
-                  onChange={this.fileSelectHandler}
-                /> */}
               </div>
               {this.state.imgSrc !== "" && (
                 <div className="mt-3 text-center mb-3">
-                  <img src={this.state.imgSrc} />
+                  <img src={this.state.imgSrc} alt="" />
                 </div>
               )}
               <div className="form-group">

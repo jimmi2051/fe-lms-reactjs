@@ -6,7 +6,7 @@ import { UploadFile } from "utils/UploadImage.js";
 import _ from "lodash";
 import { addLearningPath } from "redux/action/training";
 import AuthStorage from "utils/AuthStorage";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import PopupListCourse from "pages/NewTraining/PopupListCourse";
 import moment from "moment";
 
@@ -38,12 +38,11 @@ class Step2 extends Component {
     createdCourse: false,
     isShow: false,
     courseActived: {},
-    listCourseChoosen: [],
-    courseChoosenActived: {},
-    isShowListCourse: true,
 
-    listCourseChoosen_ver2: []
+    isShowListCourse: false,
 
+    listCourseChoosen_ver2: [],
+    messageErr: ""
   };
   componentDidMount() {
     // this.props.handleGetListCourse();
@@ -65,12 +64,10 @@ class Step2 extends Component {
   ) => {
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, () => {
-      // console.log(this.props.store);
-    });
+    addLearningPath(payload, () => {});
   };
   // Version 2
-  handleAddCourseToPath_ver2 = (coursePicked) => {
+  handleAddCourseToPath_ver2 = coursePicked => {
     let { listCourseChoosen_ver2 } = this.state;
     const index = _.findIndex(listCourseChoosen_ver2, item =>
       _.isEqual(item.course, coursePicked)
@@ -82,12 +79,12 @@ class Step2 extends Component {
         required: false
       });
       this.setState({
-        listCourseChoosen_ver2: listCourseChoosen_ver2,
+        listCourseChoosen_ver2: listCourseChoosen_ver2
       });
     }
   };
 
-  handleRemoveCourseToPath_ver2 = (coursePicked) => {
+  handleRemoveCourseToPath_ver2 = coursePicked => {
     let { listCourseChoosen_ver2 } = this.state;
     const index = _.findIndex(listCourseChoosen_ver2, item =>
       _.isEqual(item.course, coursePicked)
@@ -95,11 +92,18 @@ class Step2 extends Component {
     if (index > -1) {
       listCourseChoosen_ver2.splice(index, 1);
       this.setState({
-        listCourseChoosen_ver2: listCourseChoosen_ver2,
+        listCourseChoosen_ver2: listCourseChoosen_ver2
       });
     }
   };
 
+  handleChangePosition = (index, expectIndex) => {
+    let { listCourseChoosen_ver2 } = this.state;
+    const courseTemp = listCourseChoosen_ver2[index];
+    listCourseChoosen_ver2[index] = listCourseChoosen_ver2[expectIndex];
+    listCourseChoosen_ver2[expectIndex] = courseTemp;
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 });
+  };
 
   handleSubmit = () => {
     const { title } = this.refs;
@@ -115,110 +119,57 @@ class Step2 extends Component {
     this.setState({ isShowListCourse: !isShowListCourse });
   };
 
-  handleAddCourseToPath = () => {
-    let { listCourseChoosen, courseActived } = this.state;
-    const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item.course, courseActived)
-    );
-    if (index === -1) {
-      listCourseChoosen.push({
-        course: courseActived,
-        mark: 0,
-        required: false
-      });
-      this.setState({
-        listCourseChoosen: listCourseChoosen,
-        courseActived: {}
-      });
-    }
-  };
-
-  handleRemoveCourseToPath = () => {
-    let { listCourseChoosen, courseChoosenActived } = this.state;
-    const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item.course, courseChoosenActived)
-    );
-    if (index > -1) {
-      listCourseChoosen.splice(index, 1);
-      this.setState({
-        listCourseChoosen: listCourseChoosen,
-        courseChoosenActived: {}
-      });
-    }
-  };
-
-  handleActiveCourse = course => {
-    this.setState({ courseActived: course });
-  };
-
-  handleActiveCourseChoosen = course => {
-    this.setState({ courseChoosenActived: course });
-  };
-
-  handleUpCourse = () => {
-    let { listCourseChoosen, courseChoosenActived } = this.state;
-    const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item.course, courseChoosenActived)
-    );
-    if (index > 0) {
-      const courseTemp = listCourseChoosen[index];
-      listCourseChoosen[index] = listCourseChoosen[index - 1];
-      listCourseChoosen[index - 1] = courseTemp;
-      this.setState({ listCourseChoosen: listCourseChoosen });
-    }
-  };
-
-  handleDownCourse = () => {
-    let { listCourseChoosen, courseChoosenActived } = this.state;
-    const index = _.findIndex(listCourseChoosen, item =>
-      _.isEqual(item.course, courseChoosenActived)
-    );
-    if (index < listCourseChoosen.length - 1) {
-      const courseTemp = listCourseChoosen[index];
-      listCourseChoosen[index] = listCourseChoosen[index + 1];
-      listCourseChoosen[index + 1] = courseTemp;
-      this.setState({ listCourseChoosen: listCourseChoosen });
-    }
-  };
-
   handleStepTwo = () => {
-    const { listCourseChoosen } = this.state;
+    const { listCourseChoosen_ver2 } = this.state;
     const { isCreatedTraining } = this.props.store;
-    if (_.isUndefined(isCreatedTraining)) {
+    if (_.isEmpty(isCreatedTraining)) {
     } else {
       const trainings = [isCreatedTraining];
-      listCourseChoosen.map((item, index) => {
-        const position = index + 1;
-        const markForCourse = item.mark;
-        const isRequired = item.required;
-        const courses = [item.course];
-        this.handleAddLearningPath(
-          trainings,
-          courses,
-          position,
-          markForCourse,
-          isRequired
-        );
-        if (index === listCourseChoosen.length - 1) {
-          this.props.handleStepTwo();
-        }
-      });
+      if (this.validateCourse(listCourseChoosen_ver2)) {
+        listCourseChoosen_ver2.map((item, index) => {
+          const position = index + 1;
+          const markForCourse = item.mark;
+          const isRequired = item.required;
+          const courses = [item.course];
+          this.handleAddLearningPath(
+            trainings,
+            courses,
+            position,
+            markForCourse,
+            isRequired
+          );
+          if (index === listCourseChoosen_ver2.length - 1) {
+            this.props.handleStepTwo();
+          }
+        });
+      } else {
+        this.setState({ messageErr: "Must choose one course is a mandatory." });
+      }
     }
+  };
+
+  validateCourse = listCourse => {
+    let isValidate = true;
+    const findIndex = _.findIndex(
+      listCourse,
+      course => course.isRequired === true
+    );
+    if (findIndex === 1) {
+      isValidate = false;
+    }
+    return isValidate;
   };
 
   handleInputMark = (index, mark) => {
     let { listCourseChoosen } = this.state;
     listCourseChoosen[index].mark = mark;
-    this.setState({ listCourseChoosen: listCourseChoosen }, () => {
-    });
+    this.setState({ listCourseChoosen: listCourseChoosen }, () => {});
   };
 
   handleCheckRequired = (index, checked) => {
-    let { listCourseChoosen } = this.state;
-    listCourseChoosen[index].required = checked;
-    this.setState({ listCourseChoosen: listCourseChoosen }, () => {
-      // console.log(listCourseChoosen);
-    });
+    let { listCourseChoosen_ver2 } = this.state;
+    listCourseChoosen_ver2[index].required = checked;
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 });
   };
 
   handeChangleMark = (e, index) => {
@@ -226,11 +177,18 @@ class Step2 extends Component {
   };
 
   handleChangeRequired = (e, index) => {
+    this.setState({ messageErr: "" });
     this.handleCheckRequired(index, e.target.checked);
   };
 
   render() {
-    const { createdCourse, listCourseChoosen, isShow, isShowListCourse, listCourseChoosen_ver2 } = this.state;
+    const {
+      createdCourse,
+      isShow,
+      isShowListCourse,
+      listCourseChoosen_ver2,
+      messageErr
+    } = this.state;
     const { listCourseByUser, loadingListCourseUser } = this.props.store;
     return (
       <div className="row">
@@ -241,7 +199,8 @@ class Step2 extends Component {
           handleShowPopup={this.handleShowPopup}
         />
         {!loadingListCourseUser && (
-          <PopupListCourse isShow={isShowListCourse}
+          <PopupListCourse
+            isShow={isShowListCourse}
             listCourseByUser={listCourseByUser}
             handleShowPopup={this.handleShowPopupListCourse}
             handleAddCourseToPath_ver2={this.handleAddCourseToPath_ver2}
@@ -261,21 +220,41 @@ class Step2 extends Component {
             </button>
           </div>
         </div>
+        {messageErr !== "" && (
+          <div className="col-xl-12">
+            <h5 className="text-danger">{messageErr}</h5>
+          </div>
+        )}
+
         {listCourseChoosen_ver2.length > 0 && (
-          <div className="col-xl-12 new-training mb-4">
+          <div className="col-xl-12 new-training">
             <div className="featured-courses courses-wrap">
               <div className="row mx-m-25">
                 {listCourseChoosen_ver2.map((item, index) => {
                   return (
-                    <div className="col-12 col-md-6 px-25">
-                      <div className="course-content course-content-active">
+                    <div className="col-12 col-md-6 px-25 mb-4" key={index}>
+                      <div
+                        className={`${
+                          messageErr !== "" ? "border border-danger" : ""
+                        } course-content course-content-active`}
+                      >
                         <figure className="course-thumbnail">
-                          <button type="button" className="btn btn-remove alert-danger" onClick={() => { this.handleRemoveCourseToPath_ver2(item.course) }}><i className="fa fa-remove"></i></button>
+                          <button
+                            type="button"
+                            className="btn btn-remove alert-danger"
+                            onClick={() => {
+                              this.handleRemoveCourseToPath_ver2(item.course);
+                            }}
+                          >
+                            <i className="fa fa-remove"></i>
+                          </button>
                           <Link to={`#`}>
                             <img
-                              src={_.isEmpty(item.course.thumbnail) ?
-                                "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png" :
-                                `${REACT_APP_URL_API}${item.course.thumbnail.url}`}
+                              src={
+                                _.isEmpty(item.course.thumbnail)
+                                  ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                  : `${REACT_APP_URL_API}${item.course.thumbnail.url}`
+                              }
                               alt=""
                               height="200px"
                             />
@@ -285,54 +264,101 @@ class Step2 extends Component {
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                              <Link to={`#`}>
-                                {item.course.name}
-                              </Link>
+                              <Link to={`#`}>{item.course.name}</Link>
                             </h2>
 
                             <div className="entry-meta flex flex-wrap align-items-center">
                               <div className="course-author">
-                                <a href="#">
-                                  {item.course.users[0].firstName}{" "}
-                                  {item.course.users[0].lastName}{" "}
-                                </a>
-                              </div>
-                              <div className="course-date">
-                                {moment(item.course.createdAt).format(
-                                  "MMM. D, YYYY"
-                                )}
+                                <label>
+                                  Created date:{" "}
+                                  {moment(item.course.createdAt).format(
+                                    "DD/MM/YYYY"
+                                  )}
+                                </label>
                               </div>
                             </div>
                             <div className="form-row">
                               <div className="form-group col-md-6">
-
-                                <input onChange={e => this.handeChangleMark(e, index)} type="text" placeholder="Enter mark" className="form-control" />
+                                <input
+                                  onChange={e =>
+                                    this.handeChangleMark(e, index)
+                                  }
+                                  type="text"
+                                  placeholder="Enter mark"
+                                  className="form-control"
+                                />
                               </div>
                               <div className="form-group col-md-6">
                                 <div className="form-check">
-                                  <input className="form-check-input" type="checkbox" defaultChecked={false}
-                                    onChange={e => this.handleChangeRequired(e, index)} />
-                                  <label className="form-check-label" htmlFor="gridCheck">
-                                    Mantory
-                                </label>
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    defaultChecked={false}
+                                    onChange={e =>
+                                      this.handleChangeRequired(e, index)
+                                    }
+                                  />
+                                  <label
+                                    className={`${
+                                      messageErr !== "" ? "text-danger" : ""
+                                    } form-check-label`}
+                                    htmlFor="gridCheck"
+                                  >
+                                    Mandatory
+                                  </label>
                                 </div>
                               </div>
+                            </div>
+                            <div className="form-group row">
+                              <label className="col-sm-4 col-form-label">
+                                Position
+                              </label>
+                              <select
+                                className="form-control col-sm-8"
+                                onChange={e =>
+                                  this.handleChangePosition(
+                                    index,
+                                    e.target.value
+                                  )
+                                }
+                                value={index}
+                              >
+                                {listCourseChoosen_ver2.map(
+                                  (count, indexCount) => {
+                                    return (
+                                      <option
+                                        key={indexCount}
+                                        value={indexCount}
+                                        disabled={indexCount === index}
+                                      >
+                                        {indexCount + 1}
+                                      </option>
+                                    );
+                                  }
+                                )}
+                              </select>
+                              <small className="form-text text-muted col-sm-12">
+                                (*) Course order in the training
+                              </small>
                             </div>
                           </header>
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
           </div>
         )}
-        <div className="col-xl-12 new-training">
+        <div className="col-xl-12 new-training mb-4">
           <div className="featured-courses courses-wrap">
             <div className="row mx-m-25">
               <div className="col-12 col-md-6 px-25">
-                <div className="course-content" onClick={this.handleShowPopupListCourse}>
+                <div
+                  className="course-content"
+                  onClick={this.handleShowPopupListCourse}
+                >
                   <div className="course-content-wrap">
                     <i className="fa fa-plus"></i>
                     <h3>Add new item</h3>
@@ -341,98 +367,6 @@ class Step2 extends Component {
               </div>
             </div>
           </div>
-        </div>
-        <div className="col-xl-5">
-          <label>List course available</label>
-          <ul>
-            {!loadingListCourseUser &&
-              listCourseByUser.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    onClick={() => {
-                      this.handleActiveCourse(item);
-                    }}
-                    style={{ cursor: "pointer" }}
-                    className={
-                      _.isEqual(this.state.courseActived, item)
-                        ? "alert-success"
-                        : ""
-                    }
-                  >
-                    {item.name}
-                  </li>
-                );
-              })}
-          </ul>
-        </div>
-        <div className="form-group col-xl-2">
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleAddCourseToPath}
-          >
-            Add
-          </button>
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleRemoveCourseToPath}
-          >
-            Remove
-          </button>
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleUpCourse}
-          >
-            Up
-          </button>
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleDownCourse}
-          >
-            Down
-          </button>
-        </div>
-        <div className="col-xl-5">
-          <label>Course choosen</label>
-          <ul>
-            {listCourseChoosen.length > 0 &&
-              listCourseChoosen.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    onClick={() => {
-                      this.handleActiveCourseChoosen(item.course);
-                    }}
-                    className={
-                      _.isEqual(this.state.courseChoosenActived, item.course)
-                        ? "alert-success"
-                        : ""
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    {item.course.name}
-                    <input
-                      placeholder="Enter mark for this course"
-                      onChange={e => this.handeChangleMark(e, index)}
-                    />
-                    <div className="checkbox">
-                      <label>
-                        <input
-                          type="checkbox"
-                          defaultChecked={false}
-                          onChange={e => this.handleChangeRequired(e, index)}
-                        />
-                        Required
-                      </label>
-                    </div>
-                  </li>
-                );
-              })}
-          </ul>
         </div>
         <div className="form-group col-xl-12">
           <button

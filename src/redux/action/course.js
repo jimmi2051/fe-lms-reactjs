@@ -46,7 +46,7 @@ export const getCourseByTraining = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `learningpaths?trainings._id=${id}`,
+      uri: `learningpaths?trainings._id=${id}&_sort=position:asc`,
       beforeCallType: "FILTER_COURSE_BY_TRAINING_REQUEST",
       successType: "FILTER_COURSE_BY_TRAINING_SUCCESS",
       afterSuccess: next,

@@ -7,6 +7,11 @@ import _ from "lodash";
 import { getCourseByTraining, addCourseModule } from "redux/action/course";
 import { getModuleByCourse, removeModuleByCourse } from "redux/action/module";
 import AuthStorage from "utils/AuthStorage";
+import Select from "react-select";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import PopupListModule from "pages/NewTraining/PopupListModule";
+
 function mapStateToProps(state) {
   return {
     store: {
@@ -38,16 +43,18 @@ const mapDispatchToProps = dispatch => {
     )
   };
 };
+
+const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
+
 class Step3 extends Component {
   state = {
     createdModule: false,
     isShow: false,
-    moduleActived: {},
-    listModuleChoosen: [],
-    moduleChoosenActived: {},
     currentCourse: {},
-    listModuleRemove: [],
-    moduleChoosenActivedExist: {}
+    listCourse: [],
+    listModuleChoosen_ver2: [],
+    isShowListModule: false,
+    updateCouse: false
   };
 
   componentDidMount() {
@@ -55,7 +62,7 @@ class Step3 extends Component {
     const { isCreatedTraining } = this.props.store;
     if (_.isUndefined(isCreatedTraining._id)) {
       console.log("Error>>>> your training is invalid");
-      this.handleFilterListCourse("5d879c4bc077dc0017034b09");
+      this.handleFilterListCourse("5d9a0516fa842c10ba72c543");
     } else {
       //this is hardcode must to fix
       this.handleFilterListCourse(isCreatedTraining._id);
@@ -73,9 +80,21 @@ class Step3 extends Component {
     const payload = { id: training_id };
     const { getCourseByTraining } = this.props.action;
     getCourseByTraining(payload, () => {
-      this.setState({
-        currentCourse: this.props.store.listCourseFitler[0].courses[0]
+      let listCourse = [];
+      const { listCourseFitler } = this.props.store;
+      listCourseFitler.map((item, index) => {
+        listCourse.push({
+          value: item.courses[0],
+          label: item.courses[0].name
+        });
       });
+
+      this.setState({
+        currentCourse: listCourseFitler[0].courses[0],
+        listCourse
+      });
+      //Get Module of first course if exists
+      this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
     });
   };
 
@@ -89,35 +108,10 @@ class Step3 extends Component {
     const { title } = this.refs;
     this.props.handleStepTwo(title.value);
   };
+
   handleShowPopup = () => {
     const { isShow } = this.state;
     this.setState({ isShow: !isShow });
-  };
-
-  handleAddModuleToPath = () => {
-    let { listModuleChoosen, moduleActived } = this.state;
-    const { filterModuleByCourse, loadingModuleByCourse } = this.props.store;
-    let indexChoosen = -2;
-    if (!loadingModuleByCourse) {
-      indexChoosen = _.findIndex(filterModuleByCourse, item =>
-        _.isEqual(item.modules[0]._id, moduleActived._id)
-      );
-    }
-
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleActived)
-    );
-
-    if (
-      ((indexChoosen !== -2 && indexChoosen === -1) || indexChoosen === -2) &&
-      index === -1
-    ) {
-      listModuleChoosen.push(moduleActived);
-      this.setState({
-        listModuleChoosen: listModuleChoosen,
-        moduleActived: {}
-      });
-    }
   };
 
   handleGetModuleByCourse = course_id => {
@@ -126,159 +120,94 @@ class Step3 extends Component {
     getModuleByCourse(payload);
   };
 
-  handleRemoveModuleToPath = () => {
-    let {
-      listModuleChoosen,
-      moduleChoosenActived,
-      moduleChoosenActivedExist
-    } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleChoosenActived)
-    );
-    if (index > -1) {
-      listModuleChoosen.splice(index, 1);
-      this.setState({
-        listModuleChoosen: listModuleChoosen,
-        moduleChoosenActived: {}
-      });
-    }
-    this.handleRemoveModuleExists(moduleChoosenActivedExist);
-  };
-
-  handleActiveModule = module => {
-    this.setState({ moduleActived: module });
-  };
-
-  handleActiveModuleChoosen = module => {
-    this.setState({ moduleChoosenActived: module });
-  };
-
-  handleUpModule = () => {
-    let { listModuleChoosen, moduleChoosenActived } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleChoosenActived)
-    );
-    if (index > 0) {
-      const moduleTemp = listModuleChoosen[index];
-      listModuleChoosen[index] = listModuleChoosen[index - 1];
-      listModuleChoosen[index - 1] = moduleTemp;
-      this.setState({ listModuleChoosen: listModuleChoosen });
-    }
-  };
-
-  handleDownModule = () => {
-    let { listModuleChoosen, moduleChoosenActived } = this.state;
-    const index = _.findIndex(listModuleChoosen, item =>
-      _.isEqual(item, moduleChoosenActived)
-    );
-    if (index < listModuleChoosen.length - 1) {
-      const moduleTemp = listModuleChoosen[index];
-      listModuleChoosen[index] = listModuleChoosen[index + 1];
-      listModuleChoosen[index + 1] = moduleTemp;
-      this.setState({ listModuleChoosen: listModuleChoosen });
-    }
-  };
-
   handleChangeCourse = course => {
     this.handleGetModuleByCourse(course._id);
-
     this.setState({ currentCourse: course });
   };
 
   handleStepThree = () => {
-    const { listModuleChoosen, currentCourse } = this.state;
+    const { listModuleChoosen_ver2, currentCourse } = this.state;
     const courses = [currentCourse];
-    listModuleChoosen.map((item, index) => {
+    listModuleChoosen_ver2.map((item, index) => {
       const position = index + 1;
       const modules = [item];
       this.handleCreateCourseModule(courses, position, modules);
+      if (index === listModuleChoosen_ver2.length - 1) {
+        this.setState({ updateCourse: true, listModuleChoosen_ver2: [] });
+        this.handleGetModuleByCourse(currentCourse._id);
+      }
     });
-    let { listModuleRemove } = this.state;
-    if (listModuleRemove.length > 0) {
-      const { removeModuleByCourse } = this.props.action;
-      listModuleRemove.map((item, index) => {
-        const payload = { id: item._id };
-        removeModuleByCourse(payload, () => {});
+  };
+
+  handleChange = options => {
+    if (!_.isNull(options)) {
+      this.handleChangeCourse(options.value);
+    }
+    this.setState({ updateCouse: false });
+  };
+
+  handleAddModuleToCourse_ver2 = modulePicked => {
+    let { listModuleChoosen_ver2 } = this.state;
+    const index = _.findIndex(listModuleChoosen_ver2, item =>
+      _.isEqual(item, modulePicked)
+    );
+    if (index === -1) {
+      listModuleChoosen_ver2.push(modulePicked);
+      this.setState({
+        listModuleChoosen_ver2: listModuleChoosen_ver2
       });
     }
   };
 
-  handleRemoveModuleExists = moduleByCourse => {
-    console.log("debug>>>>", moduleByCourse);
-    let { listModuleRemove } = this.state;
-    const index = _.findIndex(listModuleRemove, item =>
-      _.isEqual(item, moduleByCourse)
-    );
-    if (index === -1) {
-      listModuleRemove.push(moduleByCourse);
-    }
-    this.setState({ listModuleRemove });
+  handleShowPopupListModule = () => {
+    const { isShowListModule } = this.state;
+    this.setState({ isShowListModule: !isShowListModule });
   };
 
-  handleActiveModuleChoosenExist = moduleChoosenActivedExist => {
-    this.setState({ moduleChoosenActivedExist });
+  handleChangePosition = (index, expectIndex) => {
+    let { listModuleChoosen_ver2 } = this.state;
+    const courseTemp = listModuleChoosen_ver2[index];
+    listModuleChoosen_ver2[index] = listModuleChoosen_ver2[expectIndex];
+    listModuleChoosen_ver2[expectIndex] = courseTemp;
+    this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
   };
 
   render() {
+    const messageErr = "";
     const {
       createdModule,
-      listModuleChoosen,
       isShow,
       currentCourse,
-      listModuleRemove,
-      moduleChoosenActivedExist
+      listCourse,
+      isShowListModule,
+      listModuleChoosen_ver2,
+      updateCourse
     } = this.state;
     const {
       listModuleByUser,
       loadingListModuleByUser,
-      listCourseFitler,
-      loadingListCourseFilter,
-      filterModuleByCourse,
-      loadingModuleByCourse
+      filterModuleByCourse
     } = this.props.store;
     return (
-      <div className="row">
+      <div className="row new-training-step3">
         <PopupNewModule
           isShow={isShow}
           handleShowPopup={this.handleShowPopup}
           handleCreateModule={this.props.handleCreateModule}
           UploadFile={UploadFile}
         />
+        {!loadingListModuleByUser && (
+          <PopupListModule
+            isShow={isShowListModule}
+            listModuleByUser={listModuleByUser}
+            handleShowPopup={this.handleShowPopupListModule}
+            handleAddModuleToCourse_ver2={this.handleAddModuleToCourse_ver2}
+          />
+        )}
         <div className="col-xl-12">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name Course</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {!loadingListCourseFilter &&
-                listCourseFitler.map((item, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{item.courses[0].id}</td>
-                      <td>{item.courses[0].name}</td>
-                      <td>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            this.handleChangeCourse(item.courses[0])
-                          }
-                          className="btn"
-                        >
-                          Detail
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
           {createdModule && (
             <h3 className="alert-success pl-3">MODULE HAVE BEEN CREATED</h3>
-          )}
+          )}{" "}
           <div className="form-group" style={{ width: "30%" }}>
             <button
               type="button"
@@ -289,125 +218,201 @@ class Step3 extends Component {
             </button>
           </div>
         </div>
-        <div className="col-xl-5">
-          <label>List module available</label>
-          <ul>
-            {!loadingListModuleByUser &&
-              listModuleByUser.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    onClick={() => {
-                      this.handleActiveModule(item);
-                    }}
-                    style={{ cursor: "pointer" }}
-                    className={
-                      _.isEqual(this.state.moduleActived, item)
-                        ? "alert-success"
-                        : ""
-                    }
-                  >
-                    {item.name}
-                  </li>
-                );
-              })}
-          </ul>
+        {listCourse.length > 0 && (
+          <div className="col-xl-12 list-course mb-3">
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              isSearchable={true}
+              onChange={this.handleChange}
+              options={listCourse}
+              defaultValue={listCourse[0]}
+              isClearable={true}
+              noOptionsMessage={inputValue => "No course found"}
+              placeholder="-- Select course --"
+            />
+          </div>
+        )}
+        <div className="col-xl-12 mb-3">
+          <h6>Modules of Course "{currentCourse.name}"</h6>
+          {updateCourse && (
+            <h6 className="text-success">Update course success</h6>
+          )}
         </div>
-        <div className="form-group col-xl-2">
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleAddModuleToPath}
-          >
-            Add
-          </button>
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleRemoveModuleToPath}
-          >
-            Remove
-          </button>
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleUpModule}
-          >
-            Up
-          </button>
-          <button
-            className="form-control"
-            type="button"
-            onClick={this.handleDownModule}
-          >
-            Down
-          </button>
-        </div>
-        <div className="col-xl-5">
-          {/* Must improve ->>>> if exists module will be shown in here */}
-          <label>Modules of Course "{currentCourse.name}"</label>
-          <ul>
-            {!loadingModuleByCourse &&
-              filterModuleByCourse.map((item, index) => {
-                if (
-                  _.findIndex(listModuleRemove, moduleRemove =>
-                    _.isEqual(moduleRemove, item)
-                  ) > -1
-                ) {
-                  return <></>;
-                }
-                return (
-                  <li
-                    key={index}
-                    onClick={() => {
-                      this.handleActiveModuleChoosenExist(item);
-                    }}
-                    className={
-                      _.isEqual(this.state.moduleChoosenActivedExist, item)
-                        ? "alert-success"
-                        : ""
-                    }
-                    style={{ cursor: "pointer" }}
+        {listModuleChoosen_ver2.length > 0 && (
+          <div className="col-xl-12 new-training">
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                {listModuleChoosen_ver2.map((item, index) => {
+                  return (
+                    <div className="col-12 col-md-6 px-25 mb-4" key={index}>
+                      <div
+                        className={`${
+                          messageErr !== "" ? "border border-danger" : ""
+                        } course-content course-content-active`}
+                      >
+                        <figure className="course-thumbnail">
+                          <Link to={`#`}>
+                            <img
+                              src={
+                                _.isEmpty(item.thumbnail)
+                                  ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                  : `${REACT_APP_URL_API}${item.thumbnail.url}`
+                              }
+                              alt=""
+                              height="200px"
+                            />
+                          </Link>
+                        </figure>
+
+                        <div className="course-content-wrap">
+                          <header className="entry-header">
+                            <h2 className="entry-title">
+                              <Link to={`#`}>{item.name}</Link>
+                            </h2>
+
+                            <div className="entry-meta flex flex-wrap align-items-center">
+                              <div className="course-author">
+                                <label>
+                                  Created date:{" "}
+                                  {moment(item.createdAt).format("DD/MM/YYYY")}
+                                </label>
+                              </div>
+                            </div>
+                            <div className="form-group row">
+                              <label className="col-sm-4 col-form-label">
+                                Position
+                              </label>
+                              <select
+                                className="form-control col-sm-8"
+                                onChange={e =>
+                                  this.handleChangePosition(
+                                    index,
+                                    e.target.value
+                                  )
+                                }
+                                value={index}
+                              >
+                                {listModuleChoosen_ver2.map(
+                                  (count, indexCount) => {
+                                    return (
+                                      <option
+                                        key={indexCount}
+                                        value={indexCount}
+                                        disabled={indexCount === index}
+                                      >
+                                        {indexCount + 1}
+                                      </option>
+                                    );
+                                  }
+                                )}
+                              </select>
+                              <small className="form-text text-muted col-sm-12">
+                                (*) Module order in the course
+                              </small>
+                            </div>
+                          </header>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+        {filterModuleByCourse.length > 0 ? (
+          <div className="col-xl-12 new-training">
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                {filterModuleByCourse.map((item, index) => {
+                  return (
+                    <div className="col-12 col-md-6 px-25 mb-4" key={index}>
+                      <div
+                        className={`${
+                          messageErr !== "" ? "border border-danger" : ""
+                        } course-content course-content-active`}
+                      >
+                        <figure className="course-thumbnail">
+                          <Link to={`#`}>
+                            <img
+                              src={
+                                _.isEmpty(item.modules[0].thumbnail)
+                                  ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                  : `${REACT_APP_URL_API}${item.modules[0].thumbnail.url}`
+                              }
+                              alt=""
+                              height="200px"
+                            />
+                          </Link>
+                        </figure>
+
+                        <div className="course-content-wrap">
+                          <header className="entry-header">
+                            <h2 className="entry-title">
+                              <Link to={`#`}>{item.modules[0].name}</Link>
+                            </h2>
+
+                            <div className="entry-meta flex flex-wrap align-items-center">
+                              <div className="course-author">
+                                <label>
+                                  Created date:{" "}
+                                  {moment(item.modules[0].createdAt).format(
+                                    "DD/MM/YYYY"
+                                  )}
+                                </label>
+                              </div>
+                            </div>
+                            <div className="form-group row text-left">
+                              <label className="col-sm-12 col-form-label">
+                                Position: <b>{item.position}</b>
+                              </label>
+                            </div>
+                          </header>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="col-xl-12 new-training mb-4">
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                <div className="col-12 col-md-6 px-25">
+                  <div
+                    className="course-content"
+                    onClick={this.handleShowPopupListModule}
                   >
-                    {item.modules[0].name}
-                  </li>
-                );
-              })}
-            {listModuleChoosen.length > 0 &&
-              listModuleChoosen.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    onClick={() => {
-                      this.handleActiveModuleChoosen(item);
-                    }}
-                    className={
-                      _.isEqual(this.state.moduleChoosenActived, item)
-                        ? "alert-success"
-                        : ""
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    {item.name}
-                  </li>
-                );
-              })}
-          </ul>
-        </div>
+                    <div className="course-content-wrap">
+                      <i className="fa fa-plus"></i>
+                      <h3>Add new item</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="form-group col-xl-12">
-          <button
-            className="btn bg-root"
-            style={{ width: "100%" }}
-            onClick={this.handleStepThree}
-          >
-            UPDATE
-          </button>
+          {filterModuleByCourse.length === 0 && (
+            <button
+              className="btn bg-root"
+              style={{ width: "100%" }}
+              onClick={this.handleStepThree}
+            >
+              UPDATE COURSE
+            </button>
+          )}
+
           <button
             className="btn bg-root"
             style={{ width: "100%" }}
             onClick={this.props.handleStepThree}
           >
-            CONTINUE
+            SAVE & CONTINUE
           </button>
         </div>
       </div>

@@ -21,15 +21,26 @@ const mapDispatchToProps = dispatch => {
 class PopupNewModule extends Component {
   state = {
     description: "",
-    fileToUpload: []
+    fileToUpload: [],
+    nameFile: "",
+    imgSrc: ""
   };
   componentDidMount() {}
 
   fileSelectHandler = e => {
     let files = e.target.files;
     let { fileToUpload } = this.state;
+    const reader = new FileReader();
+    const file = files[0];
+    const url = reader.readAsDataURL(file);
+    reader.onloadend = function(e) {
+      this.setState({
+        imgSrc: reader.result
+      });
+    }.bind(this);
+
     fileToUpload.push(files[0]);
-    this.setState({ fileToUpload: fileToUpload });
+    this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
   };
 
   handleNewModule = async () => {
@@ -63,6 +74,7 @@ class PopupNewModule extends Component {
 
   render() {
     const { isShow } = this.props;
+
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -106,20 +118,33 @@ class PopupNewModule extends Component {
                 />
               </div>
               <div className="form-group">
-                <label>Description</label>
+                <label>Description (*)</label>
                 <CKEditor
                   handleChangeDescription={this.handleChangeDescription}
                 />
               </div>
               <div className="form-group">
-                <label>Image </label>
-                <input
-                  type="file"
-                  className="form-control"
-                  placeholder="Enter training title here"
-                  onChange={this.fileSelectHandler}
-                />
+                <label>Thumbnail</label>
+                <div className="custom-file">
+                  <input
+                    type="file"
+                    className="custom-file-input"
+                    onChange={this.fileSelectHandler}
+                    id="customFile"
+                    lang="en"
+                  />
+                  <label className="custom-file-label" htmlFor="customFile">
+                    {this.state.nameFile !== ""
+                      ? this.state.nameFile
+                      : "Choose file"}
+                  </label>
+                </div>
               </div>
+              {this.state.imgSrc !== "" && (
+                <div className="mt-3 text-center mb-3">
+                  <img src={this.state.imgSrc} alt="" />
+                </div>
+              )}
               <div className="form-group">
                 <button
                   type="button"

@@ -30,19 +30,19 @@ class PopupListContent extends Component {
   state = {
     description: "",
     selectedOption: null,
-    courseSelected: {}
+    moduleSelected: {}
   };
 
   componentDidMount() {
-    const { listCourseByUser } = this.props;
-    this.processData(listCourseByUser);
+    const { listModuleByUser } = this.props;
+    this.processData(listModuleByUser);
   }
 
-  processData = listCourseByUser => {
-    listCourseByUser.map((item, index) => {
+  processData = listModuleByUser => {
+    listModuleByUser.map((item, index) => {
       options.push({ value: item, label: item.name });
     });
-    this.setState({ courseSelected: options[0].value });
+    this.setState({ moduleSelected: options[0].value });
   };
 
   handleClosePopup = () => {
@@ -51,20 +51,19 @@ class PopupListContent extends Component {
 
   handleChange = selectedOption => {
     if (!_.isNull(selectedOption)) {
-      this.setState({ selectedOption, courseSelected: selectedOption.value });
-      console.log(`Option selected:`, selectedOption);
+      this.setState({ selectedOption, moduleSelected: selectedOption.value });
     }
   };
 
   handleSubmit = () => {
-    const { handleAddCourseToPath_ver2 } = this.props;
-    handleAddCourseToPath_ver2(this.state.courseSelected);
+    const { handleAddModuleToCourse_ver2 } = this.props;
+    handleAddModuleToCourse_ver2(this.state.moduleSelected);
     this.props.handleShowPopup();
   };
 
   render() {
     const { isShow } = this.props;
-    const { courseSelected } = this.state;
+    const { moduleSelected } = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -119,18 +118,18 @@ class PopupListContent extends Component {
                 <div className="col-xl-12 popup-course mt-4">
                   <div className="featured-courses courses-wrap">
                     <div className="row mx-m-25">
-                      {!_.isEmpty(courseSelected) && (
+                      {!_.isEmpty(moduleSelected) && (
                         <div className="col-12 col-md-12 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
                               <Link
-                                to={`/admin/training/${courseSelected._id}`}
+                                to={`/admin/training/${moduleSelected._id}`}
                               >
                                 <img
                                   src={
-                                    _.isEmpty(courseSelected.thumbnail)
+                                    _.isEmpty(moduleSelected.thumbnail)
                                       ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                      : `${REACT_APP_URL_API}${courseSelected.thumbnail.url}`
+                                      : `${REACT_APP_URL_API}${moduleSelected.thumbnail.url}`
                                   }
                                   alt=""
                                   height="200px"
@@ -142,9 +141,9 @@ class PopupListContent extends Component {
                               <header className="entry-header">
                                 <h2 className="entry-title">
                                   <Link
-                                    to={`/admin/training/${courseSelected._id}`}
+                                    to={`/admin/training/${moduleSelected._id}`}
                                   >
-                                    {courseSelected.name}
+                                    {moduleSelected.name}
                                   </Link>
                                 </h2>
 
@@ -152,7 +151,7 @@ class PopupListContent extends Component {
                                   <div className="course-author">
                                     <label>
                                       Created date:{" "}
-                                      {moment(courseSelected.createdAt).format(
+                                      {moment(moduleSelected.createdAt).format(
                                         "DD/MM/YYYY"
                                       )}
                                     </label>
