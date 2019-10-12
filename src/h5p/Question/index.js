@@ -65,7 +65,7 @@ class Question extends Component {
                     if (findIndex > -1) {
                       check =
                         listAnswer[findIndex].answer === answer &&
-                        listAnswer[findIndex].question === item
+                          listAnswer[findIndex].question === item
                           ? true
                           : false;
                     } else {
@@ -75,7 +75,7 @@ class Question extends Component {
                       <div
                         className={` ${
                           status === 0 && check ? "bg-danger" : ""
-                        } ${check ? "bg-root" : ""}`}
+                          } ${check ? "bg-root" : ""}`}
                         key={indexAnswer}
                         onClick={() => this.handleChooseAnswer(item, answer)}
                         style={{ cursor: "pointer" }}
@@ -87,13 +87,14 @@ class Question extends Component {
               </div>
             );
           })}
-        <button
+        {!this.props.isView && (<button
           type="button"
           onClick={this.handleSubmit}
           className="btn btn-success"
         >
           Submit
-        </button>
+        </button>)}
+
       </div>
     );
   }

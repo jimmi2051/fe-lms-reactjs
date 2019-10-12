@@ -2,6 +2,16 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateContent } from "redux/action/content";
+import { Link } from "react-router-dom";
+import Select from "react-select";
+import _ from "lodash";
+
+import VideoNormal from "h5p/VideoNormal";
+import TextNormal from "h5p/TextNormal";
+import TextToTest from "h5p/TextToTest";
+import Question from "h5p/Question";
+import Slide from "h5p/Slide";
+
 function mapStateToProps(state) {
   return {
     store: {
@@ -20,8 +30,23 @@ const mapDispatchToProps = dispatch => {
 class PopupListContent extends Component {
   state = {
     description: "",
-    fileToUpload: []
+    fileToUpload: [],
+    listContentSelect: [],
+    currentContent: {}
   };
+  componentDidMount() {
+    const { listContent } = this.props.store;
+    this.handleProcessData(listContent);
+  }
+
+  handleProcessData = (listContent) => {
+    let listContentSelect = [];
+    listContent.map((item, index) => {
+      listContentSelect.push({ value: item, label: item.name });
+    })
+    this.setState({ listContentSelect, currentContent: listContent[0] });
+  }
+
   handleUpdateContent = content => {
     const { currentModule } = this.props;
     let modules = content.modules;
@@ -38,9 +63,26 @@ class PopupListContent extends Component {
     this.props.handleShowListContent(this.props.currentModule);
   };
 
+  handleChange = (option) => {
+    if (!_.isNull(option)) {
+      this.setState({ currentContent: option.value });
+    }
+    this.setState({ messageErr: "", messageSuc: "" })
+  }
+
+  handleUpdateContent_ver2 = () => {
+    const { currentContent } = this.state;
+    if (!this.props.handleAddContent(currentContent)) {
+      this.setState({ messageErr: "Content already exists. " })
+    }
+    else {
+      this.setState({ messageSuc: "Add successfully content. " })
+    }
+  };
+
   render() {
     const { isShow } = this.props;
-    const { listContent, loadingListContent } = this.props.store;
+    const { listContentSelect, messageErr, messageSuc, currentContent } = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -75,36 +117,86 @@ class PopupListContent extends Component {
               </button>
             </div>
             <div className="modal-body">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {!loadingListContent &&
-                    listContent.map((item, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>{item.name}</td>
-                          <td>{item.type}</td>
-                          <td>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                this.handleUpdateContent(item);
-                              }}
-                            >
-                              Choosen content
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+              <div className="row">
+                <div className="col-xl-12">
+                  {messageErr !== "" && (
+                    <label className="text-danger">{messageErr}</label>
+                  )}
+                  {messageSuc !== "" && (
+                    <label className="text-success">{messageSuc}</label>
+                  )}
+                </div>
+                <div className="col-xl-12">
+                  {listContentSelect.length > 0 && (
+                    <Select
+                      // value={selectedOption}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      onChange={this.handleChange}
+                      options={listContentSelect}
+                      defaultValue={listContentSelect[0]}
+                      isClearable={true}
+                      noOptionsMessage={inputValue => "No content found"}
+                      placeholder="-- Select content --"
+                    />
+                  )}
+                </div>
+                <div className="col-xl-12">
+                  {!_.isEmpty(currentContent) && (
+                    <div>
+                      <p className="text-success">
+                        {currentContent.relationData.data.title}
+                      </p>
+                      <p className="text-success">
+                        {currentContent.relationData.data.description}
+                      </p>
+                      {currentContent.type === "Video" && (
+                        <VideoNormal
+                          src={
+                            currentContent.relationData.media
+                              ? currentContent.relationData.media.url
+                              : currentContent.relationData.data.url
+                          }
+                          isView
+                        />
+                      )}
+                      {currentContent.type === "Text" && (
+                        <TextNormal
+                          context={currentContent.relationData.data.content}
+                          isView
+                        />
+                      )}
+                      {currentContent.type === "TextTest" && (
+                        <TextToTest
+                          contents={currentContent.relationData.data.contents}
+                          isView
+                        />
+                      )}
+                      {currentContent.type === "Question" && (
+                        <Question
+                          questions={currentContent.relationData.data.questions}
+                          isView
+                        />
+                      )}
+                      {currentContent.type === "Slide" && (
+                        <Slide
+                          // question={currentContent.relationData.data.question}
+                          // answer={currentContent.relationData.data.answer}
+                          slideItem={currentContent.relationData.data.slideItems}
+                          isView
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="col-xl-12">
+                  <div className="form-group">
+                    <button type="button" className="btn bg-root" onClick={this.handleUpdateContent_ver2}>Add content</button>
+                  </div>
+
+                </div>
+              </div>
             </div>
             <div className="modal-footer">
               <button

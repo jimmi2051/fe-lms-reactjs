@@ -64,7 +64,7 @@ class Step2 extends Component {
   ) => {
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, () => {});
+    addLearningPath(payload, () => { });
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -84,17 +84,12 @@ class Step2 extends Component {
     }
   };
 
-  handleRemoveCourseToPath_ver2 = coursePicked => {
+  handleRemoveCourseToPath_ver2 = index => {
     let { listCourseChoosen_ver2 } = this.state;
-    const index = _.findIndex(listCourseChoosen_ver2, item =>
-      _.isEqual(item.course, coursePicked)
-    );
-    if (index > -1) {
-      listCourseChoosen_ver2.splice(index, 1);
-      this.setState({
-        listCourseChoosen_ver2: listCourseChoosen_ver2
-      });
-    }
+    listCourseChoosen_ver2.splice(index, 1);
+    this.setState({
+      listCourseChoosen_ver2: listCourseChoosen_ver2
+    });
   };
 
   handleChangePosition = (index, expectIndex) => {
@@ -126,12 +121,12 @@ class Step2 extends Component {
     } else {
       const trainings = [isCreatedTraining];
       if (this.validateCourse(listCourseChoosen_ver2)) {
-        listCourseChoosen_ver2.map((item, index) => {
+        listCourseChoosen_ver2.map( async (item, index) => {
           const position = index + 1;
           const markForCourse = item.mark;
           const isRequired = item.required;
           const courses = [item.course];
-          this.handleAddLearningPath(
+          await this.handleAddLearningPath(
             trainings,
             courses,
             position,
@@ -163,7 +158,7 @@ class Step2 extends Component {
   handleInputMark = (index, mark) => {
     let { listCourseChoosen } = this.state;
     listCourseChoosen[index].mark = mark;
-    this.setState({ listCourseChoosen: listCourseChoosen }, () => {});
+    this.setState({ listCourseChoosen: listCourseChoosen }, () => { });
   };
 
   handleCheckRequired = (index, checked) => {
@@ -236,14 +231,14 @@ class Step2 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
                             type="button"
                             className="btn btn-remove alert-danger"
                             onClick={() => {
-                              this.handleRemoveCourseToPath_ver2(item.course);
+                              this.handleRemoveCourseToPath_ver2(index);
                             }}
                           >
                             <i className="fa fa-remove"></i>
@@ -301,7 +296,7 @@ class Step2 extends Component {
                                   <label
                                     className={`${
                                       messageErr !== "" ? "text-danger" : ""
-                                    } form-check-label`}
+                                      } form-check-label`}
                                     htmlFor="gridCheck"
                                   >
                                     Mandatory

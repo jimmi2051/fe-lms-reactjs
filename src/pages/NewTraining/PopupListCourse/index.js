@@ -52,7 +52,6 @@ class PopupListContent extends Component {
   handleChange = selectedOption => {
     if (!_.isNull(selectedOption)) {
       this.setState({ selectedOption, courseSelected: selectedOption.value });
-      console.log(`Option selected:`, selectedOption);
     }
   };
 
@@ -76,9 +75,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >

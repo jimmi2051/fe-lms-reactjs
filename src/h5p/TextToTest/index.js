@@ -42,7 +42,7 @@ class TextToTest extends Component {
       }
       choosen[indexQuestion].push(word);
     }
-    this.setState({ choosen,isSubmit: false, wrong: [] });
+    this.setState({ choosen, isSubmit: false, wrong: [] });
   };
 
   onSubmit = () => {
@@ -75,19 +75,19 @@ class TextToTest extends Component {
       <div className="">
         {isSubmit && (
           <div>
-             <label>
-             Result: <br />
-             </label>
-              {choosen.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <p>True: {mark[index]}/{item?item.length:"0"}
-                      <br />
-                      False: {wrong[index]?wrong[index].length:"0"}/{item?item.length:"0"}
-                      </p>
-                  </div>
-                )
-              })}
+            <label>
+              Result: <br />
+            </label>
+            {choosen.map((item, index) => {
+              return (
+                <div key={index}>
+                  <p>True: {mark[index]}/{item ? item.length : "0"}
+                    <br />
+                    False: {wrong[index] ? wrong[index].length : "0"}/{item ? item.length : "0"}
+                  </p>
+                </div>
+              )
+            })}
           </div>
         )}
         {content.map((item, index) => {
@@ -118,13 +118,16 @@ class TextToTest extends Component {
             </div>
           )
         })}
-        <button
-          type="button"
-          onClick={() => this.onSubmit()}
-          className="btn btn-success"
-        >
-          Submit
-        </button>
+        {!this.props.isView && (
+          <button
+            type="button"
+            onClick={() => this.onSubmit()}
+            className="btn btn-success"
+          >
+            Submit
+          </button>
+        )}
+
       </div>
     );
   }

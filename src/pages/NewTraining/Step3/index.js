@@ -61,7 +61,6 @@ class Step3 extends Component {
     this.props.handleGetListModuleByUser(AuthStorage.userInfo._id);
     const { isCreatedTraining } = this.props.store;
     if (_.isUndefined(isCreatedTraining._id)) {
-      console.log("Error>>>> your training is invalid");
       this.handleFilterListCourse("5d9a0516fa842c10ba72c543");
     } else {
       //this is hardcode must to fix
@@ -80,28 +79,31 @@ class Step3 extends Component {
     const payload = { id: training_id };
     const { getCourseByTraining } = this.props.action;
     getCourseByTraining(payload, () => {
-      let listCourse = [];
       const { listCourseFitler } = this.props.store;
-      listCourseFitler.map((item, index) => {
-        listCourse.push({
-          value: item.courses[0],
-          label: item.courses[0].name
-        });
-      });
-
-      this.setState({
-        currentCourse: listCourseFitler[0].courses[0],
-        listCourse
-      });
+      this.handleProcessData(listCourseFitler)
       //Get Module of first course if exists
       this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
     });
   };
 
+  handleProcessData = (listCourseFitler) => {
+    let listCourse = [];
+    listCourseFitler.map((item, index) => {
+      listCourse.push({
+        value: item.courses[0],
+        label: item.courses[0].name
+      });
+    });
+    this.setState({
+      currentCourse: listCourseFitler[0].courses[0],
+      listCourse
+    });
+  }
+
   handleCreateCourseModule = (courses, position, modules) => {
     const { addCourseModule } = this.props.action;
     const payload = { courses, position, modules };
-    addCourseModule(payload, () => {});
+    addCourseModule(payload, () => { });
   };
 
   handleSubmit = () => {
@@ -128,10 +130,10 @@ class Step3 extends Component {
   handleStepThree = () => {
     const { listModuleChoosen_ver2, currentCourse } = this.state;
     const courses = [currentCourse];
-    listModuleChoosen_ver2.map((item, index) => {
+    listModuleChoosen_ver2.map(async (item, index) => {
       const position = index + 1;
       const modules = [item];
-      this.handleCreateCourseModule(courses, position, modules);
+      await this.handleCreateCourseModule(courses, position, modules);
       if (index === listModuleChoosen_ver2.length - 1) {
         this.setState({ updateCourse: true, listModuleChoosen_ver2: [] });
         this.handleGetModuleByCourse(currentCourse._id);
@@ -171,6 +173,12 @@ class Step3 extends Component {
     listModuleChoosen_ver2[expectIndex] = courseTemp;
     this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
   };
+
+  handleRemoveModule = (index) => {
+    let { listModuleChoosen_ver2 } = this.state;
+    listModuleChoosen_ver2.splice(index, 1);
+    this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
+  }
 
   render() {
     const messageErr = "";
@@ -249,9 +257,18 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
+                          <button
+                            type="button"
+                            className="btn btn-remove alert-danger"
+                            onClick={() => {
+                              this.handleRemoveModule(index);
+                            }}
+                          >
+                            <i className="fa fa-remove"></i>
+                          </button>
                           <Link to={`#`}>
                             <img
                               src={
@@ -331,7 +348,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <Link to={`#`}>
@@ -378,24 +395,24 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-          <div className="col-xl-12 new-training mb-4">
-            <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
-                <div className="col-12 col-md-6 px-25">
-                  <div
-                    className="course-content"
-                    onClick={this.handleShowPopupListModule}
-                  >
-                    <div className="course-content-wrap">
-                      <i className="fa fa-plus"></i>
-                      <h3>Add new item</h3>
+            <div className="col-xl-12 new-training mb-4">
+              <div className="featured-courses courses-wrap">
+                <div className="row mx-m-25">
+                  <div className="col-12 col-md-6 px-25">
+                    <div
+                      className="course-content"
+                      onClick={this.handleShowPopupListModule}
+                    >
+                      <div className="course-content-wrap">
+                        <i className="fa fa-plus"></i>
+                        <h3>Add new item</h3>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button

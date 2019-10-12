@@ -4,10 +4,11 @@
 import { SINGLE_API } from "./type";
 
 export const getContent = (payload, next, nextErr) => {
+  const {id} = payload;
   return {
     type: SINGLE_API,
     payload: {
-      uri: `contents`,
+      uri: `contents?users._id=${id}`,
       beforeCallType: "GET_CONTENT_REQUEST",
       successType: "GET_CONTENT_SUCCESS",
       afterSuccess: next,
