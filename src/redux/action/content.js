@@ -4,7 +4,7 @@
 import { SINGLE_API } from "./type";
 
 export const getContent = (payload, next, nextErr) => {
-  const {id} = payload;
+  const { id } = payload;
   return {
     type: SINGLE_API,
     payload: {
@@ -46,6 +46,53 @@ export const updateContent = (payload, next, nextErr) => {
       },
       params: {
         modules
+      }
+    }
+  };
+};
+
+export const createContent = (payload, next, nextErr) => {
+  const { name, type, user } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `contents`,
+      beforeCallType: "CREATE_CONTENT_REQUEST",
+      successType: "CREATE_CONTENT_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "POST"
+      },
+      params: {
+        name,
+        type,
+        users: [user]
+      }
+    }
+  };
+};
+
+export const createData = (payload, next, nextErr) => {
+  const { data, content } = payload;
+  const struct = {};
+  const media = {};
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `data`,
+      beforeCallType: "CREATE_DATA_REQUEST",
+      successType: "CREATE_DATA_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "POST"
+      },
+      params: {
+        data,
+        struct,
+        content,
+        media
       }
     }
   };

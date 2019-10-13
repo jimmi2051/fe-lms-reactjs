@@ -80,13 +80,13 @@ class Step3 extends Component {
     const { getCourseByTraining } = this.props.action;
     getCourseByTraining(payload, () => {
       const { listCourseFitler } = this.props.store;
-      this.handleProcessData(listCourseFitler)
+      this.handleProcessData(listCourseFitler);
       //Get Module of first course if exists
       this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
     });
   };
 
-  handleProcessData = (listCourseFitler) => {
+  handleProcessData = listCourseFitler => {
     let listCourse = [];
     listCourseFitler.map((item, index) => {
       listCourse.push({
@@ -98,12 +98,17 @@ class Step3 extends Component {
       currentCourse: listCourseFitler[0].courses[0],
       listCourse
     });
-  }
+  };
 
-  handleCreateCourseModule = (courses, position, modules) => {
+  handleCreateCourseModule = (courses, position, modules, lastIndex) => {
     const { addCourseModule } = this.props.action;
     const payload = { courses, position, modules };
-    addCourseModule(payload, () => { });
+    addCourseModule(payload, () => {
+      if (lastIndex) {
+        const { currentCourse } = this.state;
+        this.handleGetModuleByCourse(currentCourse._id);
+      }
+    });
   };
 
   handleSubmit = () => {
@@ -130,13 +135,14 @@ class Step3 extends Component {
   handleStepThree = () => {
     const { listModuleChoosen_ver2, currentCourse } = this.state;
     const courses = [currentCourse];
-    listModuleChoosen_ver2.map(async (item, index) => {
+    listModuleChoosen_ver2.map((item, index) => {
       const position = index + 1;
       const modules = [item];
-      await this.handleCreateCourseModule(courses, position, modules);
       if (index === listModuleChoosen_ver2.length - 1) {
         this.setState({ updateCourse: true, listModuleChoosen_ver2: [] });
-        this.handleGetModuleByCourse(currentCourse._id);
+        this.handleCreateCourseModule(courses, position, modules, true);
+      } else {
+        this.handleCreateCourseModule(courses, position, modules, false);
       }
     });
   };
@@ -145,7 +151,7 @@ class Step3 extends Component {
     if (!_.isNull(options)) {
       this.handleChangeCourse(options.value);
     }
-    this.setState({ updateCouse: false });
+    this.setState({ updateCourse: false });
   };
 
   handleAddModuleToCourse_ver2 = modulePicked => {
@@ -174,11 +180,11 @@ class Step3 extends Component {
     this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
   };
 
-  handleRemoveModule = (index) => {
+  handleRemoveModule = index => {
     let { listModuleChoosen_ver2 } = this.state;
     listModuleChoosen_ver2.splice(index, 1);
     this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
-  }
+  };
 
   render() {
     const messageErr = "";
@@ -257,7 +263,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -348,7 +354,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <Link to={`#`}>
@@ -395,24 +401,24 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-            <div className="col-xl-12 new-training mb-4">
-              <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
-                  <div className="col-12 col-md-6 px-25">
-                    <div
-                      className="course-content"
-                      onClick={this.handleShowPopupListModule}
-                    >
-                      <div className="course-content-wrap">
-                        <i className="fa fa-plus"></i>
-                        <h3>Add new item</h3>
-                      </div>
+          <div className="col-xl-12 new-training mb-4">
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                <div className="col-12 col-md-6 px-25">
+                  <div
+                    className="course-content"
+                    onClick={this.handleShowPopupListModule}
+                  >
+                    <div className="course-content-wrap">
+                      <i className="fa fa-plus"></i>
+                      <h3>Add new item</h3>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button

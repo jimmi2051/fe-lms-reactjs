@@ -6,6 +6,14 @@ export const initialState = {
   listContentByModule: {
     data: {},
     loading: true
+  },
+  isCreateContent: {
+    data: {},
+    loading: true
+  },
+  isCreateData: {
+    data: {},
+    loading: true
   }
 };
 
@@ -30,6 +38,26 @@ export default (state = initialState, action) => {
       return {
         ...state,
         listContentByModule: { data: action.payload, loading: false }
+      };
+    case "CREATE_CONTENT_REQUEST":
+      return {
+        ...state,
+        isCreateContent: { ...initialState.isCreateContent }
+      };
+    case "CREATE_CONTENT_SUCCESS":
+      return {
+        ...state,
+        isCreateContent: { data: action.payload, loading: false }
+      };
+    case "CREATE_DATA_REQUEST":
+      return {
+        ...state,
+        isCreateData: { ...initialState.isCreateData }
+      };
+    case "CREATE_DATA_SUCCESS":
+      return {
+        ...state,
+        isCreateData: { data: action.payload, loading: false }
       };
     default:
       return state;

@@ -156,9 +156,9 @@ class Step2 extends Component {
   };
 
   handleInputMark = (index, mark) => {
-    let { listCourseChoosen } = this.state;
-    listCourseChoosen[index].mark = mark;
-    this.setState({ listCourseChoosen: listCourseChoosen }, () => { });
+    let { listCourseChoosen_ver2 } = this.state;
+    listCourseChoosen_ver2[index].mark = mark;
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => { });
   };
 
   handleCheckRequired = (index, checked) => {

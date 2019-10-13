@@ -4,10 +4,17 @@ import { bindActionCreators } from "redux";
 import _ from "lodash";
 import { getCourseByTraining, addCourseModule } from "redux/action/course";
 import { getModuleByCourse } from "redux/action/module";
-import { getContent, getContentByModule, updateContent } from "redux/action/content";
+import {
+  getContent,
+  getContentByModule,
+  updateContent
+} from "redux/action/content";
 import ListContent from "pages/NewTraining/PopupListContent";
 import AuthStorage from "utils/AuthStorage";
 import Select from "react-select";
+import PopupDetailContent from "pages/NewTraining/PopupDetailContent";
+import PopupNewContent from "pages/NewTraining/PopupNewContent";
+
 function mapStateToProps(state) {
   return {
     store: {
@@ -51,6 +58,9 @@ class Step4 extends Component {
     isFetchContent: false,
     listContentChoosen: [],
     isUpdateContent: false,
+    isShowDetailContent: false,
+    currentContent: {},
+    isShowNewContent: true
   };
   componentDidMount() {
     const { listCourseFitler, loadingListCourseFilter } = this.props.store;
@@ -69,27 +79,30 @@ class Step4 extends Component {
       const { filterModuleByCourse } = this.props.store;
       let listModule = [];
       filterModuleByCourse.map((item, index) => {
-        listModule.push({ value: item.modules[0], label: item.modules[0].name });
-      })
+        listModule.push({
+          value: item.modules[0],
+          label: item.modules[0].name
+        });
+      });
       const { isFetchContent } = this.state;
       if (!isFetchContent) {
         this.handleGetContentByModule(filterModuleByCourse[0].modules[0]._id);
-        this.setState({ isFetchContent: true })
+        this.setState({ isFetchContent: true });
       }
-      this.setState({ listModule: listModule })
+      this.setState({ listModule: listModule });
     });
   };
 
-  handleGetContentByUserId = (id) => {
+  handleGetContentByUserId = id => {
     const { getContent } = this.props.action;
     const payload = { id };
-    getContent(payload, () => { });
+    getContent(payload, () => {});
   };
 
   handleGetContentByModule = module_id => {
     const { getContentByModule } = this.props.action;
     const payload = { id: module_id };
-    getContentByModule(payload, () => { });
+    getContentByModule(payload, () => {});
   };
 
   handleChangeCourse = course => {
@@ -106,7 +119,7 @@ class Step4 extends Component {
     this.setState({ isShow: !this.state.isShow, currentModule: module });
   };
 
-  handleProcessData = (listCourseFitler) => {
+  handleProcessData = listCourseFitler => {
     let listCourse = [];
     listCourseFitler.map((item, index) => {
       listCourse.push({
@@ -118,7 +131,7 @@ class Step4 extends Component {
       currentCourse: listCourseFitler[0].courses[0],
       listCourse
     });
-  }
+  };
 
   handleChangeCourse_ver2 = options => {
     if (!_.isNull(options)) {
@@ -136,7 +149,7 @@ class Step4 extends Component {
     this.setState({ isShow: !this.state.isShow });
   };
 
-  handleAddContent = (content) => {
+  handleAddContent = content => {
     let { listContentChoosen } = this.state;
     const index = _.findIndex(listContentChoosen, item =>
       _.isEqual(item, content)
@@ -146,26 +159,25 @@ class Step4 extends Component {
       this.setState({
         listContentChoosen: listContentChoosen
       });
-      return true
+      return true;
+    } else {
+      return false;
     }
-    else {
-      return false
-    }
-  }
+  };
 
   handleUpdateContentForModule = () => {
     const { listContentChoosen } = this.state;
-    listContentChoosen.map( async (item, index) => {
-      this.handleUpdateContent(item);
+    listContentChoosen.map(async (item, index) => {
       if (index === listContentChoosen.length - 1) {
-        const { currentModule } = this.state;
-        await this.handleGetContentByModule(currentModule._id);
-        this.setState({ isUpdateContent: true, listContentChoosen: [] })
+        this.handleUpdateContent(item, true);
+        this.setState({ isUpdateContent: true, listContentChoosen: [] });
+      } else {
+        this.handleUpdateContent(item, false);
       }
-    })
-  }
+    });
+  };
 
-  handleUpdateContent = content => {
+  handleUpdateContent = (content, lastIndex) => {
     const { currentModule } = this.state;
     let modules = content.modules;
     modules.push(currentModule);
@@ -174,14 +186,27 @@ class Step4 extends Component {
       modules: modules
     };
     const { updateContent } = this.props.action;
-    updateContent(payload);
+    updateContent(payload, () => {
+      if (lastIndex) {
+        const { currentModule } = this.state;
+        this.handleGetContentByModule(currentModule._id);
+      }
+    });
   };
 
-  handleRemoveContent = (index) => {
+  handleRemoveContent = index => {
     let { listContentChoosen } = this.state;
     listContentChoosen.splice(index, 1);
     this.setState({ listContentChoosen });
-  }
+  };
+
+  handleViewDetailContent = content => {
+    this.setState({ currentContent: content, isShowDetailContent: true });
+  };
+
+  handleCloseDetailContent = () => {
+    this.setState({ isShowDetailContent: false });
+  };
 
   render() {
     const {
@@ -189,16 +214,40 @@ class Step4 extends Component {
       loadingListContentByModule,
       loadingListContent
     } = this.props.store;
-    const { isShow, currentModule, listCourse, listModule, listContentChoosen, isUpdateContent } = this.state;
+    const {
+      isShow,
+      currentModule,
+      listCourse,
+      listModule,
+      listContentChoosen,
+      isUpdateContent,
+      isShowDetailContent,
+      currentContent,
+      isShowNewContent
+    } = this.state;
     return (
       <div className="row">
-        {!loadingListContent && <ListContent
-          isShow={isShow}
-          currentModule={currentModule}
-          handleShowListContent={this.handleShowListContent_ver2}
-          handleAddContent={this.handleAddContent}
-        />}
-
+        {!loadingListContent && (
+          <ListContent
+            isShow={isShow}
+            currentModule={currentModule}
+            handleShowListContent={this.handleShowListContent_ver2}
+            handleAddContent={this.handleAddContent}
+          />
+        )}
+        {!loadingListContent && (
+          <PopupNewContent
+            isShow={isShowNewContent}
+            // currentModule={currentModule}
+            // handleShowListContent={this.handleShowListContent_ver2}
+            // handleAddContent={this.handleAddContent}
+          />
+        )}
+        <PopupDetailContent
+          isShow={isShowDetailContent}
+          currentContent={currentContent}
+          handleCloseDetailContent={this.handleCloseDetailContent}
+        />
         <div className="col-xl-12">
           <div className="form-group" style={{ width: "30%" }}>
             <button
@@ -256,22 +305,35 @@ class Step4 extends Component {
               </tr>
             </thead>
             <tbody>
-              {listContentChoosen.length > 0 && listContentChoosen.map((item, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.name}</td>
-                    <td>{item.type}</td>
-                    <td>
-                      <button className="btn bg-root" type="button">
-                        Detail
-                      </button>
-                      <button className="btn btn-danger ml-3" type="button" onClick={() => this.handleRemoveContent(index)}>Remove</button>
-                    </td>
-                  </tr>
-                )
-              })}
-              {!loadingListContentByModule && listContentByModule.length > 0 ?
+              {listContentChoosen.length > 0 &&
+                listContentChoosen.map((item, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.name}</td>
+                      <td>{item.type}</td>
+                      <td>
+                        <button
+                          className="btn bg-root"
+                          type="button"
+                          onClick={() => {
+                            this.handleViewDetailContent(item);
+                          }}
+                        >
+                          Detail
+                        </button>
+                        <button
+                          className="btn btn-danger ml-3"
+                          type="button"
+                          onClick={() => this.handleRemoveContent(index)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              {!loadingListContentByModule && listContentByModule.length > 0 ? (
                 listContentByModule.map((item, index) => {
                   return (
                     <tr key={index}>
@@ -279,34 +341,44 @@ class Step4 extends Component {
                       <td>{item.name}</td>
                       <td>{item.type}</td>
                       <td>
-                        <button className="btn bg-root" type="button">
+                        <button
+                          className="btn bg-root"
+                          type="button"
+                          onClick={() => {
+                            this.handleViewDetailContent(item);
+                          }}
+                        >
                           Detail
                         </button>
                       </td>
                     </tr>
-                  )
-                }) : (
-                  <tr>
-                    <td colSpan="3">
-                      <button
-                        onClick={() =>
-                          this.handleShowListContent_ver2()
-                        }
-                        className="btn bg-root"
-                      >
-                        Add content
-                        </button>
-                    </td>
-                  </tr>
-                )}
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="3">
+                    <button
+                      onClick={() => this.handleShowListContent_ver2()}
+                      className="btn bg-root"
+                    >
+                      Add content
+                    </button>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         {listContentByModule.length === 0 && (
           <div className="form-group col-xl-12">
-            <button className="btn bg-root" type="button" onClick={this.handleUpdateContentForModule} style={{ width: "100%" }}>
+            <button
+              className="btn bg-root"
+              type="button"
+              onClick={this.handleUpdateContentForModule}
+              style={{ width: "100%" }}
+            >
               UPDATE CONTENT FOR MODULE
-          </button>
+            </button>
           </div>
         )}
         <div className="form-group col-xl-12">
