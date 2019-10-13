@@ -53,9 +53,10 @@ class PopupNewContent extends Component {
     currentContent: {},
     currentType: "Text",
     content: "",
-    data: {}
+    data: {},
+    countTextTest: [1]
   };
-  componentDidMount() {}
+  componentDidMount() { }
 
   handleClosePopup = () => {
     this.props.handleShowListContent(this.props.currentModule);
@@ -69,7 +70,7 @@ class PopupNewContent extends Component {
   };
 
   handleChangeDescription = content => {
-    this.setState({ content }, () => {});
+    this.setState({ content }, () => { });
   };
 
   handleCreateContent = (name, type, user) => {
@@ -94,7 +95,6 @@ class PopupNewContent extends Component {
     createData(payload, () => {
       const { isCreateData } = this.props.store;
       if (isCreateData._id) {
-        console.log("CREATE SUCCESS>>>>>>>", isCreateData);
       }
     });
   };
@@ -111,12 +111,50 @@ class PopupNewContent extends Component {
     this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
   };
 
+  handleSubmitTextTest = () => {
+    const { currentType, countTextTest } = this.state;
+    const { name, title, description } = this.refs;
+    let contents = [];
+    countTextTest.map((item, index) => {
+      const titleContent = this.refs[`titleContent${item}`];
+      const content = this.refs[`content${item}`];
+      contents.push({
+        title: titleContent.value,
+        content: content.value
+      })
+    })
+    const data = {
+      title: title.value,
+      description: description.value,
+      contents
+    };
+    this.setState({ data });
+    this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+  };
+
+  handleSubmitCreate = () => {
+    const { currentType } = this.state;
+    if (currentType === "Text") {
+      this.handleSubmitTextNormal();
+    }
+    if (currentType === "TextTest") {
+      this.handleSubmitTextTest();
+    }
+  }
+
+  handleAddMoreContent = () => {
+    let { countTextTest } = this.state;
+    countTextTest.push(countTextTest[countTextTest.length - 1] + 1);
+    this.setState({ countTextTest });
+  }
+
   render() {
     const { isShow } = this.props;
-    const { currentType } = this.state;
+    const { currentType, countTextTest } = this.state;
+
     return (
       <div
-        className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
+        className={`modal new-content bd-example-modal-lg fade ${isShow ? "show" : ""}`}
         id="exampleModal"
         tabIndex="-1"
         role="dialog"
@@ -125,9 +163,9 @@ class PopupNewContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -174,10 +212,71 @@ class PopupNewContent extends Component {
                       ref="name"
                     />
                   </div>
+                  {currentType === "TextTest" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="card">
+                          <div className="card-header">List content</div>
+                          <div className="card-body">
+                            {countTextTest.length > 0 && countTextTest.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  <div className="form-group">
+                                    <label> Title for content {item}: </label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Enter title ... "
+                                      ref={`titleContent${item}`}
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Content {item}: (*)</label>
+                                    <textarea class="form-control" rows="3" ref={`content${item}`} />
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <small className="form-text text-muted">
+                            Note: The right answers, in asterix like *correctWord*.
+                                <br />
+                            Example: Hello, My name *is* Thanh.
+                        </small>
+                        </div>
+                        <div className="form-group">
+                          <button className="btn bg-root" onClick={this.handleAddMoreContent}>Add more content</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+
                   {currentType === "Text" && (
-                    <div class="card">
-                      <div class="card-header">Data of content</div>
-                      <div class="card-body">
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
                         <div className="form-group">
                           <label>Title: (*)</label>
                           <input
@@ -208,22 +307,16 @@ class PopupNewContent extends Component {
                     </div>
                   )}
                 </div>
-                <div className="col-xl-12">
-                  <div className="form-group">
-                    {currentType === "Text" && (
-                      <button
-                        type="button"
-                        className="btn bg-root"
-                        onClick={this.handleSubmitTextNormal}
-                      >
-                        Create
-                      </button>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
             <div className="modal-footer">
+              <button
+                type="button"
+                className="btn bg-root"
+                onClick={this.handleSubmitCreate}
+              >
+                Create
+              </button>
               <button
                 type="button"
                 className="btn btn-secondary"
