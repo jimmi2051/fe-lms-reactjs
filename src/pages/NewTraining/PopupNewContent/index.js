@@ -7,6 +7,11 @@ import Select from "react-select";
 import _ from "lodash";
 import CKEditor from "components/CKEditor";
 import AuthStorage from "utils/AuthStorage";
+import { UploadFile } from "utils/UploadImage.js";
+import { Player } from "video-react";
+
+const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
+
 function mapStateToProps(state) {
   return {
     store: {
@@ -54,7 +59,8 @@ class PopupNewContent extends Component {
     currentType: "Text",
     content: "",
     data: {},
-    countTextTest: [1]
+    countTextTest: [1],
+    videoSrc: "",
   };
   componentDidMount() { }
 
@@ -132,6 +138,32 @@ class PopupNewContent extends Component {
     this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
   };
 
+  handleSubmitVideoNormal = async () => {
+    const { currentType, fileToUpload } = this.state;
+    const { name, title, description } = this.refs;
+    let url = "";
+    if (fileToUpload.length > 0) {
+      let data = new FormData();
+      data.append("files", fileToUpload[0]);
+      await UploadFile(data)
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          let sliceResponse = result[0].url.split("/");
+          url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
+        });
+    }
+    const data = {
+      title: title.value,
+      description: description.value,
+      url
+    };
+    this.setState({ data });
+    this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+  };
+
+
   handleSubmitCreate = () => {
     const { currentType } = this.state;
     if (currentType === "Text") {
@@ -139,6 +171,9 @@ class PopupNewContent extends Component {
     }
     if (currentType === "TextTest") {
       this.handleSubmitTextTest();
+    }
+    if (currentType === "Video") {
+      this.handleSubmitVideoNormal();
     }
   }
 
@@ -148,9 +183,29 @@ class PopupNewContent extends Component {
     this.setState({ countTextTest });
   }
 
+  videoSelectHandler = e => {
+    try {
+      let files = e.target.files;
+      let { fileToUpload } = this.state;
+      const reader = new FileReader();
+      const file = files[0];
+      const url = reader.readAsDataURL(file);
+
+      reader.onloadend = function (e) {
+        this.setState({
+          videoSrc: [reader.result]
+        });
+      }.bind(this);
+
+      fileToUpload.push(files[0]);
+      this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
+    }
+    catch{ }
+  };
+
   render() {
     const { isShow } = this.props;
-    const { currentType, countTextTest } = this.state;
+    const { currentType, countTextTest, videoSrc } = this.state;
 
     return (
       <div
@@ -212,6 +267,56 @@ class PopupNewContent extends Component {
                       ref="name"
                     />
                   </div>
+
+                  {currentType === "Video" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Video </label>
+                          <div className="custom-file">
+                            <input
+                              type="file"
+                              className="custom-file-input"
+                              onChange={this.videoSelectHandler}
+                              id="customFile"
+                              lang="en"
+                              accept="video/mp4,video/x-m4v,video/*"
+                            />
+                            <label className="custom-file-label" htmlFor="customFile">
+                              {this.state.nameFile !== ""
+                                ? this.state.nameFile
+                                : "Choose file"}
+                            </label>
+                          </div>
+                        </div>
+                        {videoSrc !== "" && (
+                          <Player>
+                            <source src={`${videoSrc}`} />
+                          </Player>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {currentType === "TextTest" && (
                     <div className="card">
                       <div className="card-header">Data of content</div>
@@ -271,7 +376,6 @@ class PopupNewContent extends Component {
                       </div>
                     </div>
                   )}
-
 
                   {currentType === "Text" && (
                     <div className="card">

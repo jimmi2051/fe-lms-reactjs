@@ -45,7 +45,7 @@ class TrainingDetail extends Component {
   handleGetTrainingById = id => {
     const payload = { id };
     const { getTrainingById } = this.props.action;
-    getTrainingById(payload, () => {});
+    getTrainingById(payload, () => { });
   };
 
   handleChangeContent = currentContent => {
@@ -128,9 +128,9 @@ class TrainingDetail extends Component {
                       return (
                         <li
                           key={index}
-                          // onClick={() => {
-                          //   this.handleChangeCourse(path);
-                          // }}
+                        // onClick={() => {
+                        //   this.handleChangeCourse(path);
+                        // }}
                         >
                           {path.courses[0].name} - Mark: {path.markForCourse}
                           <ul>
