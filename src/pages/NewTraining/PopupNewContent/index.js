@@ -61,6 +61,9 @@ class PopupNewContent extends Component {
     data: {},
     countTextTest: [1],
     videoSrc: "",
+    slideBackground: [],
+    listNameFile: [],
+    countQuestion: [[1]]
   };
   componentDidMount() { }
 
@@ -163,6 +166,49 @@ class PopupNewContent extends Component {
     this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
   };
 
+  handleSubmitSlide = () => {
+    const { currentType, countTextTest, fileToUpload } = this.state;
+    const { name, title, description } = this.refs;
+    let slideItems = [];
+    countTextTest.map(async (item, index) => {
+      const titleContent = this.refs[`titleSlide${item}`];
+      const contentSlide = this.refs[`contentSlide${item}`];
+      let url = "";
+      // Catch error without upload image
+      try {
+        let data = new FormData();
+        data.append("files", fileToUpload[index]);
+        await UploadFile(data)
+          .then(res => {
+            return res.json();
+          })
+          .then(result => {
+            let sliceResponse = result[0].url.split("/");
+            url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
+          });
+      }
+      catch{
+        url = "uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+      }
+      // Add slideItem to list 
+      slideItems.push({
+        title: titleContent.value,
+        content: contentSlide.value,
+        imgUrl: url
+      })
+      // Process with last element in Array
+      if (index === countTextTest.length - 1) {
+        const data = {
+          title: title.value,
+          description: description.value,
+          slideItems
+        };
+        this.setState({ data }, () => {
+          this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+        });
+      }
+    })
+  };
 
   handleSubmitCreate = () => {
     const { currentType } = this.state;
@@ -175,12 +221,27 @@ class PopupNewContent extends Component {
     if (currentType === "Video") {
       this.handleSubmitVideoNormal();
     }
+    if (currentType === "Slide") {
+      this.handleSubmitSlide();
+    }
   }
 
   handleAddMoreContent = () => {
     let { countTextTest } = this.state;
     countTextTest.push(countTextTest[countTextTest.length - 1] + 1);
     this.setState({ countTextTest });
+  }
+
+  handleAddMoreQuest = () => {
+    let { countQuestion } = this.state;
+    countQuestion.push([1]);
+    this.setState({ countQuestion });
+  }
+
+  handleAddMoreAnswer = (index) => {
+    let { countQuestion } = this.state;
+    countQuestion[index].push(countQuestion[index][countQuestion[index].length - 1] + 1);
+    this.setState({ countQuestion });
   }
 
   videoSelectHandler = e => {
@@ -203,9 +264,32 @@ class PopupNewContent extends Component {
     catch{ }
   };
 
+  slideSelectHander = e => {
+    try {
+      let files = e.target.files;
+      let { fileToUpload, slideBackground, countTextTest, listNameFile } = this.state;
+      const reader = new FileReader();
+      const file = files[0];
+      const url = reader.readAsDataURL(file);
+      const index = countTextTest.length - 1;
+      reader.onloadend = function (e) {
+        slideBackground[index] = [reader.result];
+        this.setState({
+          slideBackground
+        });
+      }.bind(this);
+      fileToUpload.push(files[0]);
+      listNameFile[index] = files[0].name
+      this.setState({ fileToUpload: fileToUpload, listNameFile });
+    }
+    catch{ }
+  }
+
+
+
   render() {
     const { isShow } = this.props;
-    const { currentType, countTextTest, videoSrc } = this.state;
+    const { currentType, countTextTest, videoSrc, listNameFile, slideBackground, countQuestion } = this.state;
 
     return (
       <div
@@ -356,7 +440,7 @@ class PopupNewContent extends Component {
                                   </div>
                                   <div className="form-group">
                                     <label>Content {item}: (*)</label>
-                                    <textarea class="form-control" rows="3" ref={`content${item}`} />
+                                    <textarea className="form-control" rows="3" ref={`content${item}`} />
                                   </div>
                                 </div>
                               )
@@ -372,6 +456,81 @@ class PopupNewContent extends Component {
                         </div>
                         <div className="form-group">
                           <button className="btn bg-root" onClick={this.handleAddMoreContent}>Add more content</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentType === "Slide" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="card">
+                          <div className="card-header">List slide</div>
+                          <div className="card-body">
+                            {countTextTest.length > 0 && countTextTest.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  <div className="form-group">
+                                    <label> Title for slide {item}: </label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Enter title ... "
+                                      ref={`titleSlide${item}`}
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Content {item}: (*)</label>
+                                    <textarea className="form-control" rows="3" ref={`contentSlide${item}`} />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Background Image {item}: </label>
+                                    <div className="custom-file">
+                                      <input
+                                        type="file"
+                                        className="custom-file-input"
+                                        onChange={this.slideSelectHander}
+                                        id="customFile"
+                                        lang="en"
+                                      />
+                                      <label className="custom-file-label" htmlFor="customFile">
+                                        {listNameFile.length > 0
+                                          ? listNameFile[index]
+                                          : "Choose file"}
+                                      </label>
+                                    </div>
+                                  </div>
+                                  {slideBackground.length > 0 && (
+                                    <div className="mt-3 text-center mb-3">
+                                      <img src={slideBackground[index]} alt="" />
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <button className="btn bg-root" onClick={this.handleAddMoreContent}>Add more slide</button>
                         </div>
                       </div>
                     </div>
@@ -410,6 +569,77 @@ class PopupNewContent extends Component {
                       </div>
                     </div>
                   )}
+
+                  {currentType === "Question" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="card">
+                          <div className="card-header">List questions</div>
+                          <div className="card-body">
+                            {countQuestion.length > 0 && countQuestion.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  <div className="form-group">
+                                    <label> Question {index + 1}: </label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Enter title ... "
+                                      ref={`titleQuestion${index + 1}`}
+                                    />
+                                  </div>
+                                  {
+                                    item.length > 0 && item.map((ans, indexAns) => {
+                                      return (
+                                        <>
+                                          <div className="form-group">
+                                            <label>Answer {ans}: (*)</label>
+                                            <textarea className="form-control" rows="2" ref={`contentAnswer${index + 1}${ans}`} />
+                                          </div>
+                                          <div className="form-group row">
+                                            <div className="col-xl-2">
+                                              <input type="checkbox" ref={`resultAnswer${index + 1}${ans}`} className="form-control" id="exampleCheck1" style={{marginTop: "8px"}} />
+                                            </div>
+                                            <label className="form-check-label col-xl-10" htmlFor="exampleCheck1">Correct Ans</label>
+                                          </div>
+                                        </>
+                                      )
+                                    })
+                                  }
+                                  <div className="form-group">
+                                    <button className="btn bg-root" onClick={() => this.handleAddMoreAnswer(index)}>Add more answer</button>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <button className="btn bg-root" onClick={this.handleAddMoreQuest}>Add more question</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               </div>
             </div>
