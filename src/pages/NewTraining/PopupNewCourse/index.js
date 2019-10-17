@@ -121,6 +121,7 @@ class PopupNewCourse extends Component {
                 <label>Description (*)</label>
                 <CKEditor
                   handleChangeDescription={this.handleChangeDescription}
+                  defaultData="Enter data in here..."
                 />
               </div>
               <div className="form-group">

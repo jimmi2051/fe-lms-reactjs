@@ -11,7 +11,7 @@ class Step1 extends Component {
     const file = e.target.files[0];
     const url = reader.readAsDataURL(file);
 
-    reader.onloadend = function(e) {
+    reader.onloadend = function (e) {
       this.setState({
         imgSrc: [reader.result]
       });
@@ -41,6 +41,7 @@ class Step1 extends Component {
             <label>Description (*)</label>
             <CKEditor
               handleChangeDescription={this.props.handleChangeDescription}
+              defaultData="Enter data in here..."
             />
           </div>
           <div className="form-group">

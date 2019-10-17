@@ -14,6 +14,7 @@ import AuthStorage from "utils/AuthStorage";
 import Select from "react-select";
 import PopupDetailContent from "pages/NewTraining/PopupDetailContent";
 import PopupNewContent from "pages/NewTraining/PopupNewContent";
+import { Link } from "react-router-dom";
 
 function mapStateToProps(state) {
   return {
@@ -60,7 +61,7 @@ class Step4 extends Component {
     isUpdateContent: false,
     isShowDetailContent: false,
     currentContent: {},
-    isShowNewContent: true
+    isShowNewContent: false
   };
   componentDidMount() {
     const { listCourseFitler, loadingListCourseFilter } = this.props.store;
@@ -208,6 +209,12 @@ class Step4 extends Component {
     this.setState({ isShowDetailContent: false });
   };
 
+  handleCloseNewContent = () => {
+    this.setState({
+      isShowNewContent:!this.state.isShowNewContent
+    })
+  }
+
   render() {
     const {
       listContentByModule,
@@ -238,6 +245,7 @@ class Step4 extends Component {
         {!loadingListContent && (
           <PopupNewContent
             isShow={isShowNewContent}
+            handleCloseNewContent={this.handleCloseNewContent}
             // currentModule={currentModule}
             // handleShowListContent={this.handleShowListContent_ver2}
             // handleAddContent={this.handleAddContent}
@@ -253,7 +261,7 @@ class Step4 extends Component {
             <button
               type="button"
               className="form-control btn bg-root"
-              onClick={this.handleShowPopup}
+              onClick={this.handleCloseNewContent}
             >
               Add new content
             </button>
@@ -382,9 +390,11 @@ class Step4 extends Component {
           </div>
         )}
         <div className="form-group col-xl-12">
+        <Link to="/admin/training">
           <button className="btn bg-root" style={{ width: "100%" }}>
             DONE
           </button>
+          </Link>
         </div>
       </div>
     );

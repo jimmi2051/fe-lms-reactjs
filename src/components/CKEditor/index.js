@@ -109,10 +109,8 @@ class CustomCKEditor extends Component {
       <CKEditor
         className="form-control"
         editor={ClassicEditor}
-        data="Enter your data in here ..."
-        config={{}}
+        data={this.props.defaultData}
         onInit={editor => {
-          console.log("editor.plugins.get", editor.plugins);
           editor.plugins.get("FileRepository").createUploadAdapter = loader => {
             return new MyUploadAdapter(loader);
           };
