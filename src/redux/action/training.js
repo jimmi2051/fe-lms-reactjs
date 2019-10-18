@@ -91,6 +91,7 @@ export const getTrainingById = (payload, next, nextErr) => {
             courses{
               name
               numberOfSection
+              description
               thumbnail{
                 name
                 url

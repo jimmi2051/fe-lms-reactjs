@@ -49,7 +49,7 @@ class Step1 extends Component {
             <div className="custom-file">
               <input
                 type="file"
-                class="custom-file-input"
+                className="custom-file-input"
                 onChange={this.handleSelectFile}
                 id="customFile"
                 lang="en"
@@ -60,12 +60,6 @@ class Step1 extends Component {
                   : "Choose file"}
               </label>
             </div>
-            {/* <input
-              type="file"
-              className="form-control-file"
-              placeholder="Enter training title here"
-              
-            /> */}
             {this.state.imgSrc !== "" && (
               <div className="mt-3 ">
                 <img src={this.state.imgSrc} alt="" />

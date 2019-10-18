@@ -9,6 +9,9 @@ import TextToTest from "h5p/TextToTest";
 import Question from "h5p/Question";
 import Slide from "h5p/Slide";
 import _ from "lodash";
+
+const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
+
 function mapStateToProps(state) {
   return {
     store: {
@@ -35,7 +38,8 @@ class TrainingDetail extends Component {
   state = {
     currentContent: {},
     currentCourse: {},
-    trainingPath: {}
+    trainingPath: {},
+    currentModule: {}
   };
   componentDidMount() {
     const { id } = this.props.match.params;
@@ -49,22 +53,28 @@ class TrainingDetail extends Component {
   };
 
   handleChangeContent = currentContent => {
-    this.setState({ currentContent });
+    this.setState({ currentContent, currentCourse: {}, currentModule: {} });
   };
 
-  // handleChangeCourse = currentCourse => {
-  //   this.setState({ currentCourse });
-  // };
+  handleChangeCourse = currentCourse => {
+    console.log("currentCourse", currentCourse)
+    this.setState({ currentCourse, currentContent: {}, currentModule: {} });
+  };
+
+  handleChangeModule = currentModule => {
+    console.log("currentCourse", currentModule)
+    this.setState({ currentModule, currentContent: {}, currentCourse: {} });
+  };
 
   render() {
-    const { currentContent } = this.state;
+    const { currentContent, currentCourse, currentModule } = this.state;
 
     const { training, loadingTraining } = this.props.store;
 
     if (loadingTraining) {
       return (
         <div className="page-header">
-          <Header titleHeader="Course Page" />
+          <Header titleHeader="Training Detail Page" />
           <div className="container">
             <div className="row">
               <div className="col-12">
@@ -92,7 +102,7 @@ class TrainingDetail extends Component {
 
     return (
       <div className="page-header">
-        <Header titleHeader="Course Page" />
+        <Header titleHeader={`Training "${detailTraining.name}" Page `} />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -103,7 +113,7 @@ class TrainingDetail extends Component {
                       <i className="fa fa-home"></i> Home
                     </a>
                   </li>
-                  <li>Training</li>
+                  <li>{`Training "${detailTraining.name}"`} </li>
                 </ul>
               </div>
             </div>
@@ -111,36 +121,31 @@ class TrainingDetail extends Component {
 
           <div className="row">
             <div className="col-xl-4">
-              <div className="card text-white bg-primary mb-3">
-                <div className="card-header">
-                  TRAINING {detailTraining.name}
-                  <div
-                    className="text"
-                    dangerouslySetInnerHTML={{
-                      __html: detailTraining.description
-                    }}
-                  />
-                </div>
+              <div className="card mb-3">
                 <div className="card-body">
                   <h5 className="card-title">Learning Path</h5>
                   <ul className="learning-path">
                     {detailTraining.learningpaths.map((path, index) => {
                       return (
-                        <li
-                          key={index}
-                        // onClick={() => {
-                        //   this.handleChangeCourse(path);
-                        // }}
-                        >
-                          {path.courses[0].name} - Mark: {path.markForCourse}
-                          <ul>
+                        <>
+                          <li
+                            key={index}
+                            onClick={() => { this.handleChangeCourse(path.courses[0]) }}
+                          >
+                            {path.courses[0].name} - Mark: {path.markForCourse}
+                          </li>
+                          <ul style={{paddingLeft:"10px"}}>
                             {path.courses[0].relationcoursemodules &&
                               path.courses[0].relationcoursemodules.map(
                                 (itemCourse, indexCourse) => {
                                   return (
-                                    <li key={indexCourse}>
-                                      {itemCourse.modules[0].name}
-                                      <ul>
+                                    <>
+                                      <li key={indexCourse} onClick={() => {
+                                        this.handleChangeModule(itemCourse.modules[0])
+                                      }}>
+                                        {itemCourse.modules[0].name}
+                                      </li>
+                                      <ul style={{ paddingLeft: "20px" }}>
                                         {itemCourse.modules[0].contents &&
                                           itemCourse.modules[0].contents.map(
                                             (itemContent, indexContent) => {
@@ -159,12 +164,12 @@ class TrainingDetail extends Component {
                                             }
                                           )}
                                       </ul>
-                                    </li>
+                                    </>
                                   );
                                 }
                               )}
                           </ul>
-                        </li>
+                        </>
                       );
                     })}
                   </ul>
@@ -173,6 +178,52 @@ class TrainingDetail extends Component {
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
+                {_.isEmpty(currentContent) && _.isEmpty(currentCourse) && _.isEmpty(currentModule) && (
+                  <>
+                    <div
+                      className="text"
+                      dangerouslySetInnerHTML={{
+                        __html: detailTraining.description
+                      }}
+                    />
+                    <div className="">
+                      Level of training: {detailTraining.level}
+                    </div>
+                    <div className="">
+                      Total courses: {detailTraining.learningpaths.length}
+                    </div>
+                  </>
+                )}
+                {!_.isEmpty(currentCourse) && (
+                  <div className="course-detail">
+                    {currentCourse.name}
+                    <div
+                        className="text"
+                        dangerouslySetInnerHTML={{
+                          __html: currentCourse.description
+                        }}
+                      />
+                    {!_.isEmpty(currentCourse.thumbnail) && (
+                        <img src={`${REACT_APP_URL_API}${currentCourse.thumbnail.url}`} alt="#" />
+                      )}
+                  </div>
+                )}
+                {
+                  !_.isEmpty(currentModule) && (
+                    <div className="module-detail">
+                      <h2>{currentModule.name}</h2>
+                      <div
+                        className="text"
+                        dangerouslySetInnerHTML={{
+                          __html: currentModule.description
+                        }}
+                      />
+                      {!_.isEmpty(currentModule.thumbnail) && (
+                        <img src={`${REACT_APP_URL_API}${currentModule.thumbnail.url}`} alt="#" />
+                      )}
+                    </div>
+                  )
+                }
                 {!_.isEmpty(currentContent) && (
                   <div>
                     <p className="text-success">

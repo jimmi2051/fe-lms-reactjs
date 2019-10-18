@@ -52,38 +52,38 @@ const mapDispatchToProps = dispatch => {
 
 class NewTraining extends Component {
   state = {
-    step: 1,
+    step: 2,
     isShow: false,
     description: "",
     fileToUpload: [],
     createdModule: false,
     createdCourse: false
   };
-  componentDidMount() {}
+  componentDidMount() { }
   //#region Handle redux
   //Handle get list module
   handleGetListModule = () => {
     const payload = {};
     const { getModule } = this.props.action;
-    getModule(payload, () => {});
+    getModule(payload, () => { });
   };
   //Handle get list Course
   handleGetListCourse = () => {
     const payload = {};
     const { getCourse } = this.props.action;
-    getCourse(payload, () => {});
+    getCourse(payload, () => { });
   };
 
   handleGetListCourseByUser = userId => {
     const payload = { id: userId };
     const { getCourseByUser } = this.props.action;
-    getCourseByUser(payload, () => {});
+    getCourseByUser(payload, () => { });
   };
 
   handleGetListModuleByUser = userId => {
     const payload = { id: userId };
     const { getModuleByUser } = this.props.action;
-    getModuleByUser(payload, () => {});
+    getModuleByUser(payload, () => { });
   };
 
   //Must improve level without hardcode
@@ -177,7 +177,7 @@ class NewTraining extends Component {
   render() {
     return (
       <div className="page-header">
-        <Header titleHeader="Course Page" />
+        <Header titleHeader="New Training Page" />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -188,7 +188,7 @@ class NewTraining extends Component {
                       <i className="fa fa-home"></i> Home
                     </a>
                   </li>
-                  <li>Courses</li>
+                  <li>Trainings</li>
                 </ul>
               </div>
             </div>
@@ -202,7 +202,6 @@ class NewTraining extends Component {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title">Step by step</h5>
-                  {/* <p className="card-text"> */}
                   <ul className="card-text">
                     <li className={`${this.state.step === 1 && "bg-root"}`}>
                       Description
@@ -217,7 +216,6 @@ class NewTraining extends Component {
                       Activites
                     </li>
                   </ul>
-                  {/* </p> */}
                 </div>
               </div>
             </div>

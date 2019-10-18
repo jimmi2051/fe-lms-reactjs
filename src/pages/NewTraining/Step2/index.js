@@ -106,7 +106,7 @@ class Step2 extends Component {
   };
   handleShowPopup = () => {
     const { isShow } = this.state;
-    this.setState({ isShow: !isShow });
+    this.setState({ isShow: !isShow, createdCourse:false });
   };
 
   handleShowPopupListCourse = () => {

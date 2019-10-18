@@ -102,7 +102,7 @@ class PopupNewContent extends Component {
     });
   };
   //#endregion
-  
+
 
   //#region Handle submit button create new content
 
@@ -283,7 +283,7 @@ class PopupNewContent extends Component {
     this.setState({ content }, () => { });
   };
 
-  handleResetForm = () =>{
+  handleResetForm = () => {
     this.setState({
       description: "",
       fileToUpload: [],
@@ -418,327 +418,334 @@ class PopupNewContent extends Component {
                     <h5 className="text text-success">Created successfully content</h5>
                   </div>
                 )}
-                
-                  <form className="col-xl-12" ref={form => (this.form = form)}>
-                    <div className="form-group">
-                      <label>Type of Content: </label>
-                      <Select
-                        // value={selectedOption}
-                        className="basic-single"
-                        classNamePrefix="select"
-                        isSearchable={true}
-                        onChange={this.handleChange}
-                        options={typeContent}
-                        defaultValue={typeContent[0]}
-                        isClearable={true}
-                        noOptionsMessage={inputValue => "No content found"}
-                        placeholder="-- Select content --"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Name of content (*)</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter name of content "
-                        ref="name"
-                      />
-                    </div>
 
-                    {currentType === "Video" && (
-                      <div className="card">
-                        <div className="card-header">Data of content</div>
-                        <div className="card-body">
-                          <div className="form-group">
-                            <label>Title: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter title ... "
-                              ref="title"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Description: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter description ... "
-                              ref="description"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Video </label>
-                            <div className="custom-file">
-                              <input
-                                type="file"
-                                className="custom-file-input"
-                                onChange={this.videoSelectHandler}
-                                id="customFile"
-                                lang="en"
-                                accept="video/mp4,video/x-m4v,video/*"
-                              />
-                              <label className="custom-file-label" htmlFor="customFile">
-                                {this.state.nameFile !== ""
-                                  ? this.state.nameFile
-                                  : "Choose file"}
-                              </label>
-                            </div>
-                          </div>
-                          {videoSrc !== "" && (
-                            <Player>
-                              <source src={`${videoSrc}`} />
-                            </Player>
-                          )}
+                <form className="col-xl-12" ref={form => (this.form = form)}>
+                  <div className="form-group">
+                    <label>Type of Content: </label>
+                    <Select
+                      // value={selectedOption}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      onChange={this.handleChange}
+                      options={typeContent}
+                      defaultValue={typeContent[0]}
+                      isClearable={true}
+                      noOptionsMessage={inputValue => "No content found"}
+                      placeholder="-- Select content --"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Name of content (*)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter name of content "
+                      ref="name"
+                    />
+                  </div>
+
+                  {currentType === "Video" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
                         </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Video </label>
+                          <div className="custom-file">
+                            <input
+                              type="file"
+                              className="custom-file-input"
+                              onChange={this.videoSelectHandler}
+                              id="customFile"
+                              lang="en"
+                              accept="video/mp4,video/x-m4v,video/*"
+                            />
+                            <label className="custom-file-label" htmlFor="customFile">
+                              {this.state.nameFile !== ""
+                                ? this.state.nameFile
+                                : "Choose file"}
+                            </label>
+                          </div>
+                        </div>
+                        {videoSrc !== "" && (
+                          <Player>
+                            <source src={`${videoSrc}`} />
+                          </Player>
+                        )}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {currentType === "TextTest" && (
-                      <div className="card">
-                        <div className="card-header">Data of content</div>
-                        <div className="card-body">
-                          <div className="form-group">
-                            <label>Title: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter title ... "
-                              ref="title"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Description: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter description ... "
-                              ref="description"
-                            />
-                          </div>
-                          <div className="card">
-                            <div className="card-header">List content</div>
-                            <div className="card-body">
-                              {countTextTest.length > 0 && countTextTest.map((item, index) => {
-                                return (
-                                  <div key={index}>
-                                    <div className="form-group">
-                                      <label> Title for content {item}: </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Enter title ... "
-                                        ref={`titleContent${item}`}
-                                      />
-                                    </div>
-                                    <div className="form-group">
-                                      <label>Content {item}: (*)</label>
-                                      <textarea className="form-control" rows="3" ref={`content${item}`} />
-                                    </div>
+                  {currentType === "TextTest" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="card">
+                          <div className="card-header">List content</div>
+                          <div className="card-body">
+                            {countTextTest.length > 0 && countTextTest.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  <div className="form-group">
+                                    <label> Title for content {item}: </label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Enter title ... "
+                                      ref={`titleContent${item}`}
+                                    />
                                   </div>
-                                )
-                              })}
-                            </div>
+                                  <div className="form-group">
+                                    <label>Content {item}: (*)</label>
+                                    <textarea className="form-control" rows="3" ref={`content${item}`} />
+                                  </div>
+                                </div>
+                              )
+                            })}
                           </div>
-                          <div className="form-group">
-                            <small className="form-text text-muted">
-                              Note: The right answers, in asterix like *correctWord*.
+                        </div>
+                        <div className="form-group">
+                          <small className="form-text text-muted">
+                            Note: The right answers, in asterix like *correctWord*.
                                 <br />
-                              Example: Hello, My name *is* Thanh.
+                            Example: Hello, My name *is* Thanh.
                         </small>
-                          </div>
-                          <div className="form-group">
-                            <button className="btn bg-root" onClick={this.handleAddMoreContent}>Add more content</button>
-                          </div>
+                        </div>
+                        <div className="form-group">
+                          <button className="btn bg-root" onClick={this.handleAddMoreContent}>Add more content</button>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {currentType === "Slide" && (
-                      <div className="card">
-                        <div className="card-header">Data of content</div>
-                        <div className="card-body">
-                          <div className="form-group">
-                            <label>Title: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter title ... "
-                              ref="title"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Description: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter description ... "
-                              ref="description"
-                            />
-                          </div>
-                          <div className="card">
-                            <div className="card-header">List slide</div>
-                            <div className="card-body">
-                              {countTextTest.length > 0 && countTextTest.map((item, index) => {
-                                return (
-                                  <div key={index}>
-                                    <div className="form-group">
-                                      <label> Title for slide {item}: </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Enter title ... "
-                                        ref={`titleSlide${item}`}
-                                      />
-                                    </div>
-                                    <div className="form-group">
-                                      <label>Content {item}: (*)</label>
-                                      <textarea className="form-control" rows="3" ref={`contentSlide${item}`} />
-                                    </div>
-                                    <div className="form-group">
-                                      <label>Background Image {item}: </label>
-                                      <div className="custom-file">
-                                        <input
-                                          type="file"
-                                          className="custom-file-input"
-                                          onChange={this.slideSelectHander}
-                                          id="customFile"
-                                          lang="en"
-                                        />
-                                        <label className="custom-file-label" htmlFor="customFile">
-                                          {listNameFile.length > 0
-                                            ? listNameFile[index]
-                                            : "Choose file"}
-                                        </label>
-                                      </div>
-                                    </div>
-                                    {slideBackground.length > 0 && (
-                                      <div className="mt-3 text-center mb-3">
-                                        <img src={slideBackground[index]} alt="" />
-                                      </div>
-                                    )}
+                  {currentType === "Slide" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="card">
+                          <div className="card-header">List slide</div>
+                          <div className="card-body">
+                            {countTextTest.length > 0 && countTextTest.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  <div className="form-group">
+                                    <label> Title for slide {item}: </label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Enter title ... "
+                                      ref={`titleSlide${item}`}
+                                    />
                                   </div>
-                                )
-                              })}
-                            </div>
-                          </div>
-                          <div className="form-group">
-                            <button className="btn bg-root" onClick={this.handleAddMoreContent}>Add more slide</button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {currentType === "Text" && (
-                      <div className="card">
-                        <div className="card-header">Data of content</div>
-                        <div className="card-body">
-                          <div className="form-group">
-                            <label>Title: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter title ... "
-                              ref="title"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Description: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter description ... "
-                              ref="description"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Content: (*)</label>
-                            <CKEditor
-                              handleChangeDescription={
-                                this.handleChangeDescription
-                              }
-                              defaultData="Enter data in here..."
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {currentType === "Question" && (
-                      <div className="card">
-                        <div className="card-header">Data of content</div>
-                        <div className="card-body">
-                          <div className="form-group">
-                            <label>Title: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter title ... "
-                              ref="title"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Description: (*)</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter description ... "
-                              ref="description"
-                            />
-                          </div>
-                          <div className="card">
-                            <div className="card-header">List questions</div>
-                            <div className="card-body">
-                              {countQuestion.length > 0 && countQuestion.map((item, index) => {
-                                return (
-                                  <div key={index}>
-                                    {errorQuestion !== "" && errorQuestion === index && (
-                                      <div className="form-group">
-                                        <label className="text-danger">Please choose one correct answer.</label>
-                                      </div>
-                                    )}
-                                    <div className="form-group">
-                                      <label> Question {index + 1}: </label>
+                                  <div className="form-group">
+                                    <label>Content {item}: (*)</label>
+                                    <textarea className="form-control" rows="3" ref={`contentSlide${item}`} />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Background Image {item}: </label>
+                                    <div className="custom-file">
                                       <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Enter title ... "
-                                        ref={`titleQuestion${index + 1}`}
+                                        type="file"
+                                        className="custom-file-input"
+                                        onChange={this.slideSelectHander}
+                                        id="customFile"
+                                        lang="en"
                                       />
+                                      <label className="custom-file-label" htmlFor="customFile">
+                                        {listNameFile.length > 0
+                                          ? listNameFile[index]
+                                          : "Choose file"}
+                                      </label>
                                     </div>
-                                    {
-                                      item.length > 0 && item.map((ans, indexAns) => {
-                                        return (
-                                          <>
-                                            <div className="form-group">
-                                              <label>Answer {ans}: (*)</label>
-                                              <textarea className="form-control" rows="2" ref={`contentAnswer${index + 1}${ans}`} />
-                                            </div>
-                                            <div className="form-check">
-                                              <input onClick={this.handleResetError} type="checkbox" ref={`resultAnswer${index + 1}${ans}`} />
-                                              <label className={`${errorQuestion !== "" && errorQuestion === index ? "text-danger" : ""} form-check-label`}>
-                                                Correct Answer
+                                  </div>
+                                  {slideBackground.length > 0 && (
+                                    <div className="mt-3 text-center mb-3">
+                                      <img src={slideBackground[index]} alt="" />
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <button className="btn bg-root" type="button" onClick={(e) => {
+                            e.preventDefault();
+                            this.handleAddMoreContent();
+                          }}>Add more slide</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentType === "Text" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Content: (*)</label>
+                          <CKEditor
+                            handleChangeDescription={
+                              this.handleChangeDescription
+                            }
+                            defaultData="Enter data in here..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentType === "Question" && (
+                    <div className="card">
+                      <div className="card-header">Data of content</div>
+                      <div className="card-body">
+                        <div className="form-group">
+                          <label>Title: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter title ... "
+                            ref="title"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Description: (*)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter description ... "
+                            ref="description"
+                          />
+                        </div>
+                        <div className="card">
+                          <div className="card-header">List questions</div>
+                          <div className="card-body">
+                            {countQuestion.length > 0 && countQuestion.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  {errorQuestion !== "" && errorQuestion === index && (
+                                    <div className="form-group">
+                                      <label className="text-danger">Please choose one correct answer.</label>
+                                    </div>
+                                  )}
+                                  <div className="form-group">
+                                    <label> Question {index + 1}: </label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Enter title ... "
+                                      ref={`titleQuestion${index + 1}`}
+                                    />
+                                  </div>
+                                  {
+                                    item.length > 0 && item.map((ans, indexAns) => {
+                                      return (
+                                        <>
+                                          <div className="form-group">
+                                            <label>Answer {ans}: (*)</label>
+                                            <textarea className="form-control" rows="2" ref={`contentAnswer${index + 1}${ans}`} />
+                                          </div>
+                                          <div className="form-check">
+                                            <input onClick={this.handleResetError} type="checkbox" ref={`resultAnswer${index + 1}${ans}`} />
+                                            <label className={`${errorQuestion !== "" && errorQuestion === index ? "text-danger" : ""} form-check-label`}>
+                                              Correct Answer
                                             </label>
-                                            </div>
-                                          </>
-                                        )
-                                      })
-                                    }
-                                    <div className="form-group">
-                                      <button className="btn bg-root" onClick={() => this.handleAddMoreAnswer(index)}>Add more answer</button>
-                                    </div>
+                                          </div>
+                                        </>
+                                      )
+                                    })
+                                  }
+                                  <div className="form-group">
+                                    <button className="btn bg-root" type="button" onClick={(e) => {
+                                      e.preventDefault();
+                                      this.handleAddMoreAnswer(index);}}>Add more answer</button>
                                   </div>
-                                )
-                              })}
-                            </div>
-                          </div>
-                          <div className="form-group">
-                            <button className="btn bg-root" onClick={this.handleAddMoreQuest}>Add more question</button>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
+                        <div className="form-group">
+                          <button className="btn bg-root" type="button" onClick={(e)=>{
+                            e.preventDefault();
+                            this.handleAddMoreQuest()}}>Add more question</button>
+                        </div>
                       </div>
-                    )}
-                  </form>
+                    </div>
+                  )}
+                </form>
               </div>
             </div>
             <div className="modal-footer">

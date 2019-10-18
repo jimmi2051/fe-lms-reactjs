@@ -65,6 +65,11 @@ class PopupNewModule extends Component {
       thumbnail,
       AuthStorage.userInfo
     );
+    this.form.reset();
+    this.setState({description: "",
+    fileToUpload: [],
+    nameFile: "",
+    imgSrc: ""})
     this.props.handleShowPopup();
   };
 
@@ -108,6 +113,7 @@ class PopupNewModule extends Component {
               </button>
             </div>
             <div className="modal-body">
+            <form ref={form => (this.form = form)}>
               <div className="form-group">
                 <label>Title (*)</label>
                 <input
@@ -155,7 +161,9 @@ class PopupNewModule extends Component {
                   Add
                 </button>
               </div>
+              </form>
             </div>
+            
             <div className="modal-footer">
               <button
                 type="button"
