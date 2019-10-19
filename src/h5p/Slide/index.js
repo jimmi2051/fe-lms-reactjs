@@ -8,19 +8,29 @@ class Slider extends Component {
   render() {
     const { slideItem } = this.props;
     return (
-      <Carousel>
-        {slideItem &&
-          slideItem.length > 0 &&
-          slideItem.map((item, index) => {
-            return (
-              <div key={index}>
-                <img src={`${REACT_APP_URL_API}${item.imgUrl}`} alt="" />
-                <p className="legend">{item.title}</p>
-                <p className="legend">{item.content}</p>
-              </div>
-            );
-          })}
-      </Carousel>
+      <div className="content-slide-normal">
+        <h5 className="content-slide-normal__title">Content: </h5>
+        <Carousel useKeyboardArrows={true} dynamicHeight={true} showThumbs={false} showIndicators={false}>
+          {slideItem &&
+            slideItem.length > 0 &&
+            slideItem.map((item, index) => {
+              return (
+                <div key={index} className="slide-item row justify-content-center"
+                  style={{
+                    backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
+                    /*`url(${props.backendDomain +
+                      slide['imgBackgroundPath']['url']})`*/
+                  }}
+                >
+                  <div className="slide-item-content col-xl-10">
+                    <h5 className="pt-3">{item.title}</h5>
+                    <p className="">{item.content}</p>
+                  </div>
+                </div>
+              );
+            })}
+        </Carousel>
+      </div>
     );
   }
 }

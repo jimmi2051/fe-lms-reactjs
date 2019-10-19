@@ -3,6 +3,8 @@
 @import "./elements/modal";
 @import "./elements/list";
 @import "./elements/image";
+@import "./elements/spinner";
+@import "./elements/carousel";
 
 @import "./components/card";
 @import "./components/header";
@@ -10,3 +12,4 @@
 @import "./pages/training.scss";
 
 @import "~video-react/styles/scss/video-react";
+@import '~react-simple-tree-menu/dist/main';

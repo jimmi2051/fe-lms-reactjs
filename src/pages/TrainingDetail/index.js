@@ -9,7 +9,10 @@ import TextToTest from "h5p/TextToTest";
 import Question from "h5p/Question";
 import Slide from "h5p/Slide";
 import _ from "lodash";
-
+import { withRouter } from "react-router";
+import TreeMenu from "react-simple-tree-menu";
+import Loading from "components/Loading";
+import moment from "moment";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -39,11 +42,21 @@ class TrainingDetail extends Component {
     currentContent: {},
     currentCourse: {},
     trainingPath: {},
-    currentModule: {}
+    currentModule: {},
+    initiallyOpenProperties: [],
   };
   componentDidMount() {
     const { id } = this.props.match.params;
     this.handleGetTrainingById(id);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { training, loadingTraining } = nextProps.store;
+    if (!loadingTraining &&
+      !_.isEqual(this.props.store.training, training) && _.isEmpty(training.data.training)
+    ) {
+      this.props.history.push("/admin/training")
+    }
   }
 
   handleGetTrainingById = id => {
@@ -52,19 +65,82 @@ class TrainingDetail extends Component {
     getTrainingById(payload, () => { });
   };
 
-  handleChangeContent = currentContent => {
-    this.setState({ currentContent, currentCourse: {}, currentModule: {} });
+  handleChangeContent = currentContentChoosen => {
+    let { currentContent } = this.state;
+    if (_.isEqual(currentContent, currentContentChoosen)) {
+      this.setState({ currentContent: {} })
+    }
+    else {
+      this.setState({ currentContent: currentContentChoosen });
+    }
   };
 
-  handleChangeCourse = currentCourse => {
-    console.log("currentCourse", currentCourse)
-    this.setState({ currentCourse, currentContent: {}, currentModule: {} });
+  handleChangeCourse = currentCourseChoosen => {
+    let { currentCourse } = this.state;
+    if (_.isEqual(currentCourse, currentCourseChoosen)) {
+      this.setState({ currentCourse: {} })
+    }
+    else {
+      this.setState({ currentCourse: currentCourseChoosen });
+    }
   };
 
-  handleChangeModule = currentModule => {
-    console.log("currentCourse", currentModule)
-    this.setState({ currentModule, currentContent: {}, currentCourse: {} });
+  handleChangeModule = currentModuleChoosen => {
+    let { currentModule } = this.state;
+    if (_.isEqual(currentModule, currentModuleChoosen)) {
+      this.setState({ currentModule: {} })
+    }
+    else {
+      this.setState({ currentModule: currentModuleChoosen });
+    }
   };
+
+  processDataToListMenu = (training) => {
+    let listMenu = [];
+    training.learningpaths.map((path, index) => {
+      let menuLv1 = {}
+      menuLv1.key = `first-level-node-${index + 1}`;
+      menuLv1.label = `${path.courses[0].name}`;
+      menuLv1.value = path.courses[0];
+      menuLv1.nodes = [];
+      path.courses[0].relationcoursemodules.map((itemCourse, indexCourse) => {
+        let menuLv2 = {}
+        menuLv2.key = `second-level-node-${indexCourse + 1}`;
+        menuLv2.label = itemCourse.modules[0].name
+        menuLv2.value = itemCourse.modules[0];
+        menuLv2.nodes = []
+        itemCourse.modules[0].contents.map((itemContent, indexContent) => {
+          let menuLv3 = {}
+          menuLv3.key = `third-level-node-${indexContent + 1}`;
+          menuLv3.label = itemContent.name;
+          menuLv3.value = itemContent
+          menuLv3.nodes = []
+          menuLv2.nodes.push(menuLv3);
+        })
+        menuLv1.nodes.push(menuLv2);
+      })
+      listMenu.push(menuLv1);
+    })
+    return listMenu;
+  }
+
+  handeSelectMenu = (item) => {
+    if (item.level === 0) {
+      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {} })
+    }
+    if (item.level === 1) {
+      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {} })
+    }
+    if (item.level === 2) {
+      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value })
+    }
+  }
+
+  resetTraining = () => {
+    this.setState({
+      currentCourse: {}, currentModule: {}, currentContent: {}
+    })
+  }
 
   render() {
     const { currentContent, currentCourse, currentModule } = this.state;
@@ -83,26 +159,30 @@ class TrainingDetail extends Component {
                     <li>
                       <a href="#">
                         <i className="fa fa-home"></i> Home
-                      </a>
+                    </a>
                     </li>
                     <li>Training</li>
                   </ul>
                 </div>
               </div>
               <div className="col-12">
-                <h4 className="alert bg-root">Loading...</h4>
+                <Loading classOption="align-center-spinner" />
               </div>
             </div>
           </div>
         </div>
       );
     }
-
     const detailTraining = training.data.training;
+
+    if (_.isEmpty(detailTraining)) {
+      return (<></>)
+    }
+    const listMenu = this.processDataToListMenu(detailTraining);
 
     return (
       <div className="page-header">
-        <Header titleHeader={`Training "${detailTraining.name}" Page `} />
+        <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -113,7 +193,9 @@ class TrainingDetail extends Component {
                       <i className="fa fa-home"></i> Home
                     </a>
                   </li>
-                  <li>{`Training "${detailTraining.name}"`} </li>
+                  <li>
+                    <a href="" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -124,96 +206,74 @@ class TrainingDetail extends Component {
               <div className="card mb-3">
                 <div className="card-body">
                   <h5 className="card-title">Learning Path</h5>
-                  <ul className="learning-path">
-                    {detailTraining.learningpaths.map((path, index) => {
-                      return (
-                        <>
-                          <li
-                            key={index}
-                            onClick={() => { this.handleChangeCourse(path.courses[0]) }}
-                          >
-                            {path.courses[0].name} - Mark: {path.markForCourse}
-                          </li>
-                          <ul style={{paddingLeft:"10px"}}>
-                            {path.courses[0].relationcoursemodules &&
-                              path.courses[0].relationcoursemodules.map(
-                                (itemCourse, indexCourse) => {
-                                  return (
-                                    <>
-                                      <li key={indexCourse} onClick={() => {
-                                        this.handleChangeModule(itemCourse.modules[0])
-                                      }}>
-                                        {itemCourse.modules[0].name}
-                                      </li>
-                                      <ul style={{ paddingLeft: "20px" }}>
-                                        {itemCourse.modules[0].contents &&
-                                          itemCourse.modules[0].contents.map(
-                                            (itemContent, indexContent) => {
-                                              return (
-                                                <li
-                                                  key={indexContent}
-                                                  onClick={() =>
-                                                    this.handleChangeContent(
-                                                      itemContent
-                                                    )
-                                                  }
-                                                >
-                                                  {itemContent.name}
-                                                </li>
-                                              );
-                                            }
-                                          )}
-                                      </ul>
-                                    </>
-                                  );
-                                }
-                              )}
-                          </ul>
-                        </>
-                      );
-                    })}
-                  </ul>
+                  {listMenu.length > 0 && (<TreeMenu
+                    data={listMenu}
+                    // initialOpenNodes={this.state.initiallyOpenProperties}
+                    hasSearch={true}
+                    onClickItem={this.handeSelectMenu}
+                  />)}
                 </div>
               </div>
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
                 {_.isEmpty(currentContent) && _.isEmpty(currentCourse) && _.isEmpty(currentModule) && (
-                  <>
+                  <div className="detail-training">
+                    <h4 className="t-description">Descrption: </h4>
                     <div
-                      className="text"
+                      className="description pl-2"
                       dangerouslySetInnerHTML={{
                         __html: detailTraining.description
                       }}
                     />
-                    <div className="">
-                      Level of training: {detailTraining.level}
+                    <h4 className="t-level">Level: </h4>
+                    <div className="level pl-2">
+                      {detailTraining.level !== "" && (
+                        () => {
+                          for (let i = 0; i < parseInt(detailTraining.level); i++) {
+                            return (
+                              <span className="fa fa-star checked"></span>
+                            )
+                          }
+                        })()
+                      }
                     </div>
-                    <div className="">
-                      Total courses: {detailTraining.learningpaths.length}
+                    <h4 className="t-total-course">Total courses:</h4>
+                    <div className="total-course pl-2">
+                      {detailTraining.learningpaths.length}
                     </div>
-                  </>
+                    <h4 className="t-created-date">Created At: </h4>
+                    <div className="created-date pl-2">
+                      {moment(detailTraining.createdAt).format(
+                        "MMM. D, YYYY"
+                      )}
+                    </div>
+                    <h4 className="t-author">Author: </h4>
+                    <div className="author pl-2">{detailTraining.users[0].firstName} {detailTraining.users[0].lastName}</div>
+                  </div>
                 )}
                 {!_.isEmpty(currentCourse) && (
-                  <div className="course-detail">
-                    {currentCourse.name}
+                  <div className="detail-course">
+                    <h4 className="detail-course-name">{currentCourse.name}</h4>
+                    <h5>Description: </h5>
                     <div
-                        className="text"
-                        dangerouslySetInnerHTML={{
-                          __html: currentCourse.description
-                        }}
-                      />
+                      className="detail-course-description"
+                      dangerouslySetInnerHTML={{
+                        __html: currentCourse.description
+                      }}
+                    />
                     {!_.isEmpty(currentCourse.thumbnail) && (
-                        <img src={`${REACT_APP_URL_API}${currentCourse.thumbnail.url}`} alt="#" />
-                      )}
+                      <img src={`${REACT_APP_URL_API}${currentCourse.thumbnail.url}`} alt="#" />
+                    )}
                   </div>
                 )}
                 {
                   !_.isEmpty(currentModule) && (
-                    <div className="module-detail">
-                      <h2>{currentModule.name}</h2>
+                    <div className="detail-module">
+                      <h4 className="detail-module-name">{currentModule.name}</h4>
+                      <h5>Description: </h5>
                       <div
-                        className="text"
+                        className="detail-module-description"
                         dangerouslySetInnerHTML={{
                           __html: currentModule.description
                         }}
@@ -225,13 +285,17 @@ class TrainingDetail extends Component {
                   )
                 }
                 {!_.isEmpty(currentContent) && (
-                  <div>
-                    <p className="text-success">
+                  <div className="detail-content">
+                    <h4 className="detail-content-title">
                       {currentContent.relationData.data.title}
-                    </p>
-                    <p className="text-success">
-                      {currentContent.relationData.data.description}
-                    </p>
+                    </h4>
+                    <h5>Description: </h5>
+                    <div
+                        className="detail-content-description"
+                        dangerouslySetInnerHTML={{
+                          __html: currentContent.relationData.data.description
+                        }}
+                      />
                     {currentContent.type === "Video" && (
                       <VideoNormal
                         src={
@@ -258,8 +322,6 @@ class TrainingDetail extends Component {
                     )}
                     {currentContent.type === "Slide" && (
                       <Slide
-                        // question={currentContent.relationData.data.question}
-                        // answer={currentContent.relationData.data.answer}
                         slideItem={currentContent.relationData.data.slideItems}
                       />
                     )}
@@ -277,4 +339,4 @@ class TrainingDetail extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TrainingDetail);
+)(withRouter(TrainingDetail));

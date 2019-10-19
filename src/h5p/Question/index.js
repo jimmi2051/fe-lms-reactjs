@@ -31,8 +31,11 @@ class Question extends Component {
         check = false;
       }
     });
-    if (check) {
+    if (check && listAnswer.length>0) {
       this.setState({ result: "You're correct.", status: 1 });
+    }
+    else{
+      this.setState({ result: "You're wrong.", status: 0 });
     }
   };
   render() {

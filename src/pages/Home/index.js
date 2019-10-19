@@ -21,7 +21,12 @@ const mapDispatchToProps = dispatch => {
 class HomePage extends Component {
   componentDidMount() {}
   render() {
-    return <Header />;
+    return (
+    <>
+    <Header />;
+   
+    </>
+    )
   }
 }
 

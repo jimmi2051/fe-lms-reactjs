@@ -5,3 +5,15 @@
     }
   }
 }
+.tree-item-group
+{
+  border-top: 1px solid #ccc!important;
+  .tree-item{
+    .toggle-icon{
+      display:inline-block;
+    }
+    &--active{
+      background: #19c880;
+    }
+  }
+}

@@ -80,6 +80,7 @@ export const getTrainingById = (payload, next, nextErr) => {
           description
           numberOfStudent
           level
+          createdAt
           thumbnail{
             name
             url
@@ -121,6 +122,11 @@ export const getTrainingById = (payload, next, nextErr) => {
                 }
               }
             }
+          }
+        	users{
+            id
+            firstName
+            lastName
           }
         }
       }`,
