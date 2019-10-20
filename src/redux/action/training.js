@@ -170,3 +170,16 @@ export const getTrainingByCategory = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getAllTraining = (payload, next, nextErr) => {
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `categorytrainings`,
+      beforeCallType: "GET_ALL_TRAINING_REQUEST",
+      successType: "GET_ALL_TRAINING_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  }
+}

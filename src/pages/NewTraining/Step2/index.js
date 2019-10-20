@@ -116,6 +116,11 @@ class Step2 extends Component {
 
   handleStepTwo = () => {
     const { listCourseChoosen_ver2 } = this.state;
+    if(listCourseChoosen_ver2.length === 0)
+    {
+      console.log("You must add least one course to training");
+      return
+    }
     const { isCreatedTraining } = this.props.store;
     if (_.isEmpty(isCreatedTraining)) {
     } else {
@@ -203,7 +208,7 @@ class Step2 extends Component {
         )}
         <div className="col-xl-12">
           {createdCourse && (
-            <h3 className="bg-root pl-3">COURSE HAVE BEEN CREATED</h3>
+            <h3 className="text-success">COURSE HAVE BEEN CREATED</h3>
           )}
           <div className="form-group" style={{ width: "30%" }}>
             <button

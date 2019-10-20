@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import _ from "lodash";
 class Question extends Component {
   state = {
-    result: "",
-    status: -1,
     listAnswer: [],
     currentQuestion: 0,
     countCorrect: 0,
@@ -78,6 +76,18 @@ class Question extends Component {
     }
   }
 
+  handleReset = () =>{
+    this.setState({
+      listAnswer: [],
+      currentQuestion: 0,
+      countCorrect: 0,
+      submitAnswer: false,
+      percentResult: 0,
+      comment: "",
+      missAns: false
+    })
+  }
+
   render() {
     const { listAnswer, currentQuestion, submitAnswer, countCorrect, percentResult, comment, missAns } = this.state;
     const { questions } = this.props;
@@ -137,6 +147,9 @@ class Question extends Component {
               </div>
             )
           })}
+          <div className="text-right">
+            <button className="btn bg-root" style={{cursor:"pointer"}} type="button" onClick={this.handleReset}>Try again.</button>
+            </div>
         </div>
       )
     }
@@ -179,14 +192,14 @@ class Question extends Component {
                   )
                 })}
             </div>
-            <div className="content-question__t-submit">
+            <div className="content-question__t-submit text-right">
               {currentQuestion !== questions.length - 1 ? (
-                <button type="button" onClick={() => { this.handleNextQuestion() }} className="btn bg-root text-right">Next ></button>
+                <button type="button" onClick={() => { this.handleNextQuestion() }} className="btn bg-root">Next ></button>
               ) : (
                   <button
                     type="button"
                     onClick={this.handleSubmit}
-                    className="btn bg-root text-right"
+                    className="btn bg-root"
                     disabled={this.props.isView}
                   >
                     Submit

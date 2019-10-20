@@ -15,14 +15,19 @@ class Slider extends Component {
             slideItem.length > 0 &&
             slideItem.map((item, index) => {
               return (
-                <div key={index} className="slide-item row justify-content-center"
-                  style={{
-                    backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
-                    /*`url(${props.backendDomain +
-                      slide['imgBackgroundPath']['url']})`*/
-                  }}
+                <div key={index} className=""
+                // style={{
+                //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
+                //   /*`url(${props.backendDomain +
+                //     slide['imgBackgroundPath']['url']})`*/
+                // }}
                 >
-                  <div className="slide-item-content col-xl-10">
+                  <img src={`${REACT_APP_URL_API}${item.imgUrl}`} alt="#" />
+                  {/* <div className="slide-item-content col-xl-10">
+                    <h5 className="pt-3">{item.title}</h5>
+                    <p className="">{item.content}</p>
+                  </div> */}
+                  <div className="legend">
                     <h5 className="pt-3">{item.title}</h5>
                     <p className="">{item.content}</p>
                   </div>

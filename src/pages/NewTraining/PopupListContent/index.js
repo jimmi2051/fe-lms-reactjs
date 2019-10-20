@@ -144,13 +144,17 @@ class PopupListContent extends Component {
                 </div>
                 <div className="col-xl-12">
                   {!_.isEmpty(currentContent) && (
-                    <div>
-                      <p className="text-success">
+                    <div className="detail-content">
+                      <h4 className="detail-content-title">
                         {currentContent.relationData.data.title}
-                      </p>
-                      <p className="text-success">
-                        {currentContent.relationData.data.description}
-                      </p>
+                      </h4>
+                      <h5>Description: </h5>
+                      <div
+                        className="detail-content-description"
+                        dangerouslySetInnerHTML={{
+                          __html: currentContent.relationData.data.description
+                        }}
+                      />
                       {currentContent.type === "Video" && (
                         <VideoNormal
                           src={

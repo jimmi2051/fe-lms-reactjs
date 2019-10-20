@@ -6,7 +6,7 @@ class TextToTest extends Component {
     content: [],
     choosen: [],
     wrong: [],
-    mark: 0,
+    mark: [],
     isSubmit: false,
     currentContent: 0,
   };
@@ -77,9 +77,63 @@ class TextToTest extends Component {
     }
   }
 
+  handleReset = () => {
+    this.setState({
+      mark: [],
+      choosen: [],
+      wrong: [],
+      currentContent: 0,
+      isSubmit: false,
+    })
+  }
+
   render() {
-    const { content, isSubmit, mark, result, choosen, wrong, currentContent } = this.state;
-    const { contents } = this.props
+    const { content, isSubmit, mark, choosen, wrong, currentContent } = this.state;
+    const { contents } = this.props;
+    if (isSubmit) {
+      return (
+        <div className="content-text-test">
+          <h5 className="content-text-test__title">Result: </h5>
+          {content && content.map((item, index) => {
+            return (
+              <div className="content-text-test__result">
+                <p>{contents[index].title} | Total correct answers: {mark[index]}/{choosen[index] ? choosen[index].length : "0"} </p>
+                <div className="content-text-test__warp-context mb-4">
+                  {
+                    item.map((itemWord, indexWord) => {
+                      const findIndex = _.findIndex(choosen[index], word => word === itemWord);
+                      const findIndexWrong = _.findIndex(wrong[index], word => word === itemWord);
+                      return (
+                        <span key={indexWord}>
+                          {" "}
+                          <span
+                            className={`tag-word ${findIndex > -1 ? "tag-word-active" : ""} 
+                            ${findIndexWrong > -1 ? "tag-word-wrong" : ""}`}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {itemWord}
+                            {findIndexWrong > -1 && (
+                              <i className="fa fa-times-circle-o" />
+                            )}
+                            {findIndex > -1 && findIndexWrong === -1 && (
+                              <i className="fa fa-check-circle-o" />
+                            )}
+
+                          </span>{" "}
+                        </span>
+                      );
+                    })
+                  }
+                </div>
+              </div>
+            )
+          })}
+          <div className="text-right">
+            <button className="btn bg-root" style={{ cursor: "pointer" }} type="button" onClick={this.handleReset}>Try again.</button>
+          </div>
+        </div>
+      )
+    }
     return (
       <div className="content-text-test">
         <h5 className="content-text-test__title">Paragraph: {currentContent + 1} of {content.length}</h5>
@@ -110,15 +164,15 @@ class TextToTest extends Component {
                 })
               }
             </div>
-            <div className="content-text-test__submit">
+            <div className="content-text-test__submit text-right">
               {
                 currentContent !== content.length - 1 ? (
-                  <button className="btn btn-success" type="button" onClick={this.handleNextParagraph}>Next > </button>
+                  <button className="btn bg-root" type="button" onClick={this.handleNextParagraph}>Next > </button>
                 ) : (
                     <button
                       type="button"
                       onClick={() => this.onSubmit()}
-                      className="btn btn-success"
+                      className="btn bg-root"
                       disabled={this.props.isView}
                     >
                       Submit
@@ -128,65 +182,6 @@ class TextToTest extends Component {
             </div>
           </div>
         )}
-        {isSubmit && (
-          <div>
-            <label>
-              Result: <br />
-            </label>
-            {choosen.map((item, index) => {
-              return (
-                <div key={index}>
-                  <p>True: {mark[index]}/{item ? item.length : "0"}
-                    <br />
-                    False: {wrong[index] ? wrong[index].length : "0"}/{item ? item.length : "0"}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-        )}
-        {content.map((item, index) => {
-          return (
-            <div key={index} className="content-text-test">
-              <p>Paragraph {index + 1}/{content.length}</p>
-              <p>Title: {contents[index].title}</p>
-              <div className="content-text-test__warp-context">
-                {
-                  item.map((itemWord, indexWord) => {
-                    const findIndex = _.findIndex(choosen[index], word => word === itemWord);
-                    const findIndexWrong = _.findIndex(wrong[index], word => word === itemWord);
-                    return (
-                      <span key={indexWord}>
-                        {" "}
-                        <span
-                          onClick={() => {
-                            this.onChooseWord(index, itemWord);
-                          }}
-                          style={{ cursor: "pointer" }}
-                          className={`tag-word ${findIndex > -1 ? "tag-word-active" : ""} ${
-                            findIndexWrong > -1 ? "tag-word-wrong" : ""
-                            }`}
-                        >
-                          {itemWord}
-                        </span>{" "}
-                      </span>
-                    );
-                  })
-                }
-              </div>
-            </div>
-          )
-        })}
-        {!this.props.isView && (
-          <button
-            type="button"
-            onClick={() => this.onSubmit()}
-            className="btn btn-success"
-          >
-            Submit
-          </button>
-        )}
-
       </div>
     );
   }

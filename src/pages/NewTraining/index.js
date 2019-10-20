@@ -52,7 +52,7 @@ const mapDispatchToProps = dispatch => {
 
 class NewTraining extends Component {
   state = {
-    step: 2,
+    step: 1,
     isShow: false,
     description: "",
     fileToUpload: [],

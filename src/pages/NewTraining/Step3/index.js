@@ -69,7 +69,10 @@ class Step3 extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isCreatedModule } = nextProps.store;
+    const { isCreatedModule, isCreatedTraining } = nextProps.store;
+    if (!_.isEqual(isCreatedTraining, this.props.store.isCreatedTraining)) {
+      this.handleFilterListCourse(isCreatedTraining._id);
+    }
     if (!this.state.createdModule && !_.isUndefined(isCreatedModule._id)) {
       this.setState({ createdModule: true });
     }
@@ -220,7 +223,7 @@ class Step3 extends Component {
         )}
         <div className="col-xl-12">
           {createdModule && (
-            <h3 className="alert-success pl-3">MODULE HAVE BEEN CREATED</h3>
+            <h3 className="text-success pl-3">MODULE HAVE BEEN CREATED</h3>
           )}{" "}
           <div className="form-group" style={{ width: "30%" }}>
             <button
@@ -263,7 +266,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -354,7 +357,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <Link to={`#`}>
@@ -401,24 +404,24 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-          <div className="col-xl-12 new-training mb-4">
-            <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
-                <div className="col-12 col-md-6 px-25">
-                  <div
-                    className="course-content"
-                    onClick={this.handleShowPopupListModule}
-                  >
-                    <div className="course-content-wrap">
-                      <i className="fa fa-plus"></i>
-                      <h3>Add new item</h3>
+            <div className="col-xl-12 new-training mb-4">
+              <div className="featured-courses courses-wrap">
+                <div className="row mx-m-25">
+                  <div className="col-12 col-md-6 px-25">
+                    <div
+                      className="course-content"
+                      onClick={this.handleShowPopupListModule}
+                    >
+                      <div className="course-content-wrap">
+                        <i className="fa fa-plus"></i>
+                        <h3>Add new item</h3>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button
