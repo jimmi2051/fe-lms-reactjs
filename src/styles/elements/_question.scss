@@ -1,0 +1,66 @@
+.content-question{
+    &__t-answer{
+        display: block;
+        position: relative;
+        margin-bottom: 15px;
+        cursor: pointer;
+        font-size: 18px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        word-wrap: break-word;
+        text-align: center;
+        .warp-answer{
+          padding:15px;
+          background-color: #f1f1f1;
+          &-active{
+            background-color: #19c880;
+            color:white;
+          }
+          &-wrong{
+            background-color: red;
+            color:white;
+          }
+        }
+    }
+    &__warp-result{
+      background-color: #f1f1f1;
+      padding: 15px;
+      .title{
+        font-weight: 100;
+      }
+      margin-top:10px;
+      margin-bottom: 10px;
+    }
+    p{
+      margin-bottom: 0.5rem;
+    }
+}
+.content-text-test{
+  &__warp-context{
+    background-color: #f1f1f1;
+      padding: 15px;
+      .tag-word{
+        border: 2px solid #f1f1f1;
+        margin-left: 5px;
+        margin-right:5px;
+
+        &:hover{
+          border: 2px solid #19c880;
+        }
+
+        &-active{
+          border: 2px solid #19c880;
+          background: #19c880;
+          color: white;
+          // padding: 5px;
+        }
+        &-wrong{
+          border: 2px solid red;
+          background: red;
+          color: white;
+        }
+      }
+  }
+}

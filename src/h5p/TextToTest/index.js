@@ -7,7 +7,8 @@ class TextToTest extends Component {
     choosen: [],
     wrong: [],
     mark: 0,
-    isSubmit: false
+    isSubmit: false,
+    currentContent: 0,
   };
   componentDidMount() {
     this.processData(this.props.contents);
@@ -69,10 +70,64 @@ class TextToTest extends Component {
     this.setState({ mark, isSubmit: true, wrong });
   };
 
+  handleNextParagraph = () => {
+    let { currentContent, content } = this.state;
+    if (currentContent < content.length) {
+      this.setState({ currentContent: currentContent + 1 })
+    }
+  }
+
   render() {
-    const { content, isSubmit, mark, result, choosen, wrong } = this.state;
+    const { content, isSubmit, mark, result, choosen, wrong, currentContent } = this.state;
+    const { contents } = this.props
     return (
-      <div className="">
+      <div className="content-text-test">
+        <h5 className="content-text-test__title">Paragraph: {currentContent + 1} of {content.length}</h5>
+        {currentContent < content.length && (
+          <div className="">
+            <p>{contents[currentContent].title}</p>
+            <div className="content-text-test__warp-context mb-4">
+              {
+                content[currentContent].map((itemWord, indexWord) => {
+                  const findIndex = _.findIndex(choosen[currentContent], word => word === itemWord);
+                  const findIndexWrong = _.findIndex(wrong[currentContent], word => word === itemWord);
+                  return (
+                    <span key={indexWord}>
+                      {" "}
+                      <span
+                        onClick={() => {
+                          this.onChooseWord(currentContent, itemWord);
+                        }}
+                        style={{ cursor: "pointer" }}
+                        className={`tag-word ${findIndex > -1 ? "tag-word-active" : ""} ${
+                          findIndexWrong > -1 ? "tag-word-wrong" : ""
+                          }`}
+                      >
+                        {itemWord}
+                      </span>{" "}
+                    </span>
+                  );
+                })
+              }
+            </div>
+            <div className="content-text-test__submit">
+              {
+                currentContent !== content.length - 1 ? (
+                  <button className="btn btn-success" type="button" onClick={this.handleNextParagraph}>Next > </button>
+                ) : (
+                    <button
+                      type="button"
+                      onClick={() => this.onSubmit()}
+                      className="btn btn-success"
+                      disabled={this.props.isView}
+                    >
+                      Submit
+                      </button>
+                  )
+              }
+            </div>
+          </div>
+        )}
         {isSubmit && (
           <div>
             <label>
@@ -92,29 +147,33 @@ class TextToTest extends Component {
         )}
         {content.map((item, index) => {
           return (
-            <div key={index}>
-              {
-                item.map((itemWord, indexWord) => {
-                  const findIndex = _.findIndex(choosen[index], word => word === itemWord);
-                  const findIndexWrong = _.findIndex(wrong[index], word => word === itemWord);
-                  return (
-                    <span key={indexWord}>
-                      {" "}
-                      <span
-                        onClick={() => {
-                          this.onChooseWord(index, itemWord);
-                        }}
-                        style={{ cursor: "pointer" }}
-                        className={`${findIndex > -1 ? "bg-root" : ""} ${
-                          findIndexWrong > -1 ? "bg-danger" : ""
-                          }`}
-                      >
-                        {itemWord}
-                      </span>{" "}
-                    </span>
-                  );
-                })
-              }
+            <div key={index} className="content-text-test">
+              <p>Paragraph {index + 1}/{content.length}</p>
+              <p>Title: {contents[index].title}</p>
+              <div className="content-text-test__warp-context">
+                {
+                  item.map((itemWord, indexWord) => {
+                    const findIndex = _.findIndex(choosen[index], word => word === itemWord);
+                    const findIndexWrong = _.findIndex(wrong[index], word => word === itemWord);
+                    return (
+                      <span key={indexWord}>
+                        {" "}
+                        <span
+                          onClick={() => {
+                            this.onChooseWord(index, itemWord);
+                          }}
+                          style={{ cursor: "pointer" }}
+                          className={`tag-word ${findIndex > -1 ? "tag-word-active" : ""} ${
+                            findIndexWrong > -1 ? "tag-word-wrong" : ""
+                            }`}
+                        >
+                          {itemWord}
+                        </span>{" "}
+                      </span>
+                    );
+                  })
+                }
+              </div>
             </div>
           )
         })}
