@@ -59,8 +59,8 @@ export const getTrainingByUser = (payload, next, nextErr) => {
     type: SINGLE_API,
     payload: {
       uri: `trainings?users._id=${id}`,
-      beforeCallType: "GET_TRAINING_REQUEST",
-      successType: "GET_TRAINING_SUCCESS",
+      beforeCallType: "GET_TRAINING_BY_REQUEST",
+      successType: "GET_TRAINING_BY_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
     }
@@ -175,7 +175,7 @@ export const getAllTraining = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `categorytrainings`,
+      uri: `trainings`,
       beforeCallType: "GET_ALL_TRAINING_REQUEST",
       successType: "GET_ALL_TRAINING_SUCCESS",
       afterSuccess: next,
@@ -183,3 +183,39 @@ export const getAllTraining = (payload, next, nextErr) => {
     }
   }
 }
+
+export const getAllCategory = (payload, next, nextErr) => {
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `categorytrainings`,
+      beforeCallType: "GET_ALL_CATEGORY_REQUEST",
+      successType: "GET_ALL_CATEGORY_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  }
+}
+
+export const addToMyTraining = (payload, next, nextErr) => {
+  const { training, user } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `activityusers`,
+      beforeCallType: "ADD_TRAINING_REQUEST",
+      successType: "ADD_TRAINING_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "POST"
+      },
+      params: {
+        users: [user],
+        trainings: [training],
+        totalMark: 0,
+        courses:{}
+      }
+    }
+  };
+};

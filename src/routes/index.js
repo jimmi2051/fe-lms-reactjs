@@ -13,6 +13,7 @@ import AdminCoursePage from "pages/CourseManage";
 import AdminNewTraining from "pages/NewTraining";
 import AdminListTraining from "pages/ListTraining";
 import AdminTrainingDetail from "pages/TrainingDetail";
+import TrainingPage from "pages/ListTrainingStudent";
 export default function RootRoute() {
   return (
     <>
@@ -24,6 +25,7 @@ export default function RootRoute() {
         <Route exact path="/admin/course" component={AdminCoursePage} />
         <Route exact path="/admin/new-training" component={AdminNewTraining} />
         <Route exact path="/admin/training" component={AdminListTraining} />
+        <Route exact path="/trainings" component={TrainingPage} />
         <Route
           exact
           path="/admin/training/:id"

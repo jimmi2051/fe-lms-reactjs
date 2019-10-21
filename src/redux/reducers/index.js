@@ -38,6 +38,10 @@ import isCreateContent, { initialState as initCreateContent } from "./content";
 
 import isCreateData, { initialState as initCreateData } from "./content";
 
+import trainingAll, { initialState as initTrainingAll } from "./training"
+
+import categoryAll, { initialState as initCategoryAll } from "./training"
+import isAddTraining, {initialState as initIsAddTraining} from "./training"
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -60,7 +64,10 @@ export const exampleInitialState = {
   training: initTraining,
   trainingByCat: initTrainingByCat,
   isCreateData: initCreateData,
-  isCreateContent: initCreateContent
+  isCreateContent: initCreateContent,
+  trainingAll: initTrainingAll,
+  categoryAll: initCategoryAll,
+  isAddTraining: initIsAddTraining,
 };
 
 export default {
@@ -85,5 +92,8 @@ export default {
   training,
   trainingByCat,
   isCreateData,
-  isCreateContent
+  isCreateContent,
+  trainingAll,
+  categoryAll,
+  isAddTraining
 };
