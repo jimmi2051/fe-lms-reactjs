@@ -172,10 +172,11 @@ export const getTrainingByCategory = (payload, next, nextErr) => {
 };
 
 export const getAllTraining = (payload, next, nextErr) => {
+  const { keySearch, startItemPage, itemPerPage } = payload;
   return {
     type: SINGLE_API,
     payload: {
-      uri: `trainings`,
+      uri: `trainings?${keySearch !== "" ? `name_contains=${keySearch}`:`_start=${startItemPage}&_limit=${itemPerPage}`}`,
       beforeCallType: "GET_ALL_TRAINING_REQUEST",
       successType: "GET_ALL_TRAINING_SUCCESS",
       afterSuccess: next,
@@ -214,7 +215,7 @@ export const addToMyTraining = (payload, next, nextErr) => {
         users: [user],
         trainings: [training],
         totalMark: 0,
-        courses:{}
+        courses: {}
       }
     }
   };

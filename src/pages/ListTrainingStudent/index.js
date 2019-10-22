@@ -11,11 +11,11 @@ import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import TreeMenu from "react-simple-tree-menu";
 import Loading from "components/Loading";
 import PopupSuccess from "pages/ListTrainingStudent/PopupSuccess"
+import Pagination from "react-js-pagination";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
-
+const ENTER_KEY = 13;
 function mapStateToProps(state) {
   return {
     store: {
@@ -45,16 +45,30 @@ const mapDispatchToProps = dispatch => {
 class ListTraining extends Component {
   state = {
     addSuccess: false,
+    trainingExists: {},
+    keySearch: "",
+    startItemPage: 0,
+    itemPerPage: 3,
+    totalPage: -1,
+    activePage: 1
   }
   componentDidMount() {
     this.handleGetTraining();
     this.handleGetCategory();
+    fetch("https://be-lms.tk/trainings/count")
+      .then(response => { return response.json() })
+      .then(result => {
+        this.setState({ totalPage: result })
+      })
   }
 
   handleGetTraining = () => {
-    const payload = {};
+    const { keySearch, startItemPage, itemPerPage } = this.state;
+    const payload = { keySearch, startItemPage, itemPerPage };
     const { getAllTraining } = this.props.action;
-    getAllTraining(payload);
+    getAllTraining(payload, () => {
+      const { trainingAll } = this.props.store;
+    });
   };
 
   handleGetCategory = () => {
@@ -64,18 +78,30 @@ class ListTraining extends Component {
   };
 
   handleAddToMyTraining = (training) => {
-    const user = AuthStorage.userInfo;
-    const { addToMyTraining } = this.props.action;
-    const payload = {
-      training,
-      user,
+    this.setState({ trainingExists: {} });
+    if (this.checkTrainingExists(training._id)) {
+      this.setState({ trainingExists: training });
     }
-    addToMyTraining(payload, () => {
-      const { isAddTraining } = this.props.store;
-      if (isAddTraining._id) {
-        this.setState({ addSuccess: true })
+    else {
+      const user = AuthStorage.userInfo;
+      const { addToMyTraining } = this.props.action;
+      const payload = {
+        training,
+        user,
       }
-    });
+      addToMyTraining(payload, () => {
+        const { isAddTraining } = this.props.store;
+        if (isAddTraining._id) {
+          this.setState({ addSuccess: true })
+          let nextAuthStorage = AuthStorage.value;
+          let tempActivity = isAddTraining;
+          tempActivity.trainings[0] = tempActivity.trainings[0]._id;
+          tempActivity.users[0] = tempActivity.users[0]._id;
+          nextAuthStorage.user.activityusers.push(tempActivity);
+          AuthStorage.value = nextAuthStorage;
+        }
+      });
+    }
   }
 
   processDataToListCat = (categories) => {
@@ -103,6 +129,34 @@ class ListTraining extends Component {
     this.setState({ addSuccess: false });
   }
 
+  checkTrainingExists = (trainingId) => {
+    const idx = _.findIndex(AuthStorage.userInfo.activityusers, activity => activity.trainings[0] === trainingId)
+    if (idx > -1) {
+      return true;
+    }
+    return false;
+  }
+
+  handleInputSearch = (e) => {
+    this.setState({ keySearch: e.target.value });
+  }
+
+  beginSearch = e => {
+    if (e.keyCode === ENTER_KEY) {
+      this.setState({ startItemPage: 0, itemPerPage: 3 }, () => {
+        this.handleGetTraining();
+      })
+    }
+  };
+
+  handlePageChange(pageNumber) {
+    let { startItemPage, itemPerPage } = this.state;
+    startItemPage = (pageNumber - 1) * itemPerPage;
+    this.setState({ startItemPage }, () => {
+      this.handleGetTraining();
+    });
+  }
+
   render() {
     const {
       loadingTrainingAll,
@@ -110,7 +164,7 @@ class ListTraining extends Component {
       loadingCategoryAll,
       categoryAll
     } = this.props.store;
-    const { addSuccess } = this.state;
+    const { addSuccess, trainingExists, keySearch } = this.state;
 
     if (loadingCategoryAll) {
       return (<div className="page-header">
@@ -169,7 +223,7 @@ class ListTraining extends Component {
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">
-                    <input className="form-control" placeholder="Search by training, author." />
+                    <input onKeyDown={this.beginSearch} className="form-control" onChange={this.handleInputSearch} placeholder="Search by training name." />
                   </div>
                   <ul className="p-0 m-0">
                     {!loadingCategoryAll &&
@@ -189,7 +243,7 @@ class ListTraining extends Component {
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
                 <div className="row mx-m-25">
-                  {!loadingTrainingAll &&
+                  {!loadingTrainingAll ?
                     trainingAll.map((item, index) => {
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
@@ -230,6 +284,11 @@ class ListTraining extends Component {
                                       "MMM. D, YYYY"
                                     )}
                                   </div>
+                                  {trainingExists === item && (
+                                    <div className="text-left">
+                                      <label className="text-danger mb-0">This training have already in your list. </label>
+                                    </div>
+                                  )}
                                 </div>
                               </header>
 
@@ -255,7 +314,26 @@ class ListTraining extends Component {
                           </div>
                         </div>
                       );
-                    })}
+                    }) : (
+                      <div className="col-xl-12">
+                        <Loading classOption="align-center-spinner" />
+                      </div>
+                    )}
+
+                </div>
+                <div className="row">
+                  <div className="col-xl-12">
+                    {keySearch === "" && (
+                      <Pagination
+                        activePage={this.state.activePage}
+                        itemsCountPerPage={this.state.itemPerPage}
+                        totalItemsCount={this.state.totalPage}
+                        pageRangeDisplayed={5}
+                        onChange={this.handlePageChange.bind(this)}
+                      />
+                    )}
+
+                  </div>
                 </div>
               </div>
             </div>

@@ -28,7 +28,8 @@ function* authorize(payload, next, nextErr) {
       createdAt: response.user.createdAt,
       updatedAt: response.user.updateAt,
       provider: response.user.provider,
-      id: response.user.id
+      id: response.user.id,
+      activityusers: response.user.activityusers,
     };
     const data = {
       token: response.jwt,
