@@ -176,7 +176,7 @@ export const getAllTraining = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `trainings?${keySearch !== "" ? `name_contains=${keySearch}`:`_start=${startItemPage}&_limit=${itemPerPage}`}`,
+      uri: `trainings?${keySearch !== "" ? `name_contains=${keySearch}` : `_start=${startItemPage}&_limit=${itemPerPage}`}`,
       beforeCallType: "GET_ALL_TRAINING_REQUEST",
       successType: "GET_ALL_TRAINING_SUCCESS",
       afterSuccess: next,
@@ -220,3 +220,17 @@ export const addToMyTraining = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getTrainingToLearn = (payload, next, nextErr) => {
+  const { keySearch, startItemPage, itemPerPage, userId, categoryId } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `trainings?${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${userId}&${keySearch !== "" ? `name_contains=${keySearch}` : `_start=${startItemPage}&_limit=${itemPerPage}`}`,
+      beforeCallType: "GET_TRAINING_LEARN_REQUEST",
+      successType: "GET_TRAINING_LEARN_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  }
+}

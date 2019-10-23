@@ -20,16 +20,20 @@ export const initialState = {
     loading: true
   },
   trainingAll: {
-    data:{},
-    loading:true
+    data: {},
+    loading: true
   },
   categoryAll: {
-    data:{},
-    loading:true
+    data: {},
+    loading: true
   },
   isAddTraining: {
-    data:{},
-    loading:false,
+    data: {},
+    loading: false,
+  },
+  listTrainingLearn: {
+    data: {},
+    loading: false,
   }
 };
 
@@ -85,7 +89,7 @@ export default (state = initialState, action) => {
         ...state,
         trainingByCat: { data: action.payload, loading: false }
       };
-      case "GET_ALL_TRAINING_REQUEST":
+    case "GET_ALL_TRAINING_REQUEST":
       return {
         ...state,
         trainingAll: { ...initialState.trainingAll }
@@ -95,7 +99,7 @@ export default (state = initialState, action) => {
         ...state,
         trainingAll: { data: action.payload, loading: false }
       };
-      case "GET_ALL_CATEGORY_REQUEST":
+    case "GET_ALL_CATEGORY_REQUEST":
       return {
         ...state,
         categoryAll: { ...initialState.categoryAll }
@@ -105,7 +109,7 @@ export default (state = initialState, action) => {
         ...state,
         categoryAll: { data: action.payload, loading: false }
       };
-      case "ADD_TRAINING_REQUEST":
+    case "ADD_TRAINING_REQUEST":
       return {
         ...state,
         isAddTraining: { ...initialState.isAddTraining }
@@ -114,6 +118,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isAddTraining: { data: action.payload, loading: false }
+      };
+    case "GET_TRAINING_LEARN_REQUEST":
+      return {
+        ...state,
+        listTrainingLearn: { ...initialState.listTrainingLearn }
+      };
+    case "GET_TRAINING_LEARN_SUCCESS":
+      return {
+        ...state,
+        listTrainingLearn: { data: action.payload, loading: false }
       };
     default:
       return state;

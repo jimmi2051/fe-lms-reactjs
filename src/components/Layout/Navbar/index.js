@@ -111,7 +111,7 @@ class Navbar extends Component {
                 >
                   <ul className="flex flex-column flex-lg-row justify-content-lg-end align-content-center">
                     {AuthStorage.loggedIn &&
-                      AuthStorage.userInfo.role.type === "creator" ? (
+                      AuthStorage.userInfo.role.type === "creator" && (
                         <>
                           <li
                             className={
@@ -139,16 +139,26 @@ class Navbar extends Component {
                             <Link to="/admin/new-training">New Training</Link>
                           </li>
                         </>
-                      ) : (
+                      )}
+                    {AuthStorage.loggedIn &&
+                      AuthStorage.userInfo.role.type === "user" && (
                         <>
-                          <li className="current-menu-item">
+                          <li className={pathname === "/" ? "current-menu-item" : ""}>
                             <Link to="/">Home</Link>
                           </li>
-                          <li>
-                            <a href="#">About</a>
+                          <li className={
+                            pathname === "/my-training"
+                              ? "current-menu-item"
+                              : ""
+                          }>
+                            <Link to="/my-training">My Training</Link>
                           </li>
-                          <li>
-                            <a href="#">Courses</a>
+                          <li className={
+                            pathname === "/trainings"
+                              ? "current-menu-item"
+                              : ""
+                          }>
+                            <Link to="/trainings">Store Training</Link>
                           </li>
                           <li>
                             <a href="#">blog</a>
@@ -158,6 +168,26 @@ class Navbar extends Component {
                           </li>
                         </>
                       )}
+                    {!AuthStorage.loggedIn && (
+                      <>
+                        <li className="current-menu-item">
+                          <Link to="/">Home</Link>
+                        </li>
+                        <li>
+                          <a href="#">About</a>
+                        </li>
+                        <li>
+                          <Link to="/trainings">Trainings</Link>
+                        </li>
+                        <li>
+                          <a href="#">blog</a>
+                        </li>
+                        <li>
+                          <a href="#">Contact</a>
+                        </li>
+                      </>
+                    )}
+
                   </ul>
 
                   <div className="hamburger-menu d-lg-none">

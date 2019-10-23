@@ -39,7 +39,7 @@ import isCreateContent, { initialState as initCreateContent } from "./content";
 import isCreateData, { initialState as initCreateData } from "./content";
 
 import trainingAll, { initialState as initTrainingAll } from "./training"
-
+import listTrainingLearn, {initialState as initListTrainingLearn} from "./training";
 import categoryAll, { initialState as initCategoryAll } from "./training"
 import isAddTraining, {initialState as initIsAddTraining} from "./training"
 export const exampleInitialState = {
@@ -68,6 +68,7 @@ export const exampleInitialState = {
   trainingAll: initTrainingAll,
   categoryAll: initCategoryAll,
   isAddTraining: initIsAddTraining,
+  listTrainingLearn:initListTrainingLearn
 };
 
 export default {
@@ -95,5 +96,6 @@ export default {
   isCreateContent,
   trainingAll,
   categoryAll,
-  isAddTraining
+  isAddTraining,
+  listTrainingLearn
 };

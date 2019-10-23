@@ -5,7 +5,8 @@ import Header from "components/Layout/Header";
 import {
   getAllTraining,
   getAllCategory,
-  addToMyTraining
+  addToMyTraining,
+  getTrainingToLearn
 } from "redux/action/training";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
@@ -25,6 +26,8 @@ function mapStateToProps(state) {
       loadingCategoryAll: state.trainingAll.categoryAll.loading,
       isAddTraining: state.isAddTraining.isAddTraining.data,
       loadingAddTraining: state.isAddTraining.isAddTraining.loading,
+      listTrainingLearn: state.listTrainingLearn.listTrainingLearn.data,
+      loadingListTrainingLearn: state.listTrainingLearn.listTrainingLearn.loading,
     }
   };
 }
@@ -35,7 +38,8 @@ const mapDispatchToProps = dispatch => {
       {
         getAllTraining,
         getAllCategory,
-        addToMyTraining
+        addToMyTraining,
+        getTrainingToLearn
       },
       dispatch
     )
@@ -50,26 +54,30 @@ class ListTraining extends Component {
     startItemPage: 0,
     itemPerPage: 4,
     totalPage: -1,
-    activePage: 1
+    activePage: 1,
+    categoryId: ""
   }
   componentDidMount() {
-    this.handleGetTraining();
+    this.handleGetMyTraining(AuthStorage.userInfo._id);
     this.handleGetCategory();
-    fetch("https://be-lms.tk/trainings/count")
+    this.handleGetTotalPage("");
+  }
+
+  handleGetTotalPage = (categoryId) => {
+    fetch(`https://be-lms.tk/trainings?${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${AuthStorage.userInfo._id}`)
       .then(response => { return response.json() })
       .then(result => {
-        this.setState({ totalPage: result })
+        this.setState({ totalPage: result.length })
       })
   }
 
-  handleGetTraining = () => {
-    const { keySearch, startItemPage, itemPerPage } = this.state;
-    const payload = { keySearch, startItemPage, itemPerPage };
-    const { getAllTraining } = this.props.action;
-    getAllTraining(payload, () => {
-      const { trainingAll } = this.props.store;
+  handleGetMyTraining = (userId) => {
+    const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
+    const payload = { keySearch, startItemPage, itemPerPage, userId, categoryId };
+    const { getTrainingToLearn } = this.props.action;
+    getTrainingToLearn(payload, () => {
     });
-  };
+  }
 
   handleGetCategory = () => {
     const payload = {};
@@ -77,64 +85,8 @@ class ListTraining extends Component {
     getAllCategory(payload);
   };
 
-  handleAddToMyTraining = (training) => {
-    this.setState({ trainingExists: {} });
-    if (this.checkTrainingExists(training._id)) {
-      this.setState({ trainingExists: training });
-    }
-    else {
-      const user = AuthStorage.userInfo;
-      const { addToMyTraining } = this.props.action;
-      const payload = {
-        training,
-        user,
-      }
-      addToMyTraining(payload, () => {
-        const { isAddTraining } = this.props.store;
-        if (isAddTraining._id) {
-          this.setState({ addSuccess: true })
-          let nextAuthStorage = AuthStorage.value;
-          let tempActivity = isAddTraining;
-          tempActivity.trainings[0] = tempActivity.trainings[0]._id;
-          tempActivity.users[0] = tempActivity.users[0]._id;
-          nextAuthStorage.user.activityusers.push(tempActivity);
-          AuthStorage.value = nextAuthStorage;
-        }
-      });
-    }
-  }
-
-  processDataToListCat = (categories) => {
-    let listMenu = [];
-    categories.map((category, index) => {
-      let menuLv1 = {}
-      menuLv1.key = `first-level-node-${index + 1}`;
-      menuLv1.label = `${category.name}`;
-      menuLv1.value = category;
-      menuLv1.nodes = [];
-      category.trainings.map((training, indexTraining) => {
-        let menuLv2 = {}
-        menuLv2.key = `second-level-node-${indexTraining + 1}`;
-        menuLv2.label = training.name
-        menuLv2.value = training
-        menuLv2.nodes = addToMyTraining
-        menuLv1.nodes.push(menuLv2);
-      })
-      listMenu.push(menuLv1);
-    })
-    return listMenu;
-  }
-
   handleClosePopup = () => {
     this.setState({ addSuccess: false });
-  }
-
-  checkTrainingExists = (trainingId) => {
-    const idx = _.findIndex(AuthStorage.userInfo.activityusers, activity => activity.trainings[0] === trainingId)
-    if (idx > -1) {
-      return true;
-    }
-    return false;
   }
 
   handleInputSearch = (e) => {
@@ -144,7 +96,7 @@ class ListTraining extends Component {
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0, itemPerPage: 3 }, () => {
-        this.handleGetTraining();
+        this.handleGetMyTraining(AuthStorage.userInfo._id);
       })
     }
   };
@@ -153,20 +105,27 @@ class ListTraining extends Component {
     let { startItemPage, itemPerPage } = this.state;
     startItemPage = (pageNumber - 1) * itemPerPage;
     this.setState({ startItemPage }, () => {
-      this.handleGetTraining();
+      this.handleGetMyTraining(AuthStorage.userInfo._id);
+    });
+  }
+
+  fitlerCategory = (categoryId) => {
+    this.setState({ categoryId }, () => {
+      this.handleGetTotalPage(categoryId)
+      this.handleGetMyTraining(AuthStorage.userInfo._id);
     });
   }
 
   render() {
     const {
-      loadingTrainingAll,
-      trainingAll,
       loadingCategoryAll,
-      categoryAll
+      categoryAll,
+      listTrainingLearn,
+      loadingListTrainingLearn
     } = this.props.store;
-    const { addSuccess, trainingExists, keySearch } = this.state;
+    const { keySearch } = this.state;
 
-    if (loadingCategoryAll) {
+    if (loadingCategoryAll || loadingListTrainingLearn) {
       return (<div className="page-header">
         <Header titleHeader="LIST TRAINING" />
         <div className="container">
@@ -194,12 +153,8 @@ class ListTraining extends Component {
       </div>
       )
     }
-
-    const listMenu = this.processDataToListCat(categoryAll);
-
     return (
       <div className="page-header">
-        <PopupSuccess isShow={addSuccess} handleClosePopup={this.handleClosePopup} />
         <Header titleHeader="LIST TRAINING" />
         <div className="container">
           <div className="row">
@@ -231,11 +186,14 @@ class ListTraining extends Component {
                         (item, index) => {
                           return (
                             <li key={index}>
-                              <Link to="#">{item.name}</Link>
+                              <Link to="#" onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
                             </li>
                           );
                         }
                       )}
+                    <li>
+                      <Link to="#" onClick={(e) => { e.preventDefault(); this.fitlerCategory("") }}>VIEW ALL</Link>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -243,8 +201,14 @@ class ListTraining extends Component {
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
                 <div className="row mx-m-25">
-                  {!loadingTrainingAll ?
-                    trainingAll.map((item, index) => {
+                  {!loadingListTrainingLearn && _.isArray(listTrainingLearn) ?
+                    listTrainingLearn.map((item, index) => {
+                      const idx = _.findIndex(item.activityusers, activity => activity.users[0] === AuthStorage.userInfo._id);
+                      const activityOfTraining = item.activityusers[idx];
+                      let percent = 0;
+                      if (!_.isEmpty(activityOfTraining)) {
+                        percent = 50;
+                      }
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
@@ -284,31 +248,18 @@ class ListTraining extends Component {
                                       "MMM. D, YYYY"
                                     )}
                                   </div>
-                                  {trainingExists === item && (
-                                    <div className="text-left">
-                                      <label className="text-danger mb-0">This training have already in your list. </label>
-                                    </div>
-                                  )}
                                 </div>
                               </header>
 
                               <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
-                                {/* <div className="course-cost">
-                                  $45 <span className="price-drop">$68</span>
+                              <div className="pb-3" style={{width:"100%"}}>
+                                <div className="progress">
+                                  <div className="progress-bar bg-root" role="progressbar" style={{width:"25%"}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
                                 </div>
-
-                                <div className="course-ratings flex justify-content-end align-items-center">
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star-o"></span>
-
-                                  <span className="course-ratings-count">
-                                    (4 votes)
-                                  </span>
-                                </div> */}
-                                <button type="button" onClick={() => { this.handleAddToMyTraining(item) }} className="btn bg-root">Add to my training</button>
+                                </div>
+                                <Link to={`training/${item._id}`}>
+                                  <button style={{cursor: "pointer"}} type="button" className="btn bg-root">Continue learning</button>
+                                </Link>
                               </footer>
                             </div>
                           </div>
@@ -332,7 +283,6 @@ class ListTraining extends Component {
                         onChange={this.handlePageChange.bind(this)}
                       />
                     )}
-
                   </div>
                 </div>
               </div>
