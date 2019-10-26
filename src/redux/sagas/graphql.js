@@ -45,7 +45,6 @@ function* callGraphQL(action) {
     if (afterCallType) {
       yield put({ type: afterCallType });
     }
-
     if (response && !response.error && response.detail !== "Invalid token.") {
       if (successType) {
         yield put({ type: successType, payload: response });

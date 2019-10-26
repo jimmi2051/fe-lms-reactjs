@@ -124,11 +124,12 @@ export default (state = initialState, action) => {
         ...state,
         listTrainingLearn: { ...initialState.listTrainingLearn }
       };
-    case "GET_TRAINING_LEARN_SUCCESS":
+    case "GET_TRAINING_LEARN_SUCCESS":{
       return {
         ...state,
         listTrainingLearn: { data: action.payload, loading: false }
       };
+    }
     default:
       return state;
   }

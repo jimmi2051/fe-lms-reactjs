@@ -221,16 +221,74 @@ export const addToMyTraining = (payload, next, nextErr) => {
   };
 };
 
+// export const getTrainingToLearn = (payload, next, nextErr) => {
+//   const { keySearch, startItemPage, itemPerPage, userId, categoryId } = payload;
+//   return {
+//     type: SINGLE_API,
+//     payload: {
+//       uri: `trainings?${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${userId}&${keySearch !== "" ? `name_contains=${keySearch}` : `_start=${startItemPage}&_limit=${itemPerPage}`}`,
+//       beforeCallType: "GET_TRAINING_LEARN_REQUEST",
+//       successType: "GET_TRAINING_LEARN_SUCCESS",
+//       afterSuccess: next,
+//       afterError: nextErr
+//     }
+//   }
+// }
+
 export const getTrainingToLearn = (payload, next, nextErr) => {
   const { keySearch, startItemPage, itemPerPage, userId, categoryId } = payload;
   return {
-    type: SINGLE_API,
+    type: GRAPHQL,
     payload: {
-      uri: `trainings?${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${userId}&${keySearch !== "" ? `name_contains=${keySearch}` : `_start=${startItemPage}&_limit=${itemPerPage}`}`,
+      query: `{
+        trainings(
+          where: 
+          {
+            activityusers:
+            {
+              users:
+              {
+                _id:"${userId}"}
+            },
+            ${categoryId !== "" ? `categorytrainings:{_id:"${categoryId}",}` : ``}
+            ${keySearch !== "" ? `name_contains:"${keySearch}",` : ``}
+          },
+          limit: ${itemPerPage},
+          start: ${startItemPage} 
+        )
+        {
+          _id
+          name
+          description
+          level
+          createdAt
+          thumbnail{
+            url
+            name
+            ext
+          }
+          users{
+            firstName
+            lastName
+            _id
+          }
+          activityusers{
+            courses
+            totalMark
+            users{
+              _id
+            }
+          }
+          learningpaths{
+            markForCourse
+            position
+          }
+        }
+      }`,
       beforeCallType: "GET_TRAINING_LEARN_REQUEST",
       successType: "GET_TRAINING_LEARN_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
     }
-  }
-}
+  };
+};

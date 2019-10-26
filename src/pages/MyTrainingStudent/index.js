@@ -13,7 +13,6 @@ import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import Loading from "components/Loading";
-import PopupSuccess from "pages/ListTrainingStudent/PopupSuccess"
 import Pagination from "react-js-pagination";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
@@ -60,11 +59,12 @@ class ListTraining extends Component {
   componentDidMount() {
     this.handleGetMyTraining(AuthStorage.userInfo._id);
     this.handleGetCategory();
-    this.handleGetTotalPage("");
+    this.handleGetTotalPage();
   }
 
-  handleGetTotalPage = (categoryId) => {
-    fetch(`https://be-lms.tk/trainings?${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${AuthStorage.userInfo._id}`)
+  handleGetTotalPage = () => {
+    const { keySearch, categoryId } = this.state;
+    fetch(`https://be-lms.tk/trainings?${keySearch !== "" ? `name_contains=${keySearch}&` : ``}${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${AuthStorage.userInfo._id}`)
       .then(response => { return response.json() })
       .then(result => {
         this.setState({ totalPage: result.length })
@@ -95,9 +95,10 @@ class ListTraining extends Component {
 
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
-      this.setState({ startItemPage: 0, itemPerPage: 3 }, () => {
+      this.setState({ startItemPage: 0 }, () => {
+        this.handleGetTotalPage();
         this.handleGetMyTraining(AuthStorage.userInfo._id);
-      })
+      });
     }
   };
 
@@ -110,8 +111,8 @@ class ListTraining extends Component {
   }
 
   fitlerCategory = (categoryId) => {
-    this.setState({ categoryId }, () => {
-      this.handleGetTotalPage(categoryId)
+    this.setState({ categoryId, startItemPage: 0 }, () => {
+      this.handleGetTotalPage()
       this.handleGetMyTraining(AuthStorage.userInfo._id);
     });
   }
@@ -123,7 +124,7 @@ class ListTraining extends Component {
       listTrainingLearn,
       loadingListTrainingLearn
     } = this.props.store;
-    const { keySearch } = this.state;
+    const { categoryId } = this.state;
 
     if (loadingCategoryAll || loadingListTrainingLearn) {
       return (<div className="page-header">
@@ -186,13 +187,13 @@ class ListTraining extends Component {
                         (item, index) => {
                           return (
                             <li key={index}>
-                              <Link to="#" onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
+                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#" onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
                             </li>
                           );
                         }
                       )}
                     <li>
-                      <Link to="#" onClick={(e) => { e.preventDefault(); this.fitlerCategory("") }}>VIEW ALL</Link>
+                      <Link to="#" className={`${categoryId === "" ? "font-weight-bold" : ""}`} onClick={(e) => { e.preventDefault(); this.fitlerCategory("") }}>VIEW ALL</Link>
                     </li>
                   </ul>
                 </div>
@@ -201,13 +202,16 @@ class ListTraining extends Component {
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
                 <div className="row mx-m-25">
-                  {!loadingListTrainingLearn && _.isArray(listTrainingLearn) ?
-                    listTrainingLearn.map((item, index) => {
-                      const idx = _.findIndex(item.activityusers, activity => activity.users[0] === AuthStorage.userInfo._id);
+                  {!loadingListTrainingLearn
+                    && listTrainingLearn.data
+                    && _.isArray(listTrainingLearn.data.trainings) ?
+                    listTrainingLearn.data.trainings.map((item, index) => {
+                      const idx = _.findIndex(item.activityusers, activity => activity.users[0]._id === AuthStorage.userInfo._id);
                       const activityOfTraining = item.activityusers[idx];
                       let percent = 0;
-                      if (!_.isEmpty(activityOfTraining)) {
-                        percent = 50;
+                      console.log("activityOfTraining", activityOfTraining);
+                      if (!_.isEmpty(activityOfTraining) && !_.isEmpty(activityOfTraining.courses)) {
+                        percent = (activityOfTraining.courses.listCourse.length / item.learningpaths.length) * 100;
                       }
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
@@ -248,17 +252,20 @@ class ListTraining extends Component {
                                       "MMM. D, YYYY"
                                     )}
                                   </div>
+                                  <div className="course-cost">
+                                    Scores earned: {activityOfTraining.totalMark}
+                                  </div>
                                 </div>
                               </header>
 
                               <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
-                              <div className="pb-3" style={{width:"100%"}}>
-                                <div className="progress">
-                                  <div className="progress-bar bg-root" role="progressbar" style={{width:"25%"}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                </div>
+                                <div className="pb-3" style={{ width: "100%" }}>
+                                  <div className="progress">
+                                    <div className="progress-bar bg-root" role="progressbar" style={{ width: `${percent}%` }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{percent} %</div>
+                                  </div>
                                 </div>
                                 <Link to={`training/${item._id}`}>
-                                  <button style={{cursor: "pointer"}} type="button" className="btn bg-root">Continue learning</button>
+                                  <button style={{ cursor: "pointer" }} type="button" className="btn bg-root">Continue learning</button>
                                 </Link>
                               </footer>
                             </div>
@@ -274,15 +281,13 @@ class ListTraining extends Component {
                 </div>
                 <div className="row">
                   <div className="col-xl-12">
-                    {keySearch === "" && (
-                      <Pagination
-                        activePage={this.state.activePage}
-                        itemsCountPerPage={this.state.itemPerPage}
-                        totalItemsCount={this.state.totalPage}
-                        pageRangeDisplayed={5}
-                        onChange={this.handlePageChange.bind(this)}
-                      />
-                    )}
+                    <Pagination
+                      activePage={this.state.activePage}
+                      itemsCountPerPage={this.state.itemPerPage}
+                      totalItemsCount={this.state.totalPage}
+                      pageRangeDisplayed={5}
+                      onChange={this.handlePageChange.bind(this)}
+                    />
                   </div>
                 </div>
               </div>
