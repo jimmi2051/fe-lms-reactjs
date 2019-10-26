@@ -74,7 +74,7 @@ export const getTrainingById = (payload, next, nextErr) => {
     payload: {
       query: `{
         training(id:"${id}"){
-          id
+          _id
           name
           numberOfCourse
           description
@@ -86,10 +86,11 @@ export const getTrainingById = (payload, next, nextErr) => {
             url
           }
           learningpaths{
-            id
+            _id
             position
             markForCourse
             courses{
+              _id
               name
               numberOfSection
               description
@@ -98,8 +99,10 @@ export const getTrainingById = (payload, next, nextErr) => {
                 url
               }
               relationcoursemodules{
+                _id
                 position
                 modules{
+                  _id
                   name
                   description
                   numberOfLecture
@@ -108,6 +111,7 @@ export const getTrainingById = (payload, next, nextErr) => {
                     url
                   }
                   contents{
+                    _id
                     name
                     type
                     relationData{

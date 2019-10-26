@@ -211,7 +211,7 @@ class ListTraining extends Component {
                       let percent = 0;
                       console.log("activityOfTraining", activityOfTraining);
                       if (!_.isEmpty(activityOfTraining) && !_.isEmpty(activityOfTraining.courses)) {
-                        percent = (activityOfTraining.courses.listCourse.length / item.learningpaths.length) * 100;
+                        percent = (activityOfTraining.courses.length / item.learningpaths.length) * 100;
                       }
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
@@ -264,7 +264,14 @@ class ListTraining extends Component {
                                     <div className="progress-bar bg-root" role="progressbar" style={{ width: `${percent}%` }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{percent} %</div>
                                   </div>
                                 </div>
-                                <Link to={`training/${item._id}`}>
+                                <Link
+                                   to={{
+                                    pathname: `training/${item._id}`,
+                                    state: {
+                                      currentActivity: activityOfTraining
+                                    }
+                                  }}
+                                >
                                   <button style={{ cursor: "pointer" }} type="button" className="btn bg-root">Continue learning</button>
                                 </Link>
                               </footer>

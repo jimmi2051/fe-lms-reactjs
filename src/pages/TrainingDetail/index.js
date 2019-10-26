@@ -36,26 +36,29 @@ const mapDispatchToProps = dispatch => {
 };
 
 class TrainingDetail extends Component {
-  trainingPath = {};
-  processData = false;
   state = {
     currentContent: {},
     currentCourse: {},
-    trainingPath: {},
     currentModule: {},
     initiallyOpenProperties: [],
+    currentActivity: {},
+    isLastContent: -1
   };
   componentDidMount() {
+    try {
+      const { currentActivity } = this.props.location.state;
+      this.setState({ currentActivity })
+    }
+    catch
+    { }
     const { id } = this.props.match.params;
     this.handleGetTrainingById(id);
   }
 
   componentWillReceiveProps(nextProps) {
     const { training, loadingTraining } = nextProps.store;
-    if (!loadingTraining &&
-      !_.isEqual(this.props.store.training, training) && _.isEmpty(training.data.training)
-    ) {
-      this.props.history.push("/admin/training")
+    if (!loadingTraining && (_.isEmpty(training.data.training) || _.isEmpty(training))) {
+      this.props.history.push("/my-training")
     }
   }
 
@@ -126,13 +129,56 @@ class TrainingDetail extends Component {
 
   handeSelectMenu = (item) => {
     if (item.level === 0) {
-      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {} })
+      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {}, isLastContent: -1 })
     }
     if (item.level === 1) {
-      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {} })
+      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {}, isLastContent: -1 })
     }
     if (item.level === 2) {
-      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value })
+
+      const listKey = item.parent.split("/");
+      const keyCourse = listKey[0]
+      const keyModule = listKey[1]
+      const { data } = this.refs.treeMenu.props;
+      const currentCourse = _.find(data, course => course.key === keyCourse);
+      const currentModule = _.find(currentCourse.nodes, module => module.key === keyModule);
+
+      const idxContent = _.findIndex(currentModule.nodes, content => content.value === item.value);
+
+      const isLastContent = idxContent === currentModule.nodes.length - 1 ? 1 : 0;
+      //Process to save activity
+      let { currentActivity } = this.state;
+      const idxCourse = _.findIndex(currentActivity.courses, course => course.id === currentCourse.value._id);
+      if (idxCourse > -1) {
+        // console.log("currentActivity.courses[idxCourse].listModule", currentActivity.courses[idxCourse].listModule);
+        const idxModule = _.findIndex(currentActivity.courses[idxCourse].listModule, module => module === currentModule.value._id);
+        console.log(idxModule);
+        if (idxModule === -1) {
+          currentActivity.courses[idxCourse].listModule.push(currentModule.value._id);
+        }
+      }
+      else {
+        currentActivity.courses.push({
+          id: currentCourse.value._id,
+          listModule: [currentModule.value._id]
+        })
+      }
+
+      this.setState({ currentActivity, isLastContent, currentCourse: {}, currentModule: {}, currentContent: item.value })
+      console.log("Item>>>", item)
+
+      if (isLastContent === 1) {
+        this.setState({ nextContent: {} })
+      }
+      else {
+        let nextContent = item;
+        nextContent.value = currentModule.nodes[idxContent];
+        this.setState({ nextContent }, () => {
+          console.log(this.state);
+        })
+      }
+      console.log("currentActivity", currentActivity);
+      // console.log("treeMenu",this.refs.treeMenu.props.onClickItem());
     }
   }
 
@@ -143,7 +189,7 @@ class TrainingDetail extends Component {
   }
 
   render() {
-    const { currentContent, currentCourse, currentModule } = this.state;
+    const { currentContent, currentCourse, currentModule, isLastContent } = this.state;
 
     const { training, loadingTraining } = this.props.store;
 
@@ -175,11 +221,12 @@ class TrainingDetail extends Component {
     }
     const detailTraining = training.data.training;
 
-    if (_.isEmpty(detailTraining)) {
+    if (_.isEmpty(detailTraining) || detailTraining.length === 0) {
       return (<></>)
     }
-    const listMenu = this.processDataToListMenu(detailTraining);
 
+    const listMenu = this.processDataToListMenu(detailTraining);
+    // console.log("listMenu>>>",listMenu)
     return (
       <div className="page-header">
         <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
@@ -211,6 +258,7 @@ class TrainingDetail extends Component {
                     // initialOpenNodes={this.state.initiallyOpenProperties}
                     hasSearch={true}
                     onClickItem={this.handeSelectMenu}
+                    ref="treeMenu"
                   />)}
                 </div>
               </div>
@@ -291,11 +339,11 @@ class TrainingDetail extends Component {
                     </h4>
                     <h5>Description: </h5>
                     <div
-                        className="detail-content-description"
-                        dangerouslySetInnerHTML={{
-                          __html: currentContent.relationData.data.description
-                        }}
-                      />
+                      className="detail-content-description"
+                      dangerouslySetInnerHTML={{
+                        __html: currentContent.relationData.data.description
+                      }}
+                    />
                     {currentContent.type === "Video" && (
                       <VideoNormal
                         src={
@@ -327,6 +375,14 @@ class TrainingDetail extends Component {
                     )}
                   </div>
                 )}
+                <div className="detail-content-footer pt-3">
+                  {isLastContent === 1 && (
+                    <button className="btn bg-root">Finish module</button>
+                  )}
+                  {isLastContent === 0 && (
+                    <button className="btn bg-root">Next Content >>></button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
