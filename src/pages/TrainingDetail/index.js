@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { getTrainingById } from "redux/action/training";
+import { getTrainingById, updateActivity } from "redux/action/training";
 import VideoNormal from "h5p/VideoNormal";
 import TextNormal from "h5p/TextNormal";
 import TextToTest from "h5p/TextToTest";
@@ -19,7 +19,8 @@ function mapStateToProps(state) {
   return {
     store: {
       training: state.training.training.data,
-      loadingTraining: state.training.training.loading
+      loadingTraining: state.training.training.loading,
+      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data,
     }
   };
 }
@@ -28,7 +29,8 @@ const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators(
       {
-        getTrainingById
+        getTrainingById,
+        updateActivity
       },
       dispatch
     )
@@ -42,7 +44,8 @@ class TrainingDetail extends Component {
     currentModule: {},
     initiallyOpenProperties: [],
     currentActivity: {},
-    isLastContent: -1
+    isLastContent: -1,
+    isFinishStudying: false
   };
   componentDidMount() {
     try {
@@ -50,7 +53,9 @@ class TrainingDetail extends Component {
       this.setState({ currentActivity })
     }
     catch
-    { }
+    {
+      this.props.history.push("/my-training")
+    }
     const { id } = this.props.match.params;
     this.handleGetTrainingById(id);
   }
@@ -104,7 +109,9 @@ class TrainingDetail extends Component {
       let menuLv1 = {}
       menuLv1.key = `first-level-node-${index + 1}`;
       menuLv1.label = `${path.courses[0].name}`;
-      menuLv1.value = path.courses[0];
+      let tempCourse = path.courses[0];
+      tempCourse.totalMark = path.markForCourse;
+      menuLv1.value = tempCourse;
       menuLv1.nodes = [];
       path.courses[0].relationcoursemodules.map((itemCourse, indexCourse) => {
         let menuLv2 = {}
@@ -128,6 +135,7 @@ class TrainingDetail extends Component {
   }
 
   handeSelectMenu = (item) => {
+    this.setState({ isFinishStudying: false });
     if (item.level === 0) {
       this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {}, isLastContent: -1 })
     }
@@ -135,50 +143,34 @@ class TrainingDetail extends Component {
       this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {}, isLastContent: -1 })
     }
     if (item.level === 2) {
-
       const listKey = item.parent.split("/");
       const keyCourse = listKey[0]
       const keyModule = listKey[1]
       const { data } = this.refs.treeMenu.props;
       const currentCourse = _.find(data, course => course.key === keyCourse);
       const currentModule = _.find(currentCourse.nodes, module => module.key === keyModule);
-
       const idxContent = _.findIndex(currentModule.nodes, content => content.value === item.value);
-
-      const isLastContent = idxContent === currentModule.nodes.length - 1 ? 1 : 0;
       //Process to save activity
       let { currentActivity } = this.state;
       const idxCourse = _.findIndex(currentActivity.courses, course => course.id === currentCourse.value._id);
+      console.log("currentCourse", currentCourse);
+      const totalMark = idxContent === currentModule.nodes.length - 1 ? currentCourse.value.totalMark : 0;
       if (idxCourse > -1) {
         // console.log("currentActivity.courses[idxCourse].listModule", currentActivity.courses[idxCourse].listModule);
-        const idxModule = _.findIndex(currentActivity.courses[idxCourse].listModule, module => module === currentModule.value._id);
-        console.log(idxModule);
+        const idxModule = _.findIndex(currentActivity.courses[idxCourse].modules, module => module === currentModule.value._id);
         if (idxModule === -1) {
-          currentActivity.courses[idxCourse].listModule.push(currentModule.value._id);
+          currentActivity.courses[idxCourse].modules.push(currentModule.value._id);
         }
+        currentActivity.totalMark += totalMark;
       }
       else {
         currentActivity.courses.push({
           id: currentCourse.value._id,
-          listModule: [currentModule.value._id]
+          modules: [currentModule.value._id]
         })
+        currentActivity.totalMark += totalMark;
       }
-
-      this.setState({ currentActivity, isLastContent, currentCourse: {}, currentModule: {}, currentContent: item.value })
-      console.log("Item>>>", item)
-
-      if (isLastContent === 1) {
-        this.setState({ nextContent: {} })
-      }
-      else {
-        let nextContent = item;
-        nextContent.value = currentModule.nodes[idxContent];
-        this.setState({ nextContent }, () => {
-          console.log(this.state);
-        })
-      }
-      console.log("currentActivity", currentActivity);
-      // console.log("treeMenu",this.refs.treeMenu.props.onClickItem());
+      this.setState({ currentActivity, currentCourse: {}, currentModule: {}, currentContent: item.value })
     }
   }
 
@@ -188,10 +180,26 @@ class TrainingDetail extends Component {
     })
   }
 
-  render() {
-    const { currentContent, currentCourse, currentModule, isLastContent } = this.state;
+  handleUpdateActivity = (id, courses, totalMark) => {
+    const { updateActivity } = this.props.action;
+    const payload = { id, courses, totalMark };
+    updateActivity(payload, () => {
+      const { isUpdateActivity } = this.props.store;
+      if (isUpdateActivity._id) {
+        this.setState({ isFinishStudying: true })
+      }
+    })
+  }
 
-    const { training, loadingTraining } = this.props.store;
+  handleFinishStudying = () => {
+    const { currentActivity } = this.state;
+    this.handleUpdateActivity(currentActivity._id, currentActivity.courses, currentActivity.totalMark);
+  }
+
+  render() {
+    const { currentContent, currentCourse, currentModule, isFinishStudying } = this.state;
+
+    const { training, loadingTraining, isUpdateActivity } = this.props.store;
 
     if (loadingTraining) {
       return (
@@ -334,6 +342,9 @@ class TrainingDetail extends Component {
                 }
                 {!_.isEmpty(currentContent) && (
                   <div className="detail-content">
+                    {isFinishStudying && (
+                      <h3 className="text-success">Congratulation!! You have pass this content. </h3>
+                    )}
                     <h4 className="detail-content-title">
                       {currentContent.relationData.data.title}
                     </h4>
@@ -373,16 +384,12 @@ class TrainingDetail extends Component {
                         slideItem={currentContent.relationData.data.slideItems}
                       />
                     )}
+                    <div className="detail-content-footer pt-3">
+                      <button type="button" onClick={this.handleFinishStudying} className="btn bg-root">Finished Studying</button>
+                    </div>
                   </div>
                 )}
-                <div className="detail-content-footer pt-3">
-                  {isLastContent === 1 && (
-                    <button className="btn bg-root">Finish module</button>
-                  )}
-                  {isLastContent === 0 && (
-                    <button className="btn bg-root">Next Content >>></button>
-                  )}
-                </div>
+
               </div>
             </div>
           </div>

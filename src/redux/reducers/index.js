@@ -42,6 +42,7 @@ import trainingAll, { initialState as initTrainingAll } from "./training"
 import listTrainingLearn, {initialState as initListTrainingLearn} from "./training";
 import categoryAll, { initialState as initCategoryAll } from "./training"
 import isAddTraining, {initialState as initIsAddTraining} from "./training"
+import isUpdateActivity, {initialState as initIsUpdateActivity} from "./training"
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -68,7 +69,8 @@ export const exampleInitialState = {
   trainingAll: initTrainingAll,
   categoryAll: initCategoryAll,
   isAddTraining: initIsAddTraining,
-  listTrainingLearn:initListTrainingLearn
+  listTrainingLearn:initListTrainingLearn,
+  isUpdateActivity:initIsUpdateActivity
 };
 
 export default {
@@ -97,5 +99,6 @@ export default {
   trainingAll,
   categoryAll,
   isAddTraining,
-  listTrainingLearn
+  listTrainingLearn,
+  isUpdateActivity
 };

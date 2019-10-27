@@ -34,6 +34,10 @@ export const initialState = {
   listTrainingLearn: {
     data: {},
     loading: false,
+  },
+  isUpdateActivity: {
+    data: {},
+    loading: false,
   }
 };
 
@@ -124,10 +128,21 @@ export default (state = initialState, action) => {
         ...state,
         listTrainingLearn: { ...initialState.listTrainingLearn }
       };
-    case "GET_TRAINING_LEARN_SUCCESS":{
+    case "GET_TRAINING_LEARN_SUCCESS": {
       return {
         ...state,
         listTrainingLearn: { data: action.payload, loading: false }
+      };
+    }
+    case "UPDATE_ACTIVITY_REQUEST":
+      return {
+        ...state,
+        isUpdateActivity: { ...initialState.isUpdateActivity }
+      };
+    case "UPDATE_ACTIVITY_SUCCESS": {
+      return {
+        ...state,
+        isUpdateActivity: { data: action.payload, loading: false }
       };
     }
     default:

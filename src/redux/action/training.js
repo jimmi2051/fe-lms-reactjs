@@ -277,6 +277,7 @@ export const getTrainingToLearn = (payload, next, nextErr) => {
             _id
           }
           activityusers{
+            _id
             courses
             totalMark
             users{
@@ -293,6 +294,27 @@ export const getTrainingToLearn = (payload, next, nextErr) => {
       successType: "GET_TRAINING_LEARN_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
+    }
+  };
+};
+
+export const updateActivity = (payload, next, nextErr) => {
+  const { id, courses,totalMark } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `activityusers/${id}`,
+      beforeCallType: "UPDATE_ACTIVITY_REQUEST",
+      successType: "UPDATE_ACTIVITY_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "PUT"
+      },
+      params: {
+        courses,
+        totalMark
+      }
     }
   };
 };
