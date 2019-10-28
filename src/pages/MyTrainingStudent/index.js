@@ -209,7 +209,6 @@ class ListTraining extends Component {
                       const idx = _.findIndex(item.activityusers, activity => activity.users[0]._id === AuthStorage.userInfo._id);
                       const activityOfTraining = item.activityusers[idx];
                       let percent = 0;
-                      console.log("activityOfTraining", activityOfTraining);
                       if (!_.isEmpty(activityOfTraining) && !_.isEmpty(activityOfTraining.courses)) {
                         percent = (activityOfTraining.courses.length / item.learningpaths.length) * 100;
                       }
@@ -217,7 +216,12 @@ class ListTraining extends Component {
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              <Link to={`/admin/training/${item._id}`}>
+                              <Link to={{
+                                pathname: `training/${item._id}`,
+                                state: {
+                                  currentActivity: activityOfTraining
+                                }
+                              }}>
                                 <img
                                   src={
                                     _.isEmpty(item.thumbnail)
@@ -232,7 +236,12 @@ class ListTraining extends Component {
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  <Link to={`/admin/training/${item._id}`}>
+                                  <Link to={{
+                                    pathname: `training/${item._id}`,
+                                    state: {
+                                      currentActivity: activityOfTraining
+                                    }
+                                  }}>
                                     {item.name}
                                   </Link>
                                 </h2>
@@ -265,7 +274,7 @@ class ListTraining extends Component {
                                   </div>
                                 </div>
                                 <Link
-                                   to={{
+                                  to={{
                                     pathname: `training/${item._id}`,
                                     state: {
                                       currentActivity: activityOfTraining
