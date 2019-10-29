@@ -330,7 +330,10 @@ class TrainingDetail extends Component {
     }
 
     const listMenu = this.processDataToListMenu(detailTraining);
-
+    let starOfTraining = [];
+    for (let i = 0; i < parseInt(detailTraining.level); i++) {
+      starOfTraining.push(i);
+    }
     return (
       <div className="page-header">
         <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
@@ -369,6 +372,7 @@ class TrainingDetail extends Component {
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
+
                 {_.isEmpty(currentContent) && _.isEmpty(currentCourse) && _.isEmpty(currentModule) && (
                   <div className="detail-training">
                     <h4 className="t-description">Descrption: </h4>
@@ -380,15 +384,11 @@ class TrainingDetail extends Component {
                     />
                     <h4 className="t-level">Level: </h4>
                     <div className="level pl-2">
-                      {detailTraining.level !== "" && (
-                        () => {
-                          for (let i = 0; i < parseInt(detailTraining.level); i++) {
-                            return (
-                              <span className="fa fa-star checked"></span>
-                            )
-                          }
-                        })()
-                      }
+                      {detailTraining.level !== "" && starOfTraining.map((item, index) => {
+                        return (
+                          <span className="fa fa-star checked"></span>
+                        )
+                      })}
                     </div>
                     <h4 className="t-total-course">Total courses:</h4>
                     <div className="total-course pl-2">

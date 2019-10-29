@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import Loading from "components/Loading";
 import PopupSuccess from "pages/ListTrainingStudent/PopupSuccess"
 import Pagination from "react-js-pagination";
+import { withRouter } from "react-router";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
@@ -53,6 +54,13 @@ class ListTraining extends Component {
     activePage: 1
   }
   componentDidMount() {
+    try {
+      const { keySearch } = this.props.location.state;
+      this.setState({ keySearch })
+    }
+    catch
+    {
+    }
     this.handleGetTraining();
     this.handleGetCategory();
     fetch("https://be-lms.tk/trainings/count")
@@ -223,7 +231,7 @@ class ListTraining extends Component {
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">
-                    <input onKeyDown={this.beginSearch} className="form-control" onChange={this.handleInputSearch} placeholder="Search by training name." />
+                    <input value={this.state.keySearch} onKeyDown={this.beginSearch} className="form-control" onChange={this.handleInputSearch} placeholder="Search by training name." />
                   </div>
                   <ul className="p-0 m-0">
                     {!loadingCategoryAll &&
@@ -245,6 +253,10 @@ class ListTraining extends Component {
                 <div className="row mx-m-25">
                   {!loadingTrainingAll ?
                     trainingAll.map((item, index) => {
+                      let starOfTraining = [];
+                      for (let i = 0; i < parseInt(item.level); i++) {
+                        starOfTraining.push(i);
+                      }
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
@@ -292,7 +304,15 @@ class ListTraining extends Component {
                                 </div>
                               </header>
 
-                              <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
+                              <footer className="entry-footer flex flex-wrap align-items-center">
+                                <h4 className="t-level mb-0">Level: </h4>
+                                <div className="level pl-3">
+                                  {item.level !== "" && starOfTraining.map((item, index) => {
+                                    return (
+                                      <span className="fa fa-star checked"></span>
+                                    )
+                                  })}
+                                </div>
                                 {/* <div className="course-cost">
                                   $45 <span className="price-drop">$68</span>
                                 </div>
@@ -308,7 +328,9 @@ class ListTraining extends Component {
                                     (4 votes)
                                   </span>
                                 </div> */}
-                                <button type="button" onClick={() => { this.handleAddToMyTraining(item) }} className="btn bg-root">Add to my training</button>
+                                <div className="col-xl-12 pr-0 pt-3 text-right">
+                                  <button type="button" onClick={() => { this.handleAddToMyTraining(item) }} className="btn bg-root">Add to my training</button>
+                                </div>
                               </footer>
                             </div>
                           </div>
@@ -347,4 +369,4 @@ class ListTraining extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ListTraining);
+)(withRouter(ListTraining));

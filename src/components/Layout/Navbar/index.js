@@ -20,13 +20,20 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Navbar extends Component {
+
+  state={
+    keySearch:""
+  }
   componentDidMount() { }
   logout = () => {
     this.props.action.logoutRequest();
   };
+  handleChangeSearch = (e) => {
+    this.setState({keySearch: e.target.value})
+  }
   render() {
-    const isActive = true;
     const { pathname } = this.props.location;
+    const {keySearch} = this.state;
     return (
       <header className="site-header">
         <div className="top-header-bar">
@@ -50,7 +57,17 @@ class Navbar extends Component {
                     <input
                       type="search"
                       placeholder="What would you like to learn?"
+                      value={keySearch}
+                      onChange= {this.handleChangeSearch}
                     />
+                     <Link
+                        to={{
+                            pathname: `trainings`,
+                            state: {
+                              keySearch
+                            }
+                          }}
+                        >
                     <button
                       type="submit"
                       value=""
@@ -58,6 +75,7 @@ class Navbar extends Component {
                     >
                       <i className="fa fa-search"></i>
                     </button>
+                    </Link>
                   </form>
                 </div>
 
