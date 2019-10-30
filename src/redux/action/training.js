@@ -132,6 +132,16 @@ export const getTrainingById = (payload, next, nextErr) => {
             firstName
             lastName
           }
+          activityusers{
+            courses
+            totalMark
+            users{
+              _id
+            }
+          }
+          categorytrainings{
+            name
+          }
         }
       }`,
       beforeCallType: "GET_TRAINING_BY_ID_REQUEST",
@@ -299,7 +309,7 @@ export const getTrainingToLearn = (payload, next, nextErr) => {
 };
 
 export const updateActivity = (payload, next, nextErr) => {
-  const { id, courses,totalMark } = payload;
+  const { id, courses, totalMark } = payload;
   return {
     type: SINGLE_API,
     payload: {

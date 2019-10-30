@@ -15,6 +15,7 @@ import AdminListTraining from "pages/ListTraining";
 import TrainingDetail from "pages/TrainingDetail";
 import TrainingPage from "pages/ListTrainingStudent";
 import MyTrainingPage from "pages/MyTrainingStudent";
+import ViewTrainingDetail from "pages/ViewDetailTraining";
 export default function RootRoute() {
   return (
     <>
@@ -32,6 +33,11 @@ export default function RootRoute() {
           exact
           path="/training/:id"
           component={TrainingDetail}
+        />
+        <Route
+          exact
+          path="/view-training/:id"
+          component={ViewTrainingDetail}
         />
       </Switch>
     </>

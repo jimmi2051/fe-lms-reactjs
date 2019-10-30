@@ -1,0 +1,450 @@
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import Header from "components/Layout/Header";
+import { getTrainingById, updateActivity } from "redux/action/training";
+import VideoNormal from "h5p/VideoNormal";
+import TextNormal from "h5p/TextNormal";
+import TextToTest from "h5p/TextToTest";
+import Question from "h5p/Question";
+import Slide from "h5p/Slide";
+import _ from "lodash";
+import { withRouter } from "react-router";
+import TreeMenu from "react-simple-tree-menu";
+import Loading from "components/Loading";
+import moment from "moment";
+const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
+
+function mapStateToProps(state) {
+  return {
+    store: {
+      training: state.training.training.data,
+      loadingTraining: state.training.training.loading,
+      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data,
+    }
+  };
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    action: bindActionCreators(
+      {
+        getTrainingById,
+        updateActivity
+      },
+      dispatch
+    )
+  };
+};
+
+class TrainingDetail extends Component {
+  state = {
+    currentContent: {},
+    currentCourse: {},
+    currentModule: {},
+    initiallyOpenProperties: [],
+    currentActivity: {},
+    isLastContent: -1,
+    isFinishStudying: false,
+    keyCourse: "",
+    keyModule: "",
+  };
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    this.handleGetTrainingById(id);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { training, loadingTraining } = nextProps.store;
+    if (!loadingTraining && (_.isEmpty(training.data.training) || _.isEmpty(training))) {
+      this.props.history.push("/my-training")
+    }
+  }
+
+  handleGetTrainingById = id => {
+    const payload = { id };
+    const { getTrainingById } = this.props.action;
+    getTrainingById(payload, () => { });
+  };
+
+  handleChangeContent = currentContentChoosen => {
+    let { currentContent } = this.state;
+    if (_.isEqual(currentContent, currentContentChoosen)) {
+      this.setState({ currentContent: {} })
+    }
+    else {
+      this.setState({ currentContent: currentContentChoosen });
+    }
+  };
+
+  handleChangeCourse = currentCourseChoosen => {
+    let { currentCourse } = this.state;
+    if (_.isEqual(currentCourse, currentCourseChoosen)) {
+      this.setState({ currentCourse: {} })
+    }
+    else {
+      this.setState({ currentCourse: currentCourseChoosen });
+    }
+  };
+
+  handleChangeModule = currentModuleChoosen => {
+    let { currentModule } = this.state;
+    if (_.isEqual(currentModule, currentModuleChoosen)) {
+      this.setState({ currentModule: {} })
+    }
+    else {
+      this.setState({ currentModule: currentModuleChoosen });
+    }
+  };
+
+  processDataToListMenu = (training) => {
+    let listMenu = [];
+    training.learningpaths.map((path, index) => {
+      let menuLv1 = {}
+      menuLv1.key = `first-level-node-${index + 1}`;
+      menuLv1.label = `${path.courses[0].name}`;
+      let tempCourse = path.courses[0];
+      tempCourse.totalMark = path.markForCourse;
+      menuLv1.value = tempCourse;
+      menuLv1.nodes = [];
+      path.courses[0].relationcoursemodules.map((itemCourse, indexCourse) => {
+        let menuLv2 = {}
+        menuLv2.key = `second-level-node-${indexCourse + 1}`;
+        menuLv2.label = itemCourse.modules[0].name
+        menuLv2.value = itemCourse.modules[0];
+        menuLv2.nodes = []
+        itemCourse.modules[0].contents.map((itemContent, indexContent) => {
+          let menuLv3 = {}
+          menuLv3.key = `third-level-node-${indexContent + 1}`;
+          menuLv3.label = itemContent.name;
+          menuLv3.value = itemContent
+          menuLv3.nodes = []
+          menuLv2.nodes.push(menuLv3);
+        })
+        menuLv1.nodes.push(menuLv2);
+      })
+      listMenu.push(menuLv1);
+    })
+    return listMenu;
+  }
+
+  handeSelectMenu = (item) => {
+    this.setState({ isFinishStudying: false });
+    if (item.level === 0) {
+      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {}, isLastContent: -1 })
+    }
+    if (item.level === 1) {
+      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {}, isLastContent: -1 })
+    }
+    if (item.level === 2) {
+      const listKey = item.parent.split("/");
+      const keyCourse = listKey[0]
+      const keyModule = listKey[1]
+
+      const { data } = this.refs.treeMenu.props;
+      const currentCourse = _.find(data, course => course.key === keyCourse);
+      const currentModule = _.find(currentCourse.nodes, module => module.key === keyModule);
+      const idxContent = _.findIndex(currentModule.nodes, content => content.value === item.value);
+      //Process to save activity
+      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse);
+
+      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value, keyCourse, keyModule })
+    }
+  }
+
+  handleProcessActivity = (courseId, moduleId, listModule, currentCourse) => {
+    let { currentActivity } = this.state;
+    const idxCourse = _.findIndex(currentActivity.courses, course => course.id === courseId);
+    // const totalMark = idxContent === listModule.length - 1 ? currentCourse.value.totalMark : 0;
+
+    if (idxCourse > -1) {
+      // console.log("currentActivity.courses[idxCourse].listModule", currentActivity.courses[idxCourse].listModule);
+      const idxModule = _.findIndex(currentActivity.courses[idxCourse].modules, module => module === moduleId);
+      if (idxModule === -1) {
+        currentActivity.courses[idxCourse].modules.push(moduleId);
+      }
+      const totalMark = currentActivity.courses[idxCourse].modules.length === listModule.length ? currentCourse.value.totalMark : 0;
+      currentActivity.totalMark += totalMark;
+    }
+    else {
+      currentActivity.courses.push({
+        id: courseId,
+        modules: [moduleId]
+      })
+    }
+    this.setState({ currentActivity });
+  }
+
+
+  resetTraining = () => {
+    this.setState({
+      currentCourse: {}, currentModule: {}, currentContent: {}
+    })
+  }
+
+  handleUpdateActivity = (id, courses, totalMark) => {
+    const { updateActivity } = this.props.action;
+    const payload = { id, courses, totalMark };
+    updateActivity(payload, () => {
+      const { isUpdateActivity } = this.props.store;
+      if (isUpdateActivity._id) {
+        this.setState({ isFinishStudying: true })
+      }
+    })
+  }
+
+  handleFinishStudying = () => {
+    const { currentActivity } = this.state;
+    this.handleUpdateActivity(currentActivity._id, currentActivity.courses, currentActivity.totalMark);
+  }
+
+  handleNextContent = (listMenu) => {
+    const { currentContent, keyCourse, keyModule } = this.state;
+    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
+    const currentCourse = listMenu[idxCourse];
+    const idxModule = _.findIndex(currentCourse.nodes, module => module.key === keyModule);
+    const currentModule = currentCourse.nodes[idxModule];
+    const idxContent = _.findIndex(currentModule.nodes, content => content.value._id === currentContent._id);
+    if (idxContent === currentModule.nodes.length - 1) {
+      if (idxModule === currentCourse.nodes.length - 1) {
+        if (idxCourse === listMenu.length - 1) {
+          // Case lastest content of course 
+        }
+        else {
+          this.setState({
+            currentContent: {},
+            currentModule: {},
+            currentCourse: listMenu[idxCourse + 1].value,
+            keyCourse: listMenu[idxCourse + 1].key
+          })
+        }
+        this.handleFinishStudying()
+      }
+      else {
+        this.setState({
+          currentContent: {},
+          currentModule: currentCourse.nodes[idxModule + 1].value,
+          keyModule: currentCourse.nodes[idxModule + 1].key
+        })
+      }
+    }
+    // Case next content
+    else {
+      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse)
+      this.setState({ currentContent: currentModule.nodes[idxContent + 1].value })
+    }
+  }
+
+  handleNextModule = (listMenu) => {
+    const { keyCourse, keyModule } = this.state;
+    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
+    const currentCourse = listMenu[idxCourse];
+    const idxModule = _.findIndex(currentCourse.nodes, module => module.key === keyModule);
+    const currentModule = currentCourse.nodes[idxModule];
+    if (currentModule.nodes.length > 0) {
+      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse)
+      this.setState({
+        currentContent: currentModule.nodes[0].value,
+        currentModule: {}
+      })
+    }
+    else {
+      if (idxModule === currentCourse.nodes.length - 1) {
+        if (idxCourse === listMenu.length - 1) {
+          this.handleFinishStudying()
+        }
+        else {
+          this.setState({
+            currentCourse: listMenu[idxCourse + 1].value,
+            keyCourse: listMenu[idxCourse + 1].key,
+            currentModule: {}
+          })
+        }
+      }
+      else {
+        this.setState({ currentModule: currentCourse[idxModule + 1].value })
+      }
+    }
+  }
+
+  handleNextCourse = (listMenu) => {
+    const { keyCourse, keyModule } = this.state;
+    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
+    const currentCourse = listMenu[idxCourse];
+    if (currentCourse.nodes.length > 0) {
+      this.setState({
+        currentModule: currentCourse.nodes[0].value,
+        currentCourse: {},
+      })
+    }
+    else {
+      if (idxCourse === listMenu.length - 1) {
+        this.handleFinishStudying()
+      }
+    }
+  }
+
+  render() {
+    const { currentContent, currentCourse, currentModule, isFinishStudying, keyCourse, keyModule } = this.state;
+
+    const { training, loadingTraining, isUpdateActivity } = this.props.store;
+
+    if (loadingTraining) {
+      return (
+        <div className="page-header">
+          <Header titleHeader="Training Detail Page" />
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <div className="breadcrumbs">
+                  <ul className="flex flex-wrap align-items-center p-0 m-0">
+                    <li>
+                      <a href="#">
+                        <i className="fa fa-home"></i> Home
+                    </a>
+                    </li>
+                    <li>Training</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="col-12">
+                <Loading classOption="align-center-spinner" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    const detailTraining = training.data.training;
+
+    if (_.isEmpty(detailTraining) || detailTraining.length === 0) {
+      return (<></>)
+    }
+
+    const listMenu = this.processDataToListMenu(detailTraining);
+    let starOfTraining = [];
+    for (let i = 0; i < parseInt(detailTraining.level); i++) {
+      starOfTraining.push(i);
+    }
+    return (
+      <div className="page-header">
+        <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <div className="breadcrumbs">
+                <ul className="flex flex-wrap align-items-center p-0 m-0">
+                  <li>
+                    <a href="#">
+                      <i className="fa fa-home"></i> Home
+                    </a>
+                  </li>
+                  <li>
+                    <a href="" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-12 offset-lg-1 col-lg-1">
+              <div className="post-share">
+                <h3>share</h3>
+
+                <ul className="flex flex-wrap align-items-center p-0 m-0">
+                  <li><a href="#"><i className="fa fa-facebook"></i></a></li>
+                  <li><a href="#"><i className="fa fa-twitter"></i></a></li>
+                  <li><a href="#"><i className="fa fa-google-plus"></i></a></li>
+                  <li><a href="#"><i className="fa fa-instagram"></i></a></li>
+                  <li><a href="#"><i className="fa fa-thumb-tack"></i></a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="col-12 col-lg-10">
+              <div className="single-course-wrap">
+                <div className="course-info flex flex-wrap align-items-center">
+                  <div className="course-author flex flex-wrap align-items-center mt-3">
+                    <img src="https://be-lms.tk/uploads/6a8cd6609b024ee5b3a7239eae0d3111.png" alt="" />
+
+                    <div className="author-wrap">
+                      <label className="m-0">Teacher</label>
+                      <div className="author-name">
+                        <a href="#">
+                          {detailTraining.users && detailTraining.users.length > 0
+                            ? `${detailTraining.users[0].firstName} ${detailTraining.users[0].lastName}`
+                            : "Unknown author"}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="course-cats mt-3">
+                    <label className="m-0">Categories</label>
+                    <div className="author-name"><a href="#">{detailTraining.categorytrainings && detailTraining.categorytrainings[0].name}</a></div>
+                  </div>
+
+                  <div className="course-students mt-3">
+                    <label className="m-0">Student</label>
+                    <div className="author-name"><a href="#">{detailTraining.activityusers.length} (REGISTERED)</a></div>
+                  </div>
+                  <div className="buy-course mt-3">
+                    <a className="btn" href="#">ADD to cart</a>
+                  </div>
+                </div>
+              </div>
+              <div className="single-course-cont-section">
+
+                <h2>Descrption: </h2>
+                <div
+                  className="description pl-2"
+                  dangerouslySetInnerHTML={{
+                    __html: detailTraining.description
+                  }}
+                />
+                <img src={`${REACT_APP_URL_API}${detailTraining.thumbnail.url}`} alt="#" />
+                <h4 className="t-level">Level: </h4>
+                <div className="level pl-2">
+                  {detailTraining.level !== "" && starOfTraining.map((item, index) => {
+                    return (
+                      <span className="fa fa-star checked"></span>
+                    )
+                  })}
+                  <h4 className="t-created-date">Created At: </h4>
+                  <div className="created-date pl-2">
+                    {moment(detailTraining.createdAt).format(
+                      "MMM. D, YYYY"
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="single-course-accordion-cont mt-1">
+                <header className="entry-header flex flex-wrap justify-content-between align-items-center">
+                  <h2>Curriculum For This Course</h2>
+
+                  <div className="number-of-lectures">{detailTraining.learningpaths.length} Lectures</div>
+
+                  <div className="total-lectures-time">###</div>
+                </header>
+                <div className="entry-contents">
+                  {listMenu.length > 0 && (<TreeMenu
+                    data={listMenu}
+                    // initialOpenNodes={this.state.initiallyOpenProperties}
+                    hasSearch={false}
+                    onClickItem={this.handeSelectMenu}
+                    ref="treeMenu"
+                  />)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(TrainingDetail));
