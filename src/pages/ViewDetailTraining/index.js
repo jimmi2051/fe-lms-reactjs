@@ -2,17 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { getTrainingById, updateActivity } from "redux/action/training";
-import VideoNormal from "h5p/VideoNormal";
-import TextNormal from "h5p/TextNormal";
-import TextToTest from "h5p/TextToTest";
-import Question from "h5p/Question";
-import Slide from "h5p/Slide";
+import { getTrainingById, updateActivity, addToMyTraining } from "redux/action/training";
+import AuthStorage from "utils/AuthStorage";
 import _ from "lodash";
 import { withRouter } from "react-router";
 import TreeMenu from "react-simple-tree-menu";
 import Loading from "components/Loading";
 import moment from "moment";
+import { ToastContainer } from "react-toastr";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -30,13 +27,14 @@ const mapDispatchToProps = dispatch => {
     action: bindActionCreators(
       {
         getTrainingById,
-        updateActivity
+        updateActivity,
+        addToMyTraining
       },
       dispatch
     )
   };
 };
-
+let toastr;
 class TrainingDetail extends Component {
   state = {
     currentContent: {},
@@ -48,8 +46,20 @@ class TrainingDetail extends Component {
     isFinishStudying: false,
     keyCourse: "",
     keyModule: "",
+    addTraining: {},
+    training: {},
+    currentTraining: {},
+    trainingExists: {}
   };
   componentDidMount() {
+    try {
+      const { currentTraining } = this.props.location.state;
+      this.setState({ currentTraining })
+    }
+    catch
+    {
+      this.props.history.push("/trainings")
+    }
     const { id } = this.props.match.params;
     this.handleGetTrainingById(id);
   }
@@ -57,7 +67,7 @@ class TrainingDetail extends Component {
   componentWillReceiveProps(nextProps) {
     const { training, loadingTraining } = nextProps.store;
     if (!loadingTraining && (_.isEmpty(training.data.training) || _.isEmpty(training))) {
-      this.props.history.push("/my-training")
+      this.props.history.push("/trainings")
     }
   }
 
@@ -102,7 +112,7 @@ class TrainingDetail extends Component {
     training.learningpaths.map((path, index) => {
       let menuLv1 = {}
       menuLv1.key = `first-level-node-${index + 1}`;
-      menuLv1.label = `${path.courses[0].name}`;
+      menuLv1.label = `${path.courses[0].name} | Total Modules: ${path.courses[0].relationcoursemodules.length}`;
       let tempCourse = path.courses[0];
       tempCourse.totalMark = path.markForCourse;
       menuLv1.value = tempCourse;
@@ -110,7 +120,7 @@ class TrainingDetail extends Component {
       path.courses[0].relationcoursemodules.map((itemCourse, indexCourse) => {
         let menuLv2 = {}
         menuLv2.key = `second-level-node-${indexCourse + 1}`;
-        menuLv2.label = itemCourse.modules[0].name
+        menuLv2.label = `${itemCourse.modules[0].name} | Total Contents: ${itemCourse.modules[0].contents.length}`
         menuLv2.value = itemCourse.modules[0];
         menuLv2.nodes = []
         itemCourse.modules[0].contents.map((itemContent, indexContent) => {
@@ -131,163 +141,66 @@ class TrainingDetail extends Component {
   handeSelectMenu = (item) => {
     this.setState({ isFinishStudying: false });
     if (item.level === 0) {
-      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {}, isLastContent: -1 })
+      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {} })
     }
     if (item.level === 1) {
-      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {}, isLastContent: -1 })
+      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {} })
     }
     if (item.level === 2) {
-      const listKey = item.parent.split("/");
-      const keyCourse = listKey[0]
-      const keyModule = listKey[1]
-
-      const { data } = this.refs.treeMenu.props;
-      const currentCourse = _.find(data, course => course.key === keyCourse);
-      const currentModule = _.find(currentCourse.nodes, module => module.key === keyModule);
-      const idxContent = _.findIndex(currentModule.nodes, content => content.value === item.value);
-      //Process to save activity
-      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse);
-
-      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value, keyCourse, keyModule })
+      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value })
     }
   }
 
-  handleProcessActivity = (courseId, moduleId, listModule, currentCourse) => {
-    let { currentActivity } = this.state;
-    const idxCourse = _.findIndex(currentActivity.courses, course => course.id === courseId);
-    // const totalMark = idxContent === listModule.length - 1 ? currentCourse.value.totalMark : 0;
-
-    if (idxCourse > -1) {
-      // console.log("currentActivity.courses[idxCourse].listModule", currentActivity.courses[idxCourse].listModule);
-      const idxModule = _.findIndex(currentActivity.courses[idxCourse].modules, module => module === moduleId);
-      if (idxModule === -1) {
-        currentActivity.courses[idxCourse].modules.push(moduleId);
-      }
-      const totalMark = currentActivity.courses[idxCourse].modules.length === listModule.length ? currentCourse.value.totalMark : 0;
-      currentActivity.totalMark += totalMark;
+  handleAddToMyTraining = (training) => {
+    if (this.checkTrainingExists(training._id)) {
+      this.notifyError("Notification", "This training already exists in your list.")
     }
     else {
-      currentActivity.courses.push({
-        id: courseId,
-        modules: [moduleId]
-      })
-    }
-    this.setState({ currentActivity });
-  }
-
-
-  resetTraining = () => {
-    this.setState({
-      currentCourse: {}, currentModule: {}, currentContent: {}
-    })
-  }
-
-  handleUpdateActivity = (id, courses, totalMark) => {
-    const { updateActivity } = this.props.action;
-    const payload = { id, courses, totalMark };
-    updateActivity(payload, () => {
-      const { isUpdateActivity } = this.props.store;
-      if (isUpdateActivity._id) {
-        this.setState({ isFinishStudying: true })
+      const user = AuthStorage.userInfo;
+      const { addToMyTraining } = this.props.action;
+      const payload = {
+        training,
+        user,
       }
-    })
-  }
-
-  handleFinishStudying = () => {
-    const { currentActivity } = this.state;
-    this.handleUpdateActivity(currentActivity._id, currentActivity.courses, currentActivity.totalMark);
-  }
-
-  handleNextContent = (listMenu) => {
-    const { currentContent, keyCourse, keyModule } = this.state;
-    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
-    const currentCourse = listMenu[idxCourse];
-    const idxModule = _.findIndex(currentCourse.nodes, module => module.key === keyModule);
-    const currentModule = currentCourse.nodes[idxModule];
-    const idxContent = _.findIndex(currentModule.nodes, content => content.value._id === currentContent._id);
-    if (idxContent === currentModule.nodes.length - 1) {
-      if (idxModule === currentCourse.nodes.length - 1) {
-        if (idxCourse === listMenu.length - 1) {
-          // Case lastest content of course 
+      addToMyTraining(payload, (response) => {
+        if (response._id) {
+          this.setState({ addSuccess: true })
+          let nextAuthStorage = AuthStorage.value;
+          let tempActivity = response;
+          tempActivity.trainings[0] = tempActivity.trainings[0]._id;
+          tempActivity.users[0] = tempActivity.users[0]._id;
+          nextAuthStorage.user.activityusers.push(tempActivity);
+          AuthStorage.value = nextAuthStorage;
+          this.notifySuccess("Notification", "Add training to store successfully.");
         }
         else {
-          this.setState({
-            currentContent: {},
-            currentModule: {},
-            currentCourse: listMenu[idxCourse + 1].value,
-            keyCourse: listMenu[idxCourse + 1].key
-          })
+          this.notifyError("Notification", "Something when wrong. Please wait a few minutes and try again. Thanks.")
         }
-        this.handleFinishStudying()
-      }
-      else {
-        this.setState({
-          currentContent: {},
-          currentModule: currentCourse.nodes[idxModule + 1].value,
-          keyModule: currentCourse.nodes[idxModule + 1].key
-        })
-      }
-    }
-    // Case next content
-    else {
-      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse)
-      this.setState({ currentContent: currentModule.nodes[idxContent + 1].value })
+      });
     }
   }
 
-  handleNextModule = (listMenu) => {
-    const { keyCourse, keyModule } = this.state;
-    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
-    const currentCourse = listMenu[idxCourse];
-    const idxModule = _.findIndex(currentCourse.nodes, module => module.key === keyModule);
-    const currentModule = currentCourse.nodes[idxModule];
-    if (currentModule.nodes.length > 0) {
-      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse)
-      this.setState({
-        currentContent: currentModule.nodes[0].value,
-        currentModule: {}
-      })
+  checkTrainingExists = (trainingId) => {
+    const idx = _.findIndex(AuthStorage.userInfo.activityusers, activity => activity.trainings[0] === trainingId)
+    if (idx > -1) {
+      return true;
     }
-    else {
-      if (idxModule === currentCourse.nodes.length - 1) {
-        if (idxCourse === listMenu.length - 1) {
-          this.handleFinishStudying()
-        }
-        else {
-          this.setState({
-            currentCourse: listMenu[idxCourse + 1].value,
-            keyCourse: listMenu[idxCourse + 1].key,
-            currentModule: {}
-          })
-        }
-      }
-      else {
-        this.setState({ currentModule: currentCourse[idxModule + 1].value })
-      }
-    }
+    return false;
   }
 
-  handleNextCourse = (listMenu) => {
-    const { keyCourse, keyModule } = this.state;
-    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
-    const currentCourse = listMenu[idxCourse];
-    if (currentCourse.nodes.length > 0) {
-      this.setState({
-        currentModule: currentCourse.nodes[0].value,
-        currentCourse: {},
-      })
-    }
-    else {
-      if (idxCourse === listMenu.length - 1) {
-        this.handleFinishStudying()
-      }
-    }
-  }
+  notifySuccess = (title, content) => {
+    toastr.success(content, title, {
+      closeButton: true
+    });
+  };
+  notifyError = (title, content) => {
+    toastr.error(content, title, {
+      closeButton: true
+    });
+  };
 
   render() {
-    const { currentContent, currentCourse, currentModule, isFinishStudying, keyCourse, keyModule } = this.state;
-
-    const { training, loadingTraining, isUpdateActivity } = this.props.store;
+    const { training, loadingTraining } = this.props.store;
 
     if (loadingTraining) {
       return (
@@ -328,6 +241,10 @@ class TrainingDetail extends Component {
     }
     return (
       <div className="page-header">
+        <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
         <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
         <div className="container">
           <div className="row">
@@ -381,7 +298,7 @@ class TrainingDetail extends Component {
                   </div>
                   <div className="course-cats mt-3">
                     <label className="m-0">Categories</label>
-                    <div className="author-name"><a href="#">{detailTraining.categorytrainings && detailTraining.categorytrainings[0].name}</a></div>
+                    <div className="author-name"><a href="#">{detailTraining.categorytrainings && detailTraining.categorytrainings.length > 0 && detailTraining.categorytrainings[0].name}</a></div>
                   </div>
 
                   <div className="course-students mt-3">
@@ -389,7 +306,7 @@ class TrainingDetail extends Component {
                     <div className="author-name"><a href="#">{detailTraining.activityusers.length} (REGISTERED)</a></div>
                   </div>
                   <div className="buy-course mt-3">
-                    <a className="btn" href="#">ADD to cart</a>
+                    <a className="btn" href="#" onClick={(e) => { e.preventDefault(); this.handleAddToMyTraining(this.state.currentTraining) }} >ADD to cart</a>
                   </div>
                 </div>
               </div>
@@ -397,21 +314,21 @@ class TrainingDetail extends Component {
 
                 <h2>Descrption: </h2>
                 <div
-                  className="description pl-2"
+                  className="description"
                   dangerouslySetInnerHTML={{
                     __html: detailTraining.description
                   }}
                 />
                 <img src={`${REACT_APP_URL_API}${detailTraining.thumbnail.url}`} alt="#" />
                 <h4 className="t-level">Level: </h4>
-                <div className="level pl-2">
+                <div className="level">
                   {detailTraining.level !== "" && starOfTraining.map((item, index) => {
                     return (
                       <span className="fa fa-star checked"></span>
                     )
                   })}
                   <h4 className="t-created-date">Created At: </h4>
-                  <div className="created-date pl-2">
+                  <div className="created-date">
                     {moment(detailTraining.createdAt).format(
                       "MMM. D, YYYY"
                     )}

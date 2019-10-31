@@ -187,7 +187,8 @@ class ListTraining extends Component {
                         (item, index) => {
                           return (
                             <li key={index}>
-                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#" onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
+                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#" 
+                              onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
                             </li>
                           );
                         }

@@ -51,7 +51,8 @@ class ListTraining extends Component {
     startItemPage: 0,
     itemPerPage: 4,
     totalPage: -1,
-    activePage: 1
+    activePage: 1,
+    categoryId: ""
   }
   componentDidMount() {
     try {
@@ -70,9 +71,18 @@ class ListTraining extends Component {
       })
   }
 
+  handleGetTotalPage = () => {
+    const { keySearch, categoryId } = this.state;
+    fetch(`https://be-lms.tk/trainings?${keySearch !== "" ? `name_contains=${keySearch}&` : ``}${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}`)
+      .then(response => { return response.json() })
+      .then(result => {
+        this.setState({ totalPage: result.length })
+      })
+  }
+
   handleGetTraining = () => {
-    const { keySearch, startItemPage, itemPerPage } = this.state;
-    const payload = { keySearch, startItemPage, itemPerPage };
+    const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
+    const payload = { keySearch, startItemPage, itemPerPage, categoryId };
     const { getAllTraining } = this.props.action;
     getAllTraining(payload, () => {
       const { trainingAll } = this.props.store;
@@ -151,7 +161,8 @@ class ListTraining extends Component {
 
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
-      this.setState({ startItemPage: 0, itemPerPage: 3 }, () => {
+      this.setState({ startItemPage: 0 }, () => {
+        this.handleGetTotalPage();
         this.handleGetTraining();
       })
     }
@@ -165,6 +176,13 @@ class ListTraining extends Component {
     });
   }
 
+  fitlerCategory = (categoryId) => {
+    this.setState({ categoryId, startItemPage: 0 }, () => {
+      this.handleGetTotalPage()
+      this.handleGetTraining();
+    });
+  }
+
   render() {
     const {
       loadingTrainingAll,
@@ -172,7 +190,7 @@ class ListTraining extends Component {
       loadingCategoryAll,
       categoryAll
     } = this.props.store;
-    const { addSuccess, trainingExists, keySearch } = this.state;
+    const { addSuccess, trainingExists, keySearch, categoryId } = this.state;
 
     if (loadingCategoryAll) {
       return (<div className="page-header">
@@ -239,11 +257,16 @@ class ListTraining extends Component {
                         (item, index) => {
                           return (
                             <li key={index}>
-                              <Link to="#">{item.name}</Link>
+                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#"
+                                onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}
+                              >{item.name}</Link>
                             </li>
                           );
                         }
                       )}
+                    <li>
+                      <Link to="#" className={`${categoryId === "" ? "font-weight-bold" : ""}`} onClick={(e) => { e.preventDefault(); this.fitlerCategory("") }}>VIEW ALL</Link>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -261,7 +284,15 @@ class ListTraining extends Component {
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              <Link to={`/admin/training/${item._id}`}>
+                              <Link
+                                to={{
+                                  pathname: `/view-training/${item._id}`,
+                                  state: {
+                                    currentTraining: item,
+                                    // funcAddTraining: this.handleAddToMyTraining
+                                  }
+                                }}
+                              >
                                 <img
                                   src={
                                     _.isEmpty(item.thumbnail)
@@ -271,12 +302,14 @@ class ListTraining extends Component {
                                   alt=""
                                 />
                               </Link>
+
                             </figure>
 
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  <Link to={`/admin/training/${item._id}`}>
+
+                                  <Link to={`/view-training/${item._id}`} target="_blank">
                                     {item.name}
                                   </Link>
                                 </h2>
@@ -345,16 +378,13 @@ class ListTraining extends Component {
                 </div>
                 <div className="row">
                   <div className="col-xl-12">
-                    {keySearch === "" && (
-                      <Pagination
-                        activePage={this.state.activePage}
-                        itemsCountPerPage={this.state.itemPerPage}
-                        totalItemsCount={this.state.totalPage}
-                        pageRangeDisplayed={5}
-                        onChange={this.handlePageChange.bind(this)}
-                      />
-                    )}
-
+                    <Pagination
+                      activePage={this.state.activePage}
+                      itemsCountPerPage={this.state.itemPerPage}
+                      totalItemsCount={this.state.totalPage}
+                      pageRangeDisplayed={5}
+                      onChange={this.handlePageChange.bind(this)}
+                    />
                   </div>
                 </div>
               </div>

@@ -41,3 +41,16 @@
 .modal-body-alert{
   height: 100px;
 }
+
+.toast {
+  &-success {
+    background: #60cdf6 !important;
+    background-position: 15px center !important;
+    background-repeat: no-repeat !important;
+  }
+  &-error {
+    background: #d9534f !important;
+    background-position: 15px center !important;
+    background-repeat: no-repeat !important;
+  }
+}
