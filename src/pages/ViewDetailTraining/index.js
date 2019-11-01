@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
 import { getTrainingById, updateActivity, addToMyTraining } from "redux/action/training";
 import AuthStorage from "utils/AuthStorage";
+import ActivityStorage from "utils/ActivityStorage";
 import _ from "lodash";
 import { withRouter } from "react-router";
 import TreeMenu from "react-simple-tree-menu";
@@ -164,13 +165,12 @@ class TrainingDetail extends Component {
       }
       addToMyTraining(payload, (response) => {
         if (response._id) {
-          this.setState({ addSuccess: true })
-          let nextAuthStorage = AuthStorage.value;
+          let nextActivityStorage = ActivityStorage.value;
           let tempActivity = response;
           tempActivity.trainings[0] = tempActivity.trainings[0]._id;
           tempActivity.users[0] = tempActivity.users[0]._id;
-          nextAuthStorage.user.activityusers.push(tempActivity);
-          AuthStorage.value = nextAuthStorage;
+          nextActivityStorage.activityusers.push(tempActivity);
+          ActivityStorage.value = nextActivityStorage;
           this.notifySuccess("Notification", "Add training to store successfully.");
         }
         else {
@@ -181,7 +181,8 @@ class TrainingDetail extends Component {
   }
 
   checkTrainingExists = (trainingId) => {
-    const idx = _.findIndex(AuthStorage.userInfo.activityusers, activity => activity.trainings[0] === trainingId)
+    console.log("ActivityStorage.activityUsers",ActivityStorage.activityUsers)
+    const idx = _.findIndex(ActivityStorage.activityUsers, activity => activity.trainings[0] === trainingId)
     if (idx > -1) {
       return true;
     }

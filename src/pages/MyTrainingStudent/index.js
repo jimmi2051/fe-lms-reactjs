@@ -14,6 +14,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import Loading from "components/Loading";
 import Pagination from "react-js-pagination";
+import { ToastContainer } from "react-toastr";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
@@ -44,7 +45,7 @@ const mapDispatchToProps = dispatch => {
     )
   };
 };
-
+let toastr;
 class ListTraining extends Component {
   state = {
     addSuccess: false,
@@ -117,6 +118,17 @@ class ListTraining extends Component {
     });
   }
 
+  notifySuccess = (title, content) => {
+    toastr.success(content, title, {
+      closeButton: true
+    });
+  };
+  notifyError = (title, content) => {
+    toastr.error(content, title, {
+      closeButton: true
+    });
+  };
+
   render() {
     const {
       loadingCategoryAll,
@@ -156,6 +168,10 @@ class ListTraining extends Component {
     }
     return (
       <div className="page-header">
+        <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
         <Header titleHeader="LIST TRAINING" />
         <div className="container">
           <div className="row">

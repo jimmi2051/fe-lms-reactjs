@@ -1,6 +1,7 @@
 import { take, call, cancel, fork, put } from "redux-saga/effects";
 import AuthStorage from "../../utils/AuthStorage";
 import fetchApi from "../../utils/FetchApi";
+import ActivityStorage from "../../utils/ActivityStorage";
 import { showLoading, hideLoading } from "react-redux-loading-bar";
 
 function* authorize(payload, next, nextErr) {
@@ -29,8 +30,10 @@ function* authorize(payload, next, nextErr) {
       updatedAt: response.user.updateAt,
       provider: response.user.provider,
       id: response.user.id,
-      activityusers: response.user.activityusers,
     };
+    ActivityStorage.value = {
+      activityusers: response.user.activityusers
+    }
     const data = {
       token: response.jwt,
       user: newUser

@@ -9,12 +9,14 @@ import {
 } from "redux/action/training";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
+import ActivityStorage from "utils/ActivityStorage";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import Loading from "components/Loading";
 import PopupSuccess from "pages/ListTrainingStudent/PopupSuccess"
 import Pagination from "react-js-pagination";
 import { withRouter } from "react-router";
+import { ToastContainer } from "react-toastr";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
@@ -42,7 +44,7 @@ const mapDispatchToProps = dispatch => {
     )
   };
 };
-
+let toastr;
 class ListTraining extends Component {
   state = {
     addSuccess: false,
@@ -96,9 +98,8 @@ class ListTraining extends Component {
   };
 
   handleAddToMyTraining = (training) => {
-    this.setState({ trainingExists: {} });
     if (this.checkTrainingExists(training._id)) {
-      this.setState({ trainingExists: training });
+      this.notifyError("Notification", "This training already exists in your list.")
     }
     else {
       const user = AuthStorage.userInfo;
@@ -107,40 +108,21 @@ class ListTraining extends Component {
         training,
         user,
       }
-      addToMyTraining(payload, () => {
-        const { isAddTraining } = this.props.store;
-        if (isAddTraining._id) {
-          this.setState({ addSuccess: true })
-          let nextAuthStorage = AuthStorage.value;
-          let tempActivity = isAddTraining;
+      addToMyTraining(payload, (response) => {
+        if (response._id) {
+          let nextActivityStorage = ActivityStorage.value;
+          let tempActivity = response;
           tempActivity.trainings[0] = tempActivity.trainings[0]._id;
           tempActivity.users[0] = tempActivity.users[0]._id;
-          nextAuthStorage.user.activityusers.push(tempActivity);
-          AuthStorage.value = nextAuthStorage;
+          nextActivityStorage.activityusers.push(tempActivity);
+          ActivityStorage.value = nextActivityStorage;
+          this.notifySuccess("Notification", "Add training to store successfully.");
+        }
+        else {
+          this.notifyError("Notification", "Something when wrong. Please wait a few minutes and try again. Thanks.")
         }
       });
     }
-  }
-
-  processDataToListCat = (categories) => {
-    let listMenu = [];
-    categories.map((category, index) => {
-      let menuLv1 = {}
-      menuLv1.key = `first-level-node-${index + 1}`;
-      menuLv1.label = `${category.name}`;
-      menuLv1.value = category;
-      menuLv1.nodes = [];
-      category.trainings.map((training, indexTraining) => {
-        let menuLv2 = {}
-        menuLv2.key = `second-level-node-${indexTraining + 1}`;
-        menuLv2.label = training.name
-        menuLv2.value = training
-        menuLv2.nodes = addToMyTraining
-        menuLv1.nodes.push(menuLv2);
-      })
-      listMenu.push(menuLv1);
-    })
-    return listMenu;
   }
 
   handleClosePopup = () => {
@@ -148,7 +130,7 @@ class ListTraining extends Component {
   }
 
   checkTrainingExists = (trainingId) => {
-    const idx = _.findIndex(AuthStorage.userInfo.activityusers, activity => activity.trainings[0] === trainingId)
+    const idx = _.findIndex(ActivityStorage.activityUsers, activity => activity.trainings[0] === trainingId)
     if (idx > -1) {
       return true;
     }
@@ -183,6 +165,18 @@ class ListTraining extends Component {
     });
   }
 
+  notifySuccess = (title, content) => {
+    toastr.success(content, title, {
+      closeButton: true
+    });
+  };
+  notifyError = (title, content) => {
+    toastr.error(content, title, {
+      closeButton: true
+    });
+  };
+
+
   render() {
     const {
       loadingTrainingAll,
@@ -190,7 +184,7 @@ class ListTraining extends Component {
       loadingCategoryAll,
       categoryAll
     } = this.props.store;
-    const { addSuccess, trainingExists, keySearch, categoryId } = this.state;
+    const { addSuccess, trainingExists, categoryId } = this.state;
 
     if (loadingCategoryAll) {
       return (<div className="page-header">
@@ -221,11 +215,13 @@ class ListTraining extends Component {
       )
     }
 
-    const listMenu = this.processDataToListCat(categoryAll);
-
     return (
       <div className="page-header">
         <PopupSuccess isShow={addSuccess} handleClosePopup={this.handleClosePopup} />
+        <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
         <Header titleHeader="LIST TRAINING" />
         <div className="container">
           <div className="row">
@@ -342,7 +338,7 @@ class ListTraining extends Component {
                                 <div className="level pl-3">
                                   {item.level !== "" && starOfTraining.map((item, index) => {
                                     return (
-                                      <span className="fa fa-star checked"></span>
+                                      <span key={index} className="fa fa-star checked"></span>
                                     )
                                   })}
                                 </div>
