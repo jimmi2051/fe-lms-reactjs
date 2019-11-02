@@ -33,7 +33,8 @@
     "react-select": "3.0.8",
     "react-simple-tree-menu": "1.1.6",
     "react-js-pagination": "^3.0.2",
-    "react-toastr": "^3.0.0"
+    "react-toastr": "^3.0.0",
+    "papaparse": "5.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
