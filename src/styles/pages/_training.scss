@@ -69,31 +69,35 @@
     width: auto;
   }
 }
-.detail-training{
- 
+.detail-training {
 }
-.detail-course{
-  &-name{
+.detail-course {
+  &-name {
     font-style: italic;
   }
-  &-description{
-    font-weight: 100;
-  }
- 
-}
-.detail-module{
-  &-name{
-    font-style:italic;
-  }
-  &-description{
+  &-description {
     font-weight: 100;
   }
 }
-.detail-content{
-  &-title{
-    
+.detail-module {
+  &-name {
+    font-style: italic;
   }
-  &-description{
+  &-description {
     font-weight: 100;
+  }
+}
+.detail-content {
+  &-title {
+  }
+  &-description {
+    font-weight: 100;
+  }
+}
+.new-training-page {
+  button {
+    &:hover {
+      cursor: pointer;
+    }
   }
 }

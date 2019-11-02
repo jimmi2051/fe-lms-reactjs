@@ -158,7 +158,7 @@ class Login extends Component {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="btn bg-root"
                   style={{ cursor: "pointer" }}
                 >
                   Login

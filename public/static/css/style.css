@@ -2707,12 +2707,3 @@ p.footer-copyright {
         margin-right: 15px;
     }
 }
-
-.footer-bar-nav ul li a {
-    color: #757686;
-    text-decoration: none;
-}
-
-.footer-bar-nav ul li a:hover {
-    color: #34d986;
-}

@@ -1,0 +1,23 @@
+.site-footer {
+  background: #218838;
+  margin-top: 50px;
+  .footer-bar {
+    padding: 15px 0;
+  }
+  p.footer-copyright {
+    margin: 0px;
+    color: white;
+  }
+  ul {
+    li {
+      color: white;
+      a {
+        color: white;
+        &:hover {
+          font-weight: bold;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}

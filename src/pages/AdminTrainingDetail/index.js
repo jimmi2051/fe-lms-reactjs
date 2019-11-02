@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -50,15 +51,6 @@ class TrainingDetail extends Component {
     keyModule: "",
   };
   componentDidMount() {
-    try {
-      const { currentActivity } = this.props.location.state;
-      this.setState({ currentActivity })
-      console.log("currentActivity", currentActivity)
-    }
-    catch
-    {
-      this.props.history.push("/my-training")
-    }
     const { id } = this.props.match.params;
     this.handleGetTrainingById(id);
   }
@@ -140,157 +132,20 @@ class TrainingDetail extends Component {
   handeSelectMenu = (item) => {
     this.setState({ isFinishStudying: false });
     if (item.level === 0) {
-      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {}, isLastContent: -1 })
+      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {} })
     }
     if (item.level === 1) {
-      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {}, isLastContent: -1 })
+      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {} })
     }
     if (item.level === 2) {
-      const listKey = item.parent.split("/");
-      const keyCourse = listKey[0]
-      const keyModule = listKey[1]
-
-      const { data } = this.refs.treeMenu.props;
-      const currentCourse = _.find(data, course => course.key === keyCourse);
-      const currentModule = _.find(currentCourse.nodes, module => module.key === keyModule);
-      const idxContent = _.findIndex(currentModule.nodes, content => content.value === item.value);
-      //Process to save activity
-      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse);
-
-      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value, keyCourse, keyModule })
+      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value })
     }
   }
-
-  handleProcessActivity = (courseId, moduleId, listModule, currentCourse) => {
-    let { currentActivity } = this.state;
-    const idxCourse = _.findIndex(currentActivity.courses, course => course.id === courseId);
-    // const totalMark = idxContent === listModule.length - 1 ? currentCourse.value.totalMark : 0;
-
-    if (idxCourse > -1) {
-      // console.log("currentActivity.courses[idxCourse].listModule", currentActivity.courses[idxCourse].listModule);
-      const idxModule = _.findIndex(currentActivity.courses[idxCourse].modules, module => module === moduleId);
-      if (idxModule === -1) {
-        currentActivity.courses[idxCourse].modules.push(moduleId);
-      }
-      const totalMark = currentActivity.courses[idxCourse].modules.length === listModule.length ? currentCourse.value.totalMark : 0;
-      currentActivity.totalMark += totalMark;
-    }
-    else {
-      currentActivity.courses.push({
-        id: courseId,
-        modules: [moduleId]
-      })
-    }
-    this.setState({ currentActivity });
-  }
-
 
   resetTraining = () => {
     this.setState({
       currentCourse: {}, currentModule: {}, currentContent: {}
     })
-  }
-
-  handleUpdateActivity = (id, courses, totalMark) => {
-    const { updateActivity } = this.props.action;
-    const payload = { id, courses, totalMark };
-    updateActivity(payload, () => {
-      const { isUpdateActivity } = this.props.store;
-      if (isUpdateActivity._id) {
-        this.setState({ isFinishStudying: true })
-      }
-    })
-  }
-
-  handleFinishStudying = () => {
-    const { currentActivity } = this.state;
-    this.handleUpdateActivity(currentActivity._id, currentActivity.courses, currentActivity.totalMark);
-  }
-
-  handleNextContent = (listMenu) => {
-    const { currentContent, keyCourse, keyModule } = this.state;
-    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
-    const currentCourse = listMenu[idxCourse];
-    const idxModule = _.findIndex(currentCourse.nodes, module => module.key === keyModule);
-    const currentModule = currentCourse.nodes[idxModule];
-    const idxContent = _.findIndex(currentModule.nodes, content => content.value._id === currentContent._id);
-    if (idxContent === currentModule.nodes.length - 1) {
-      if (idxModule === currentCourse.nodes.length - 1) {
-        if (idxCourse === listMenu.length - 1) {
-          // Case lastest content of course 
-        }
-        else {
-          this.setState({
-            currentContent: {},
-            currentModule: {},
-            currentCourse: listMenu[idxCourse + 1].value,
-            keyCourse: listMenu[idxCourse + 1].key
-          })
-        }
-        this.handleFinishStudying()
-      }
-      else {
-        this.setState({
-          currentContent: {},
-          currentModule: currentCourse.nodes[idxModule + 1].value,
-          keyModule: currentCourse.nodes[idxModule + 1].key
-        })
-      }
-    }
-    // Case next content
-    else {
-      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse)
-      this.setState({ currentContent: currentModule.nodes[idxContent + 1].value })
-    }
-  }
-
-  handleNextModule = (listMenu) => {
-    const { keyCourse, keyModule } = this.state;
-    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
-    const currentCourse = listMenu[idxCourse];
-    const idxModule = _.findIndex(currentCourse.nodes, module => module.key === keyModule);
-    const currentModule = currentCourse.nodes[idxModule];
-    if (currentModule.nodes.length > 0) {
-      this.handleProcessActivity(currentCourse.value._id, currentModule.value._id, currentCourse.nodes, currentCourse)
-      this.setState({
-        currentContent: currentModule.nodes[0].value,
-        currentModule: {}
-      })
-    }
-    else {
-      if (idxModule === currentCourse.nodes.length - 1) {
-        if (idxCourse === listMenu.length - 1) {
-          this.handleFinishStudying()
-        }
-        else {
-          this.setState({
-            currentCourse: listMenu[idxCourse + 1].value,
-            keyCourse: listMenu[idxCourse + 1].key,
-            currentModule: {}
-          })
-        }
-      }
-      else {
-        this.setState({ currentModule: currentCourse[idxModule + 1].value })
-      }
-    }
-  }
-
-  handleNextCourse = (listMenu) => {
-    const { keyCourse, keyModule } = this.state;
-    const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
-    const currentCourse = listMenu[idxCourse];
-    if (currentCourse.nodes.length > 0) {
-      this.setState({
-        currentModule: currentCourse.nodes[0].value,
-        currentCourse: {},
-      })
-    }
-    else {
-      if (idxCourse === listMenu.length - 1) {
-        this.handleFinishStudying()
-      }
-    }
   }
 
   render() {
@@ -349,7 +204,7 @@ class TrainingDetail extends Component {
                     </a>
                   </li>
                   <li>
-                    <a href="" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>
+                    <a href="#" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>
                   </li>
                 </ul>
               </div>
@@ -422,13 +277,7 @@ class TrainingDetail extends Component {
                     {!_.isEmpty(currentCourse.thumbnail) && (
                       <img src={`${REACT_APP_URL_API}${currentCourse.thumbnail.url}`} alt="#" />
                     )}
-                    <div className="detail-course-footer pt-3 text-right">
-                      {keyCourse !== "" && keyModule !== "" && (
-                        <button type="button" onClick={
-                          () => { this.handleNextCourse(listMenu) }
-                        } className="btn bg-root">Next step <i className="fa fa-arrow-right" /></button>
-                      )}
-                    </div>
+
                   </div>
                 )}
                 {
@@ -445,21 +294,13 @@ class TrainingDetail extends Component {
                       {!_.isEmpty(currentModule.thumbnail) && (
                         <img src={`${REACT_APP_URL_API}${currentModule.thumbnail.url}`} alt="#" />
                       )}
-                      <div className="detail-module-footer pt-3 text-right">
-                        {keyCourse !== "" && keyModule !== "" && (
-                          <button type="button" onClick={
-                            () => { this.handleNextModule(listMenu) }
-                          } className="btn bg-root">Next step <i className="fa fa-arrow-right" /></button>
-                        )}
-                      </div>
+
                     </div>
                   )
                 }
                 {!_.isEmpty(currentContent) && (
                   <div className="detail-content">
-                    {isFinishStudying && (
-                      <h3 className="text-success">Congratulation!! You have pass this content. </h3>
-                    )}
+
                     <h4 className="detail-content-title">
                       {currentContent.relationData.data.title}
                     </h4>
@@ -499,11 +340,6 @@ class TrainingDetail extends Component {
                         slideItem={currentContent.relationData.data.slideItems}
                       />
                     )}
-                    <div className="detail-content-footer pt-3 text-right">
-                      <button type="button" onClick={
-                        () => { this.handleNextContent(listMenu) }
-                      } className="btn bg-root">Next Content <i className="fa fa-arrow-right" /></button>
-                    </div>
                   </div>
                 )}
 

@@ -21,19 +21,19 @@ const mapDispatchToProps = dispatch => {
 
 class Navbar extends Component {
 
-  state={
-    keySearch:""
+  state = {
+    keySearch: ""
   }
   componentDidMount() { }
   logout = () => {
     this.props.action.logoutRequest();
   };
   handleChangeSearch = (e) => {
-    this.setState({keySearch: e.target.value})
+    this.setState({ keySearch: e.target.value })
   }
   render() {
     const { pathname } = this.props.location;
-    const {keySearch} = this.state;
+    const { keySearch } = this.state;
     return (
       <header className="site-header">
         <div className="top-header-bar">
@@ -58,23 +58,23 @@ class Navbar extends Component {
                       type="search"
                       placeholder="What would you like to learn?"
                       value={keySearch}
-                      onChange= {this.handleChangeSearch}
+                      onChange={this.handleChangeSearch}
                     />
-                     <Link
-                        to={{
-                            pathname: `trainings`,
-                            state: {
-                              keySearch
-                            }
-                          }}
-                        >
-                    <button
-                      type="submit"
-                      value=""
-                      className="flex justify-content-center align-items-center"
+                    <Link
+                      to={{
+                        pathname: `trainings`,
+                        state: {
+                          keySearch
+                        }
+                      }}
                     >
-                      <i className="fa fa-search"></i>
-                    </button>
+                      <button
+                        type="submit"
+                        value=""
+                        className="flex justify-content-center align-items-center"
+                      >
+                        <i className="fa fa-search"></i>
+                      </button>
                     </Link>
                   </form>
                 </div>
@@ -117,7 +117,7 @@ class Navbar extends Component {
               <div className="col-9 col-lg-3">
                 <div className="site-branding">
                   <h1 className="site-title">
-                    <Link to="/"> Ezu<span>ca</span></Link>
+                    <Link to="/"> L<span>MS</span></Link>
                   </h1>
                 </div>
               </div>

@@ -186,7 +186,7 @@ export const getTrainingByCategory = (payload, next, nextErr) => {
 };
 
 export const getAllTraining = (payload, next, nextErr) => {
-  const { keySearch, startItemPage, itemPerPage,categoryId } = payload;
+  const { keySearch, startItemPage, itemPerPage, categoryId } = payload;
   return {
     type: SINGLE_API,
     payload: {
@@ -229,7 +229,7 @@ export const addToMyTraining = (payload, next, nextErr) => {
         users: [user],
         trainings: [training],
         totalMark: 0,
-        courses: {}
+        courses: []
       }
     }
   };

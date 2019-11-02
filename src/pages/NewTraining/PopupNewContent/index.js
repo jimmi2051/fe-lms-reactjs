@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { createContent, createData } from "redux/action/content";
-import { Link } from "react-router-dom";
 import Select from "react-select";
 import _ from "lodash";
 import CKEditor from "components/CKEditor";
@@ -24,7 +23,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators({ createContent, createData }, dispatch)
-  };
+  }
 };
 
 const typeContent = [
@@ -63,7 +62,6 @@ class PopupNewContent extends Component {
     videoSrc: "",
     slideBackground: [],
     listNameFile: [],
-    countQuestion: [[1]],
     errorQuestion: "",
     createdContent: false,
     questions: [{
@@ -237,33 +235,8 @@ class PopupNewContent extends Component {
   };
 
   handleSubmitQuestion = () => {
-    const { currentType, countQuestion, questions } = this.state;
+    const { currentType, questions } = this.state;
     const { name, title, description } = this.refs;
-    // let questions = [];
-    // countQuestion.map((item, index) => {
-    //   const titleQuestion = this.refs[`titleQuestion${index + 1}`];
-    //   let answers = [];
-    //   item.map((itemAnswer, indexAnswer) => {
-    //     const contentAnswer = this.refs[`contentAnswer${index + 1}${itemAnswer}`];
-    //     const resultAnswer = this.refs[`resultAnswer${index + 1}${itemAnswer}`];
-    //     answers.push({
-    //       anw: contentAnswer.value,
-    //       result: resultAnswer.checked,
-    //     })
-    //   })
-    //   if (this.handleValidateQuestion(answers)) {
-    //     questions.push({
-    //       question: titleQuestion.value,
-    //       answers: answers
-    //     })
-    //   }
-    //   else {
-    //     let { errorQuestion } = this.state;
-    //     errorQuestion = index;
-    //     this.setState({ errorQuestion });
-    //     return;
-    //   }
-    // })
     const data = {
       title: title.value,
       description: description.value,
@@ -304,7 +277,6 @@ class PopupNewContent extends Component {
       videoSrc: "",
       slideBackground: [],
       listNameFile: [],
-      countQuestion: [[1]],
       errorQuestion: "",
       questions: [{
         question: "",
@@ -322,18 +294,6 @@ class PopupNewContent extends Component {
     let { countTextTest } = this.state;
     countTextTest.push(countTextTest[countTextTest.length - 1] + 1);
     this.setState({ countTextTest });
-  }
-
-  handleAddMoreQuest = () => {
-    let { countQuestion } = this.state;
-    countQuestion.push([1]);
-    this.setState({ countQuestion });
-  }
-
-  handleAddMoreAnswer = (index) => {
-    let { countQuestion } = this.state;
-    countQuestion[index].push(countQuestion[index][countQuestion[index].length - 1] + 1);
-    this.setState({ countQuestion });
   }
 
   handleValidateQuestion = (listAnswer) => {
@@ -498,7 +458,7 @@ class PopupNewContent extends Component {
 
   render() {
     const { isShow } = this.props;
-    const { currentType, countTextTest, videoSrc, listNameFile, slideBackground, countQuestion, errorQuestion, createdContent } = this.state;
+    const { currentType, countTextTest, videoSrc, listNameFile, slideBackground, errorQuestion, createdContent } = this.state;
     const { questions } = this.state;
     return (
       <div
@@ -522,7 +482,7 @@ class PopupNewContent extends Component {
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
                 Create new content
-              </h5>
+							</h5>
               <button
                 type="button"
                 className="close"
@@ -665,9 +625,9 @@ class PopupNewContent extends Component {
                         <div className="form-group">
                           <small className="form-text text-muted">
                             Note: The right answers, in asterix like *correctWord*.
-                                <br />
+																<br />
                             Example: Hello, My name *is* Thanh.
-                        </small>
+												</small>
                         </div>
                         <div className="form-group">
                           <button className="btn bg-root" onClick={(e) => { e.preventDefault(); this.handleAddMoreContent() }}>Add more content</button>
@@ -813,7 +773,24 @@ class PopupNewContent extends Component {
                         </div>
                         <div className="form-group">
                           <label>Import Question from File CSV</label>
-                          <input type="file" className="form-control" onChange={this.readFileQuestion} />
+                          <div className="custom-file">
+
+                            <input
+                              type="file"
+                              className="custom-file-input"
+                              onChange={this.readFileQuestion}
+                              id="customFile"
+                              lang="en"
+                            />
+                            <label className="custom-file-label" htmlFor="customFile">
+                              Choose file
+																			</label>
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <small className="form-text text-muted">
+                            Accept file *.csv
+												</small>
                         </div>
                         <div className="card">
                           <div className="card-header">List questions</div>
@@ -848,7 +825,7 @@ class PopupNewContent extends Component {
                                             <input onChange={e => this.handleChangeAnswerQuestion(index, indexAns, e)} onClick={this.handleResetError} type="checkbox" checked={ans.result} />
                                             <label className={`${errorQuestion !== "" && errorQuestion === index ? "text-danger" : ""} form-check-label`}>
                                               Correct Answer
-                                            </label>
+																						</label>
                                           </div>
                                         </>
                                       )
@@ -884,7 +861,7 @@ class PopupNewContent extends Component {
                 onClick={this.handleSubmitCreate}
               >
                 Create
-              </button>
+							</button>
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -892,7 +869,7 @@ class PopupNewContent extends Component {
                 onClick={this.handleClosePopup}
               >
                 Close
-              </button>
+							</button>
             </div>
           </div>
         </div>

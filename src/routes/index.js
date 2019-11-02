@@ -16,6 +16,8 @@ import TrainingDetail from "pages/TrainingDetail";
 import TrainingPage from "pages/ListTrainingStudent";
 import MyTrainingPage from "pages/MyTrainingStudent";
 import ViewTrainingDetail from "pages/ViewDetailTraining";
+import AdminTrainingDetail from "pages/AdminTrainingDetail";
+import StudentWarp from "layout/Student";
 export default function RootRoute() {
   return (
     <>
@@ -28,17 +30,28 @@ export default function RootRoute() {
         <Route exact path="/admin/new-training" component={AdminNewTraining} />
         <Route exact path="/admin/training" component={AdminListTraining} />
         <Route exact path="/trainings" component={TrainingPage} />
-        <Route exact path="/my-training" component={MyTrainingPage} />
+
         <Route
           exact
-          path="/training/:id"
-          component={TrainingDetail}
+          path="/admin/training/:id"
+          component={AdminTrainingDetail}
         />
+
         <Route
           exact
           path="/view-training/:id"
           component={ViewTrainingDetail}
         />
+        <StudentWarp>
+          <Switch>
+            <Route
+              exact
+              path="/training/:id"
+              component={TrainingDetail}
+            />
+            <Route exact path="/my-training" component={MyTrainingPage} />
+          </Switch>
+        </StudentWarp>
       </Switch>
     </>
   );
