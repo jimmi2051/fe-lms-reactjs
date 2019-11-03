@@ -98,6 +98,11 @@ class ListTraining extends Component {
   };
 
   handleAddToMyTraining = (training) => {
+    if(!AuthStorage.loggedIn)
+    {
+      this.props.history.push("/login");
+      return;
+    }
     if (this.checkTrainingExists(training._id)) {
       this.notifyError("Notification", "This training already exists in your list.")
     }
@@ -285,7 +290,6 @@ class ListTraining extends Component {
                                   pathname: `/view-training/${item._id}`,
                                   state: {
                                     currentTraining: item,
-                                    // funcAddTraining: this.handleAddToMyTraining
                                   }
                                 }}
                               >
@@ -342,21 +346,6 @@ class ListTraining extends Component {
                                     )
                                   })}
                                 </div>
-                                {/* <div className="course-cost">
-                                  $45 <span className="price-drop">$68</span>
-                                </div>
-
-                                <div className="course-ratings flex justify-content-end align-items-center">
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star checked"></span>
-                                  <span className="fa fa-star-o"></span>
-
-                                  <span className="course-ratings-count">
-                                    (4 votes)
-                                  </span>
-                                </div> */}
                                 <div className="col-xl-12 pr-0 pt-3 text-right">
                                   <button type="button" onClick={() => { this.handleAddToMyTraining(item) }} className="btn bg-root">Add to my training</button>
                                 </div>

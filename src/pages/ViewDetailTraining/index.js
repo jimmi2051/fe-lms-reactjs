@@ -153,6 +153,11 @@ class TrainingDetail extends Component {
   }
 
   handleAddToMyTraining = (training) => {
+    if(!AuthStorage.loggedIn)
+    {
+      this.props.history.push("/login");
+      return;
+    }
     if (this.checkTrainingExists(training._id)) {
       this.notifyError("Notification", "This training already exists in your list.")
     }
@@ -325,7 +330,7 @@ class TrainingDetail extends Component {
                 <div className="level">
                   {detailTraining.level !== "" && starOfTraining.map((item, index) => {
                     return (
-                      <span className="fa fa-star checked"></span>
+                      <span key={index} className="fa fa-star checked"></span>
                     )
                   })}
                   <h4 className="t-created-date">Created At: </h4>

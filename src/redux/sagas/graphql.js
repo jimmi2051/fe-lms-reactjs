@@ -37,11 +37,19 @@ function* callGraphQL(action) {
     }
 
     yield put(showLoading());
-    const response = yield call(client.query, {
+    let response; 
+    try{
+    response = yield call(client.query, {
       query: gql`
         ${query}
       `
     });
+  }
+  catch{
+    response = {
+      status: false
+    }
+  }
     if (afterCallType) {
       yield put({ type: afterCallType });
     }

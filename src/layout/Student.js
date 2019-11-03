@@ -40,10 +40,16 @@ class StudentWrap extends PureComponent {
     if (!AuthStorage.loggedIn) {
       history.push("/login");
     }
-    else{
-      if (AuthStorage.userInfo && AuthStorage.userInfo.role.type !== "user") {
-        this.props.action.logoutRequest();
-        history.push("/login");
+    else {
+      console.log("history", history);
+      const { pathname } = history.location;
+
+      const arrayPath = pathname.split("/");
+      if (arrayPath[1] === "admin" && AuthStorage.userInfo.role.type !== "creator") {
+        history.push("/pagenotfound");
+      }
+      if (arrayPath[1] !== "admin" && AuthStorage.userInfo.role.type !== "user") {
+        history.push("/pagenotfound");
       }
     }
   }

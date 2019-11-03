@@ -188,13 +188,17 @@ class Navbar extends Component {
                       )}
                     {!AuthStorage.loggedIn && (
                       <>
-                        <li className="current-menu-item">
+                        <li className={pathname === "/" ? "current-menu-item" : ""}>
                           <Link to="/">Home</Link>
                         </li>
                         <li>
                           <a href="#">About</a>
                         </li>
-                        <li>
+                        <li className={
+                            pathname === "/trainings"
+                              ? "current-menu-item"
+                              : ""
+                          }>
                           <Link to="/trainings">Trainings</Link>
                         </li>
                         <li>

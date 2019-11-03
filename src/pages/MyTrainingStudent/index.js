@@ -140,7 +140,7 @@ class ListTraining extends Component {
 
     if (loadingCategoryAll || loadingListTrainingLearn) {
       return (<div className="page-header">
-        <Header titleHeader="LIST TRAINING" />
+        <Header titleHeader="MY TRAINING" />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -151,7 +151,7 @@ class ListTraining extends Component {
                       <i className="fa fa-home"></i> Home
                     </Link>
                   </li>
-                  <li>Training</li>
+                  <li>My Training</li>
                 </ul>
               </div>
             </div>
@@ -166,13 +166,14 @@ class ListTraining extends Component {
       </div>
       )
     }
+    console.log("listTrainingLearn.data",listTrainingLearn.data);
     return (
       <div className="page-header">
         <ToastContainer
           ref={ref => (toastr = ref)}
           className="toast-top-right"
         />
-        <Header titleHeader="LIST TRAINING" />
+        <Header titleHeader="MY TRAINING" />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -183,7 +184,7 @@ class ListTraining extends Component {
                       <i className="fa fa-home"></i> Home
                     </Link>
                   </li>
-                  <li>Training</li>
+                  <li>My Training</li>
                 </ul>
               </div>
             </div>
@@ -203,8 +204,8 @@ class ListTraining extends Component {
                         (item, index) => {
                           return (
                             <li key={index}>
-                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#" 
-                              onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
+                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#"
+                                onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
                             </li>
                           );
                         }
@@ -310,17 +311,25 @@ class ListTraining extends Component {
                         <Loading classOption="align-center-spinner" />
                       </div>
                     )}
-
+                  {this.state.totalPage === 0 && (
+                    <h5 className="col-xl-12 text-info">
+                      You don't have any training. Please go to store training to add it.
+                      </h5>
+                  )
+                  }
                 </div>
                 <div className="row">
                   <div className="col-xl-12">
-                    <Pagination
-                      activePage={this.state.activePage}
-                      itemsCountPerPage={this.state.itemPerPage}
-                      totalItemsCount={this.state.totalPage}
-                      pageRangeDisplayed={5}
-                      onChange={this.handlePageChange.bind(this)}
-                    />
+                    {this.state.totalPage > 0 && (
+                      <Pagination
+                        activePage={this.state.activePage}
+                        itemsCountPerPage={this.state.itemPerPage}
+                        totalItemsCount={this.state.totalPage}
+                        pageRangeDisplayed={5}
+                        onChange={this.handlePageChange.bind(this)}
+                      />
+                    )}
+
                   </div>
                 </div>
               </div>

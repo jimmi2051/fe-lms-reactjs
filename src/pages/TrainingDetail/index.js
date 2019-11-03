@@ -53,7 +53,6 @@ class TrainingDetail extends Component {
     try {
       const { currentActivity } = this.props.location.state;
       this.setState({ currentActivity })
-      console.log("currentActivity", currentActivity)
     }
     catch
     {
@@ -65,7 +64,7 @@ class TrainingDetail extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { training, loadingTraining } = nextProps.store;
-    if (!loadingTraining && (_.isEmpty(training.data.training) || _.isEmpty(training))) {
+    if (!loadingTraining && training && training.status === false) {
       this.props.history.push("/my-training")
     }
   }
@@ -73,7 +72,8 @@ class TrainingDetail extends Component {
   handleGetTrainingById = id => {
     const payload = { id };
     const { getTrainingById } = this.props.action;
-    getTrainingById(payload, () => { });
+    getTrainingById(payload, () => { }, (errors) => {
+    });
   };
 
   handleChangeContent = currentContentChoosen => {
@@ -296,9 +296,9 @@ class TrainingDetail extends Component {
   render() {
     const { currentContent, currentCourse, currentModule, isFinishStudying, keyCourse, keyModule } = this.state;
 
-    const { training, loadingTraining, isUpdateActivity } = this.props.store;
+    const { training, loadingTraining } = this.props.store;
 
-    if (loadingTraining) {
+    if (loadingTraining || training.status === false) {
       return (
         <div className="page-header">
           <Header titleHeader="Training Detail Page" />
@@ -324,6 +324,7 @@ class TrainingDetail extends Component {
         </div>
       );
     }
+
     const detailTraining = training.data.training;
 
     if (_.isEmpty(detailTraining) || detailTraining.length === 0) {
@@ -387,7 +388,7 @@ class TrainingDetail extends Component {
                     <div className="level pl-2">
                       {detailTraining.level !== "" && starOfTraining.map((item, index) => {
                         return (
-                          <span className="fa fa-star checked"></span>
+                          <span key={index} className="fa fa-star checked"></span>
                         )
                       })}
                     </div>

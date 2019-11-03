@@ -11,6 +11,11 @@
       }
     }
   }
+  button{
+    &:hover{
+      cursor: pointer;
+    }
+  }
 }
 .new-content{
   .card{
