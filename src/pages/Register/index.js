@@ -177,7 +177,7 @@ class Register extends Component {
           <div className="row justify-content-center pt-5 pb-5">
             <div className="col-xl-6">
               {this.state.isSuccess ? (
-                <h4 className="alert alert-success">
+                <h4 className="text-success">
                   Register success. Click <Link to="/login">here</Link> to Login
                 </h4>
               ) : (

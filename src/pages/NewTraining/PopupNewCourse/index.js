@@ -167,7 +167,7 @@ class PopupNewCourse extends Component {
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn bg-root"
                 data-dismiss="modal"
                 onClick={this.props.handleShowPopup}
               >

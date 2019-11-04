@@ -20,6 +20,10 @@ import Step2 from "pages/NewTraining/Step2";
 import Step3 from "pages/NewTraining/Step3";
 import Step4 from "pages/NewTraining/Step4";
 import AuthStorage from "utils/AuthStorage";
+import { ToastContainer } from "react-toastr";
+
+let toastr;
+
 function mapStateToProps(state) {
   return {
     store: {
@@ -57,7 +61,8 @@ class NewTraining extends Component {
     description: "",
     fileToUpload: [],
     createdModule: false,
-    createdCourse: false
+    createdCourse: false,
+    level: "3"
   };
   componentDidMount() {}
   //#region Handle redux
@@ -93,6 +98,7 @@ class NewTraining extends Component {
     createTraining(payload, () => {
       const { isCreatedTraining } = this.props.store;
       if (!_.isUndefined(isCreatedTraining.id)) {
+        this.notifySuccess("Nofitication",`Training ${isCreatedTraining.name} has been created successfully.`)
         this.setState({ step: 2 });
       }
     });
@@ -105,7 +111,7 @@ class NewTraining extends Component {
       const { isCreatedModule } = this.props.store;
       if (!_.isUndefined(isCreatedModule._id)) {
         this.handleGetListModuleByUser(AuthStorage.userInfo._id);
-        this.setState({ createdModule: true });
+        this.notifySuccess("Nofitication",`Module ${isCreatedModule.name} has been created successfully.`)
       }
     });
   };
@@ -118,7 +124,10 @@ class NewTraining extends Component {
       const { isCreatedCourse } = this.props.store;
       if (!_.isUndefined(isCreatedCourse.id)) {
         this.handleGetListCourseByUser(AuthStorage.userInfo._id);
-        this.setState({ createdCourse: true });
+        this.notifySuccess("Nofitication",`Course ${isCreatedCourse.name} has been created successfully.`)
+      }
+      else{
+        this.notifyError("Nofitication","Error! Something when wrong. Please wait a few minutes and try again. Thanks")
       }
     });
   };
@@ -135,7 +144,7 @@ class NewTraining extends Component {
 
   //#region Helper
   handleStepOne = async title => {
-    const { description, fileToUpload } = this.state;
+    const { description, fileToUpload,level } = this.state;
     let thumbnail = {};
     if (fileToUpload.length > 0) {
       let data = new FormData();
@@ -150,7 +159,7 @@ class NewTraining extends Component {
     }
     this.handleCreateTraining(
       title,
-      "1",
+      level,
       description,
       thumbnail,
       AuthStorage.userInfo
@@ -172,11 +181,30 @@ class NewTraining extends Component {
     this.setState({ description: data });
   };
 
+  handleChangeLevel = level => {
+    this.setState({level})
+  }
+
+  notifySuccess = (title, content) => {
+    toastr.success(content, title, {
+      closeButton: true
+    });
+  };
+  notifyError = (title, content) => {
+    toastr.error(content, title, {
+      closeButton: true
+    });
+  };
+
   //#endregion
 
   render() {
     return (
       <div className="page-header new-training-page">
+       <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
         <Header titleHeader="New Training Page" />
         <div className="container">
           <div className="row">
@@ -188,7 +216,7 @@ class NewTraining extends Component {
                       <i className="fa fa-home"></i> Home
                     </a>
                   </li>
-                  <li>Trainings</li>
+                  <li>New Training</li>
                 </ul>
               </div>
             </div>
@@ -220,13 +248,18 @@ class NewTraining extends Component {
               </div>
             </div>
             <div className="col-xl-8">
-              {this.state.step === 4 && <Step4 />}
+              {this.state.step === 4 && <Step4 
+                notifySuccess={this.notifySuccess}
+                notifyError={this.notifyError}
+              />}
               {this.state.step === 3 && (
                 <Step3
                   handleCreateModule={this.handleCreateModule}
                   handleGetListModule={this.handleGetListModule}
                   handleGetListModuleByUser={this.handleGetListModuleByUser}
                   handleStepThree={this.handleStepThree}
+                  notifySuccess={this.notifySuccess}
+                notifyError={this.notifyError}
                 />
               )}
               {this.state.step === 2 && (
@@ -235,6 +268,8 @@ class NewTraining extends Component {
                   handleStepTwo={this.handleStepTwo}
                   handleGetListCourse={this.handleGetListCourse}
                   handleGetListCourseByUser={this.handleGetListCourseByUser}
+                  notifySuccess={this.notifySuccess}
+                notifyError={this.notifyError}
                 />
               )}
               {this.state.step === 1 && (
@@ -242,6 +277,7 @@ class NewTraining extends Component {
                   handleChangeDescription={this.handleChangeDescription}
                   fileSelectHandler={this.fileSelectHandler}
                   handleStepOne={this.handleStepOne}
+                  handleChangeLevel={this.handleChangeLevel}
                 />
               )}
             </div>

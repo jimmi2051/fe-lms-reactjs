@@ -10,18 +10,18 @@ import gql from "graphql-tag";
 import AuthStorage from "utils/AuthStorage";
 const API_URL = process.env.REACT_APP_URL_API;
 
-const client = new ApolloClient({
-  uri: `${API_URL}graphql`,
-  request: (operation) => {
-    operation.setContext({
-      headers: {
-        authorization: AuthStorage.loggedIn ? `Bearer ${AuthStorage.token}` : ""
-      }
-    })
-  }
-});
 
 function* callGraphQL(action) {
+  const client = new ApolloClient({
+    uri: `${API_URL}graphql`,
+    request: (operation) => {
+      operation.setContext({
+        headers: {
+          authorization: AuthStorage.loggedIn ? `Bearer ${AuthStorage.token}` : ""
+        }
+      })
+    }
+  });  
   if (action.type === GRAPHQL) {
     const {
       successType,

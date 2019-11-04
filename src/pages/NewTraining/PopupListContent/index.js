@@ -142,7 +142,7 @@ class PopupListContent extends Component {
                     />
                   )}
                 </div>
-                <div className="col-xl-12">
+                <div className="col-xl-12 pt-4">
                   {!_.isEmpty(currentContent) && (
                     <div className="detail-content">
                       <h4 className="detail-content-title">
@@ -194,7 +194,7 @@ class PopupListContent extends Component {
                     </div>
                   )}
                 </div>
-                <div className="col-xl-12">
+                <div className="col-xl-12 mt-3">
                   <div className="form-group">
                     <button type="button" className="btn bg-root" onClick={this.handleUpdateContent_ver2}>Add content</button>
                   </div>

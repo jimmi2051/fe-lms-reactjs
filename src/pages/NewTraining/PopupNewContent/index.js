@@ -97,11 +97,13 @@ class PopupNewContent extends Component {
   };
 
   handleCreateData = (data, content) => {
+    const {handleGetContentByUserId} = this.props
     const payload = { data, content };
     const { createData } = this.props.action;
     createData(payload, () => {
       const { isCreateData } = this.props.store;
       if (isCreateData._id) {
+        handleGetContentByUserId(AuthStorage.userInfo._id);
         this.setState({ createdContent: true });
         this.handleResetForm();
         this.form.reset();

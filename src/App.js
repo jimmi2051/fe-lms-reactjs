@@ -12,8 +12,6 @@ export default function App() {
   return (
     <Router>
       <>
-        {/* <Navbar /> */}
-        {/* <Header /> */}
         <RootRoute />
         <Footer />
       </>

@@ -76,7 +76,7 @@ class ListTraining extends Component {
     const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
     const payload = { keySearch, startItemPage, itemPerPage, userId, categoryId };
     const { getTrainingToLearn } = this.props.action;
-    getTrainingToLearn(payload, () => {
+    getTrainingToLearn(payload, (response) => {
     });
   }
 
@@ -166,7 +166,6 @@ class ListTraining extends Component {
       </div>
       )
     }
-    console.log("listTrainingLearn.data",listTrainingLearn.data);
     return (
       <div className="page-header">
         <ToastContainer
@@ -192,7 +191,7 @@ class ListTraining extends Component {
 
           <div className="row courses-wrap-custom">
             <div className="col-xl-4">
-              <div className="sidebar" style={{ height: "100%" }}>
+              <div className="sidebar" style={{ height: "100%", minHeight: "600px" }}>
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">
@@ -312,8 +311,8 @@ class ListTraining extends Component {
                       </div>
                     )}
                   {this.state.totalPage === 0 && (
-                    <h5 className="col-xl-12 text-info">
-                      You don't have any training. Please go to store training to add it.
+                    <h5 className="col-xl-12 text-success">
+                      No training found. Please go to store training to add more training.
                       </h5>
                   )
                   }

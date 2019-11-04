@@ -12,8 +12,7 @@ import AuthStorage from "utils/AuthStorage";
 import ActivityStorage from "utils/ActivityStorage";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import Loading from "components/Loading";
-import PopupSuccess from "pages/ListTrainingStudent/PopupSuccess"
+import Loading from "components/Loading"
 import Pagination from "react-js-pagination";
 import { withRouter } from "react-router";
 import { ToastContainer } from "react-toastr";
@@ -87,7 +86,6 @@ class ListTraining extends Component {
     const payload = { keySearch, startItemPage, itemPerPage, categoryId };
     const { getAllTraining } = this.props.action;
     getAllTraining(payload, () => {
-      const { trainingAll } = this.props.store;
     });
   };
 
@@ -222,7 +220,6 @@ class ListTraining extends Component {
 
     return (
       <div className="page-header">
-        <PopupSuccess isShow={addSuccess} handleClosePopup={this.handleClosePopup} />
         <ToastContainer
           ref={ref => (toastr = ref)}
           className="toast-top-right"
@@ -246,7 +243,7 @@ class ListTraining extends Component {
 
           <div className="row courses-wrap-custom">
             <div className="col-xl-4">
-              <div className="sidebar" style={{ height: "100%" }}>
+              <div className="sidebar" style={{ height: "100%",minHeight: "600px" }}>
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">

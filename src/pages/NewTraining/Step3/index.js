@@ -136,13 +136,15 @@ class Step3 extends Component {
   };
 
   handleStepThree = () => {
+    const {notifySuccess,notifyError} = this.props;
     const { listModuleChoosen_ver2, currentCourse } = this.state;
     const courses = [currentCourse];
     listModuleChoosen_ver2.map((item, index) => {
       const position = index + 1;
       const modules = [item];
       if (index === listModuleChoosen_ver2.length - 1) {
-        this.setState({ updateCourse: true, listModuleChoosen_ver2: [] });
+        notifySuccess("Nofitication",`List modules of training "${currentCourse.name}" has been updated successfully.`)
+        this.setState({ listModuleChoosen_ver2: [] });
         this.handleCreateCourseModule(courses, position, modules, true);
       } else {
         this.handleCreateCourseModule(courses, position, modules, false);
@@ -154,7 +156,6 @@ class Step3 extends Component {
     if (!_.isNull(options)) {
       this.handleChangeCourse(options.value);
     }
-    this.setState({ updateCourse: false });
   };
 
   handleAddModuleToCourse_ver2 = modulePicked => {
@@ -198,7 +199,6 @@ class Step3 extends Component {
       listCourse,
       isShowListModule,
       listModuleChoosen_ver2,
-      updateCourse
     } = this.state;
     const {
       listModuleByUser,
@@ -252,9 +252,6 @@ class Step3 extends Component {
         )}
         <div className="col-xl-12 mb-3">
           <h6>Modules of Course "{currentCourse.name}"</h6>
-          {updateCourse && (
-            <h6 className="text-success">Update course success</h6>
-          )}
         </div>
         {listModuleChoosen_ver2.length > 0 && (
           <div className="col-xl-12 new-training">
@@ -425,7 +422,7 @@ class Step3 extends Component {
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button
-              className="btn bg-root"
+              className="btn bg-root mb-3"
               style={{ width: "100%" }}
               onClick={this.handleStepThree}
             >

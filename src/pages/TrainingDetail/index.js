@@ -13,6 +13,7 @@ import { withRouter } from "react-router";
 import TreeMenu from "react-simple-tree-menu";
 import Loading from "components/Loading";
 import moment from "moment";
+import { Link } from "react-router-dom";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -308,9 +309,9 @@ class TrainingDetail extends Component {
                 <div className="breadcrumbs">
                   <ul className="flex flex-wrap align-items-center p-0 m-0">
                     <li>
-                      <a href="#">
-                        <i className="fa fa-home"></i> Home
-                    </a>
+                    <Link to="/">
+                      <i className="fa fa-home"></i> Home
+                    </Link>
                     </li>
                     <li>Training</li>
                   </ul>
@@ -345,9 +346,10 @@ class TrainingDetail extends Component {
               <div className="breadcrumbs">
                 <ul className="flex flex-wrap align-items-center p-0 m-0">
                   <li>
-                    <a href="#">
+                    <Link to="/">
                       <i className="fa fa-home"></i> Home
-                    </a>
+                    </Link>
+
                   </li>
                   <li>
                     <a href="" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>

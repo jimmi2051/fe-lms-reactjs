@@ -246,6 +246,7 @@ class Step4 extends Component {
           <PopupNewContent
             isShow={isShowNewContent}
             handleCloseNewContent={this.handleCloseNewContent}
+            handleGetContentByUserId={this.handleGetContentByUserId}
             // currentModule={currentModule}
             // handleShowListContent={this.handleShowListContent_ver2}
             // handleAddContent={this.handleAddContent}

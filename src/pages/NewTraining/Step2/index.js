@@ -62,9 +62,11 @@ class Step2 extends Component {
     markForCourse,
     isRequired
   ) => {
+    
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, () => { });
+    addLearningPath(payload, (response) => {
+    });
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -115,6 +117,7 @@ class Step2 extends Component {
   };
 
   handleStepTwo = () => {
+    const {notifySuccess,notifyError} = this.props;
     const { listCourseChoosen_ver2 } = this.state;
     if(listCourseChoosen_ver2.length === 0)
     {
@@ -139,6 +142,7 @@ class Step2 extends Component {
             isRequired
           );
           if (index === listCourseChoosen_ver2.length - 1) {
+            notifySuccess("Nofitication",`Learning path of training "${isCreatedTraining.name}" has been updated successfully.`)
             this.props.handleStepTwo();
           }
         });

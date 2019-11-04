@@ -28,33 +28,31 @@ export default function RootRoute() {
         <Route exact path="/" component={HomePage} />
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/register" component={RegisterPage} />
-        <Route exact path="/course" component={CoursePage} />
         <Route exact path="/trainings" component={TrainingPage} />
         <Route
           exact
           path="/view-training/:id"
           component={ViewTrainingDetail}
         />
-
-          <StudentWarp>
-            <Switch>
-              <Route
-                exact
-                path="/training/:id"
-                component={TrainingDetail}
-              />
-              <Route exact path="/my-training" component={MyTrainingPage} />
-              <Route
-                exact
-                path="/admin/training/:id"
-                component={AdminTrainingDetail}
-              />
-              <Route exact path="/admin/course" component={AdminCoursePage} />
-              <Route exact path="/admin/new-training" component={AdminNewTraining} />
-              <Route exact path="/admin/training" component={AdminListTraining} />
-              <Route component={PageNotFound}/>
-            </Switch>
-          </StudentWarp>        
+        <StudentWarp>
+          <Switch>
+            <Route
+              exact
+              path="/training/:id"
+              component={TrainingDetail}
+            />
+            <Route exact path="/my-training" component={MyTrainingPage} />
+            <Route
+              exact
+              path="/admin/training/:id"
+              component={AdminTrainingDetail}
+            />
+            <Route exact path="/admin/course" component={AdminCoursePage} />
+            <Route exact path="/admin/new-training" component={AdminNewTraining} />
+            <Route exact path="/admin/training" component={AdminListTraining} />
+            <Route component={PageNotFound} />
+          </Switch>
+        </StudentWarp>
       </Switch>
     </>
   );

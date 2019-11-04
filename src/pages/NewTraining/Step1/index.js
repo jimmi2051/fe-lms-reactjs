@@ -25,6 +25,7 @@ class Step1 extends Component {
     this.props.handleStepOne(title.value);
   };
   render() {
+    const{handleChangeLevel}  =this.props;
     return (
       <div className="row no-gutters">
         <div className="col-xl-12">
@@ -65,6 +66,19 @@ class Step1 extends Component {
                 <img src={this.state.imgSrc} alt="" />
               </div>
             )}
+          </div>
+          <div className="form-group">
+            <label>Select level for training</label>
+            <select className="form-control" defaultValue="3" onChange={e=>{handleChangeLevel(e.target.value)}}>
+              <option value="1">1 - Basic</option>
+              <option value="2">2 - Semi-medium</option>
+              <option value="3">3 - Medium</option>
+              <option value="4">4 - Semi-hard</option>
+              <option value="5">5 - Hard</option>
+            </select>
+            <small className="form-text text-muted">
+              (*) The difficulty increases gradually from 1 to 5. 
+            </small>
           </div>
           <div className="form-group">
             <label>Required Training</label>

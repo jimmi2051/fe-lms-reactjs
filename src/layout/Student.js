@@ -41,7 +41,6 @@ class StudentWrap extends PureComponent {
       history.push("/login");
     }
     else {
-      console.log("history", history);
       const { pathname } = history.location;
 
       const arrayPath = pathname.split("/");

@@ -549,6 +549,7 @@ a:hover, a:active {
     display: block;
     width: 100%;
     object-fit: cover;
+    height: 200px;
 }
 
 .course-content-wrap {

@@ -11,6 +11,7 @@ import TreeMenu from "react-simple-tree-menu";
 import Loading from "components/Loading";
 import moment from "moment";
 import { ToastContainer } from "react-toastr";
+import { Link } from "react-router-dom";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -153,8 +154,7 @@ class TrainingDetail extends Component {
   }
 
   handleAddToMyTraining = (training) => {
-    if(!AuthStorage.loggedIn)
-    {
+    if (!AuthStorage.loggedIn) {
       this.props.history.push("/login");
       return;
     }
@@ -186,7 +186,7 @@ class TrainingDetail extends Component {
   }
 
   checkTrainingExists = (trainingId) => {
-    console.log("ActivityStorage.activityUsers",ActivityStorage.activityUsers)
+    console.log("ActivityStorage.activityUsers", ActivityStorage.activityUsers)
     const idx = _.findIndex(ActivityStorage.activityUsers, activity => activity.trainings[0] === trainingId)
     if (idx > -1) {
       return true;
@@ -218,9 +218,9 @@ class TrainingDetail extends Component {
                 <div className="breadcrumbs">
                   <ul className="flex flex-wrap align-items-center p-0 m-0">
                     <li>
-                      <a href="#">
-                        <i className="fa fa-home"></i> Home
-                    </a>
+                    <Link to="/">
+                      <i className="fa fa-home"></i> Home
+                    </Link>
                     </li>
                     <li>Training</li>
                   </ul>
@@ -258,9 +258,9 @@ class TrainingDetail extends Component {
               <div className="breadcrumbs">
                 <ul className="flex flex-wrap align-items-center p-0 m-0">
                   <li>
-                    <a href="#">
+                    <Link to="/">
                       <i className="fa fa-home"></i> Home
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a href="" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>
