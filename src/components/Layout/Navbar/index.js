@@ -65,7 +65,7 @@ class Navbar extends Component {
                         pathname: `trainings`,
                         state: {
                           keySearch
-                        }
+                        },
                       }}
                     >
                       <button
@@ -138,6 +138,13 @@ class Navbar extends Component {
                           >
                             <Link to="/">Home</Link>
                           </li>
+                          <li className={
+                            pathname === "/trainings"
+                              ? "current-menu-item"
+                              : ""
+                          }>
+                            <Link to="/trainings">Store Training</Link>
+                          </li>
                           <li
                             className={
                               pathname === "/admin/training"
@@ -195,10 +202,10 @@ class Navbar extends Component {
                           <a href="#">About</a>
                         </li>
                         <li className={
-                            pathname === "/trainings"
-                              ? "current-menu-item"
-                              : ""
-                          }>
+                          pathname === "/trainings"
+                            ? "current-menu-item"
+                            : ""
+                        }>
                           <Link to="/trainings">Trainings</Link>
                         </li>
                         <li>

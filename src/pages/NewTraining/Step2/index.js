@@ -35,7 +35,6 @@ const mapDispatchToProps = dispatch => {
 };
 class Step2 extends Component {
   state = {
-    createdCourse: false,
     isShow: false,
     courseActived: {},
 
@@ -49,10 +48,6 @@ class Step2 extends Component {
     this.props.handleGetListCourseByUser(AuthStorage.userInfo._id);
   }
   componentWillReceiveProps(nextProps) {
-    const { isCreatedCourse } = nextProps.store;
-    if (!this.state.createdCourse && !_.isUndefined(isCreatedCourse._id)) {
-      this.setState({ createdCourse: true });
-    }
   }
 
   handleAddLearningPath = (
@@ -62,7 +57,7 @@ class Step2 extends Component {
     markForCourse,
     isRequired
   ) => {
-    
+
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
     addLearningPath(payload, (response) => {
@@ -108,7 +103,7 @@ class Step2 extends Component {
   };
   handleShowPopup = () => {
     const { isShow } = this.state;
-    this.setState({ isShow: !isShow, createdCourse:false });
+    this.setState({ isShow: !isShow });
   };
 
   handleShowPopupListCourse = () => {
@@ -117,49 +112,49 @@ class Step2 extends Component {
   };
 
   handleStepTwo = () => {
-    const {notifySuccess,notifyError} = this.props;
+    const { notifySuccess, notifyError } = this.props;
     const { listCourseChoosen_ver2 } = this.state;
-    if(listCourseChoosen_ver2.length === 0)
-    {
-      console.log("You must add least one course to training");
+    if (listCourseChoosen_ver2.length === 0) {
+      notifyError("Nofitication", "Error! You must add least one course to training.")
       return
     }
-    const { isCreatedTraining } = this.props.store;
-    if (_.isEmpty(isCreatedTraining)) {
+    const { trainingCreated } = this.props;
+    if(!trainingCreated._id){
+      notifyError("Nofitication", "Error! Something when wrong. Please wait a few minutes and try again. Thanks");
+      return
+    }
+    const trainings = [trainingCreated];
+    if (this.validateCourse(listCourseChoosen_ver2)) {
+      listCourseChoosen_ver2.map(async (item, index) => {
+        const position = index + 1;
+        const markForCourse = item.mark;
+        const isRequired = item.required;
+        const courses = [item.course];
+        await this.handleAddLearningPath(
+          trainings,
+          courses,
+          position,
+          markForCourse,
+          isRequired
+        );
+        if (index === listCourseChoosen_ver2.length - 1) {
+          notifySuccess("Nofitication", `Learning path of training "${trainingCreated.name}" has been updated successfully.`)
+          this.props.handleStepTwo();
+        }
+      });
     } else {
-      const trainings = [isCreatedTraining];
-      if (this.validateCourse(listCourseChoosen_ver2)) {
-        listCourseChoosen_ver2.map( async (item, index) => {
-          const position = index + 1;
-          const markForCourse = item.mark;
-          const isRequired = item.required;
-          const courses = [item.course];
-          await this.handleAddLearningPath(
-            trainings,
-            courses,
-            position,
-            markForCourse,
-            isRequired
-          );
-          if (index === listCourseChoosen_ver2.length - 1) {
-            notifySuccess("Nofitication",`Learning path of training "${isCreatedTraining.name}" has been updated successfully.`)
-            this.props.handleStepTwo();
-          }
-        });
-      } else {
-        this.setState({ messageErr: "Must choose one course is a mandatory." });
-      }
+      this.setState({ messageErr: "Must choose one course is a mandatory." });
     }
   };
 
   validateCourse = listCourse => {
-    let isValidate = true;
+    let isValidate = false;
     const findIndex = _.findIndex(
       listCourse,
-      course => course.isRequired === true
+      item => item.required === true
     );
-    if (findIndex === 1) {
-      isValidate = false;
+    if (findIndex > -1) {
+      isValidate = true;
     }
     return isValidate;
   };
@@ -187,7 +182,6 @@ class Step2 extends Component {
 
   render() {
     const {
-      createdCourse,
       isShow,
       isShowListCourse,
       listCourseChoosen_ver2,
@@ -211,9 +205,6 @@ class Step2 extends Component {
           />
         )}
         <div className="col-xl-12">
-          {createdCourse && (
-            <h3 className="text-success">COURSE HAVE BEEN CREATED</h3>
-          )}
           <div className="form-group" style={{ width: "30%" }}>
             <button
               type="button"

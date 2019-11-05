@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { createTraining } from "redux/action/training";
+import { createTraining, getAllCategory } from "redux/action/training";
 import { UploadFile } from "utils/UploadImage.js";
 import {
   createModule,
@@ -21,7 +21,7 @@ import Step3 from "pages/NewTraining/Step3";
 import Step4 from "pages/NewTraining/Step4";
 import AuthStorage from "utils/AuthStorage";
 import { ToastContainer } from "react-toastr";
-
+import { Link } from "react-router-dom";
 let toastr;
 
 function mapStateToProps(state) {
@@ -32,7 +32,9 @@ function mapStateToProps(state) {
       isCreatedModule: state.isCreatedModule.isCreatedModule.data,
       loadingCreatedModule: state.isCreatedModule.isCreatedModule.loading,
       isCreatedCourse: state.isCreatedCourse.isCreatedCourse.data,
-      loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading
+      loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading,
+      categoryAll: state.trainingAll.categoryAll.data,
+      loadingCategoryAll: state.trainingAll.categoryAll.loading,
     }
   };
 }
@@ -47,7 +49,8 @@ const mapDispatchToProps = dispatch => {
         createCourse,
         getCourse,
         getCourseByUser,
-        getModuleByUser
+        getModuleByUser,
+        getAllCategory
       },
       dispatch
     )
@@ -62,44 +65,58 @@ class NewTraining extends Component {
     fileToUpload: [],
     createdModule: false,
     createdCourse: false,
-    level: "3"
+    level: "3",
+    trainingCreated: "",
+    idxCategory: "-1",
   };
-  componentDidMount() {}
+  componentDidMount() {
+    this.handleGetCategory();
+  }
   //#region Handle redux
+  //Handle get list category
+  handleGetCategory = () => {
+    const payload = {};
+    const { getAllCategory } = this.props.action;
+    getAllCategory(payload);
+  };
   //Handle get list module
   handleGetListModule = () => {
     const payload = {};
     const { getModule } = this.props.action;
-    getModule(payload, () => {});
+    getModule(payload, () => { });
   };
   //Handle get list Course
   handleGetListCourse = () => {
     const payload = {};
     const { getCourse } = this.props.action;
-    getCourse(payload, () => {});
+    getCourse(payload, () => { });
   };
 
   handleGetListCourseByUser = userId => {
     const payload = { id: userId };
     const { getCourseByUser } = this.props.action;
-    getCourseByUser(payload, () => {});
+    getCourseByUser(payload, () => { });
   };
 
   handleGetListModuleByUser = userId => {
     const payload = { id: userId };
     const { getModuleByUser } = this.props.action;
-    getModuleByUser(payload, () => {});
+    getModuleByUser(payload, () => { });
   };
 
   //Must improve level without hardcode
-  handleCreateTraining = (name, level, description, thumbnail, users) => {
-    const payload = { name, level, description, thumbnail, users };
+  handleCreateTraining = (name, level, description, thumbnail, users, categorytrainings) => {
+    const payload = { name, level, description, thumbnail, users, categorytrainings };
     const { createTraining } = this.props.action;
     createTraining(payload, () => {
       const { isCreatedTraining } = this.props.store;
       if (!_.isUndefined(isCreatedTraining.id)) {
-        this.notifySuccess("Nofitication",`Training ${isCreatedTraining.name} has been created successfully.`)
+        this.setState({ trainingCreated: isCreatedTraining })
+        this.notifySuccess("Nofitication", `Training ${isCreatedTraining.name} has been created successfully.`)
         this.setState({ step: 2 });
+      }
+      else {
+        this.notifyError("Nofitication", "Error! Create training failed. Please wait a few minutes and try again. Thanks")
       }
     });
   };
@@ -111,7 +128,10 @@ class NewTraining extends Component {
       const { isCreatedModule } = this.props.store;
       if (!_.isUndefined(isCreatedModule._id)) {
         this.handleGetListModuleByUser(AuthStorage.userInfo._id);
-        this.notifySuccess("Nofitication",`Module ${isCreatedModule.name} has been created successfully.`)
+        this.notifySuccess("Nofitication", `Module ${isCreatedModule.name} has been created successfully.`)
+      }
+      else {
+        this.notifyError("Nofitication", "Error! Create module failed. Please wait a few minutes and try again. Thanks")
       }
     });
   };
@@ -124,10 +144,10 @@ class NewTraining extends Component {
       const { isCreatedCourse } = this.props.store;
       if (!_.isUndefined(isCreatedCourse.id)) {
         this.handleGetListCourseByUser(AuthStorage.userInfo._id);
-        this.notifySuccess("Nofitication",`Course ${isCreatedCourse.name} has been created successfully.`)
+        this.notifySuccess("Nofitication", `Course ${isCreatedCourse.name} has been created successfully.`)
       }
-      else{
-        this.notifyError("Nofitication","Error! Something when wrong. Please wait a few minutes and try again. Thanks")
+      else {
+        this.notifyError("Nofitication", "Error! Something when wrong. Please wait a few minutes and try again. Thanks")
       }
     });
   };
@@ -144,26 +164,35 @@ class NewTraining extends Component {
 
   //#region Helper
   handleStepOne = async title => {
-    const { description, fileToUpload,level } = this.state;
-    let thumbnail = {};
-    if (fileToUpload.length > 0) {
-      let data = new FormData();
-      data.append("files", fileToUpload[0]);
-      await UploadFile(data)
-        .then(res => {
-          return res.json();
-        })
-        .then(result => {
-          thumbnail = result;
-        });
+    const { description, fileToUpload, level, idxCategory } = this.state;
+    if (idxCategory === "-1" || title === "") {
+      this.notifyError("Nofitication", "Error! Please enter full field (*). It is required.");
     }
-    this.handleCreateTraining(
-      title,
-      level,
-      description,
-      thumbnail,
-      AuthStorage.userInfo
-    );
+    else {
+      const { categoryAll } = this.props.store;
+      const categoryCurrent = categoryAll[idxCategory];
+      let thumbnail = {};
+      if (fileToUpload.length > 0) {
+        let data = new FormData();
+        data.append("files", fileToUpload[0]);
+        await UploadFile(data)
+          .then(res => {
+            return res.json();
+          })
+          .then(result => {
+            thumbnail = result;
+          });
+      }
+      this.handleCreateTraining(
+        title,
+        level,
+        description,
+        thumbnail,
+        AuthStorage.userInfo,
+        categoryCurrent
+      );
+    }
+
   };
 
   handleStepTwo = () => {
@@ -182,7 +211,7 @@ class NewTraining extends Component {
   };
 
   handleChangeLevel = level => {
-    this.setState({level})
+    this.setState({ level })
   }
 
   notifySuccess = (title, content) => {
@@ -196,12 +225,17 @@ class NewTraining extends Component {
     });
   };
 
+  handleChangeCategory = (idxCategory) => {
+    this.setState({ idxCategory })
+  }
+
   //#endregion
 
   render() {
+    const { categoryAll, loadingCategoryAll } = this.props.store;
     return (
       <div className="page-header new-training-page">
-       <ToastContainer
+        <ToastContainer
           ref={ref => (toastr = ref)}
           className="toast-top-right"
         />
@@ -212,9 +246,9 @@ class NewTraining extends Component {
               <div className="breadcrumbs">
                 <ul className="flex flex-wrap align-items-center p-0 m-0">
                   <li>
-                    <a href="#">
+                    <Link to="/">
                       <i className="fa fa-home"></i> Home
-                    </a>
+                    </Link>
                   </li>
                   <li>New Training</li>
                 </ul>
@@ -233,22 +267,22 @@ class NewTraining extends Component {
                   <ul className="card-text">
                     <li className={`${this.state.step === 1 && "bg-root"}`}>
                       Description
-                    </li>
+                                        </li>
                     <li className={`${this.state.step === 2 && "bg-root"}`}>
                       Learning Path Manage
-                    </li>
+                                        </li>
                     <li className={`${this.state.step === 3 && "bg-root"}`}>
                       Manage Module of Course
-                    </li>
+                                        </li>
                     <li className={`${this.state.step === 4 && "bg-root"}`}>
                       Activites
-                    </li>
+                                        </li>
                   </ul>
                 </div>
               </div>
             </div>
             <div className="col-xl-8">
-              {this.state.step === 4 && <Step4 
+              {this.state.step === 4 && <Step4
                 notifySuccess={this.notifySuccess}
                 notifyError={this.notifyError}
               />}
@@ -259,7 +293,7 @@ class NewTraining extends Component {
                   handleGetListModuleByUser={this.handleGetListModuleByUser}
                   handleStepThree={this.handleStepThree}
                   notifySuccess={this.notifySuccess}
-                notifyError={this.notifyError}
+                  notifyError={this.notifyError}
                 />
               )}
               {this.state.step === 2 && (
@@ -269,7 +303,8 @@ class NewTraining extends Component {
                   handleGetListCourse={this.handleGetListCourse}
                   handleGetListCourseByUser={this.handleGetListCourseByUser}
                   notifySuccess={this.notifySuccess}
-                notifyError={this.notifyError}
+                  notifyError={this.notifyError}
+                  trainingCreated={this.state.trainingCreated}
                 />
               )}
               {this.state.step === 1 && (
@@ -278,6 +313,10 @@ class NewTraining extends Component {
                   fileSelectHandler={this.fileSelectHandler}
                   handleStepOne={this.handleStepOne}
                   handleChangeLevel={this.handleChangeLevel}
+                  loadingCategoryAll={loadingCategoryAll}
+                  categoryAll={categoryAll}
+                  idxCategory={this.state.idxCategory}
+                  handleChangeCategory={this.handleChangeCategory}
                 />
               )}
             </div>

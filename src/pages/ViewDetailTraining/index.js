@@ -218,8 +218,8 @@ class TrainingDetail extends Component {
                 <div className="breadcrumbs">
                   <ul className="flex flex-wrap align-items-center p-0 m-0">
                     <li>
-                    <Link to="/">
-                      <i className="fa fa-home"></i> Home
+                      <Link to="/">
+                        <i className="fa fa-home"></i> Home
                     </Link>
                     </li>
                     <li>Training</li>
@@ -311,9 +311,12 @@ class TrainingDetail extends Component {
                     <label className="m-0">Student</label>
                     <div className="author-name"><a href="#">{detailTraining.activityusers.length} (REGISTERED)</a></div>
                   </div>
-                  <div className="buy-course mt-3">
-                    <a className="btn" href="#" onClick={(e) => { e.preventDefault(); this.handleAddToMyTraining(this.state.currentTraining) }} >ADD to cart</a>
-                  </div>
+                  {AuthStorage.loggedIn &&
+                    AuthStorage.userInfo.role.type === "creator" ? (<></>) : (
+                      <div className="buy-course mt-3">
+                        <a className="btn" href="#" onClick={(e) => { e.preventDefault(); this.handleAddToMyTraining(this.state.currentTraining) }} >ADD to cart</a>
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="single-course-cont-section">

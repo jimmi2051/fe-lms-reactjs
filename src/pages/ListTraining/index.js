@@ -80,7 +80,7 @@ class ListTraining extends Component {
 
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
-      this.setState({ startItemPage: 0 }, () => {
+      this.setState({ startItemPage: 0, activePage: 1 }, () => {
         this.handleGetTotalPage(AuthStorage.userInfo._id);
         this.handleGetTraining(AuthStorage.userInfo._id);
       })
@@ -96,7 +96,7 @@ class ListTraining extends Component {
   }
 
   fitlerCategory = (categoryId) => {
-    this.setState({ categoryId, startItemPage: 0 }, () => {
+    this.setState({ categoryId, startItemPage: 0,activePage: 1 }, () => {
       this.handleGetTotalPage(AuthStorage.userInfo._id)
       this.handleGetTraining(AuthStorage.userInfo._id);
     });

@@ -422,7 +422,7 @@ class Step3 extends Component {
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button
-              className="btn bg-root mb-3"
+              className="btn bg-root-active mb-3"
               style={{ width: "100%" }}
               onClick={this.handleStepThree}
             >

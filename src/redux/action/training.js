@@ -4,7 +4,7 @@
 import { SINGLE_API, GRAPHQL } from "./type";
 
 export const createTraining = (payload, next, nextErr) => {
-  const { name, level, description, thumbnail, users } = payload;
+  const { name, level, description, thumbnail, users, categorytrainings } = payload;
   const isActive = true;
   return {
     type: SINGLE_API,
@@ -23,7 +23,8 @@ export const createTraining = (payload, next, nextErr) => {
         level,
         description,
         thumbnail,
-        users: [users]
+        users: [users],
+        categorytrainings: [categorytrainings],
       }
     }
   };

@@ -65,11 +65,7 @@ class ListTraining extends Component {
     }
     this.handleGetTraining();
     this.handleGetCategory();
-    fetch("https://be-lms.tk/trainings/count")
-      .then(response => { return response.json() })
-      .then(result => {
-        this.setState({ totalPage: result })
-      })
+    this.handleGetTotalPage();
   }
 
   handleGetTotalPage = () => {
@@ -96,8 +92,7 @@ class ListTraining extends Component {
   };
 
   handleAddToMyTraining = (training) => {
-    if(!AuthStorage.loggedIn)
-    {
+    if (!AuthStorage.loggedIn) {
       this.props.history.push("/login");
       return;
     }
@@ -146,7 +141,7 @@ class ListTraining extends Component {
 
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
-      this.setState({ startItemPage: 0 }, () => {
+      this.setState({ startItemPage: 0,activePage: 1 }, () => {
         this.handleGetTotalPage();
         this.handleGetTraining();
       })
@@ -156,13 +151,13 @@ class ListTraining extends Component {
   handlePageChange(pageNumber) {
     let { startItemPage, itemPerPage } = this.state;
     startItemPage = (pageNumber - 1) * itemPerPage;
-    this.setState({ startItemPage }, () => {
+    this.setState({ startItemPage, activePage: pageNumber }, () => {
       this.handleGetTraining();
     });
   }
 
   fitlerCategory = (categoryId) => {
-    this.setState({ categoryId, startItemPage: 0 }, () => {
+    this.setState({ categoryId, startItemPage: 0,activePage: 1 }, () => {
       this.handleGetTotalPage()
       this.handleGetTraining();
     });
@@ -187,11 +182,11 @@ class ListTraining extends Component {
       loadingCategoryAll,
       categoryAll
     } = this.props.store;
-    const { addSuccess, trainingExists, categoryId } = this.state;
+    const { categoryId } = this.state;
 
     if (loadingCategoryAll) {
       return (<div className="page-header">
-        <Header titleHeader="LIST TRAINING" />
+        <Header titleHeader="TRAINING LIST" />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -224,7 +219,7 @@ class ListTraining extends Component {
           ref={ref => (toastr = ref)}
           className="toast-top-right"
         />
-        <Header titleHeader="LIST TRAINING" />
+        <Header titleHeader="TRAINING LIST" />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -243,7 +238,7 @@ class ListTraining extends Component {
 
           <div className="row courses-wrap-custom">
             <div className="col-xl-4">
-              <div className="sidebar" style={{ height: "100%",minHeight: "600px" }}>
+              <div className="sidebar" style={{ height: "100%", minHeight: "600px" }}>
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">
@@ -326,11 +321,6 @@ class ListTraining extends Component {
                                       "MMM. D, YYYY"
                                     )}
                                   </div>
-                                  {trainingExists === item && (
-                                    <div className="text-left">
-                                      <label className="text-danger mb-0">This training have already in your list. </label>
-                                    </div>
-                                  )}
                                 </div>
                               </header>
 
@@ -343,9 +333,12 @@ class ListTraining extends Component {
                                     )
                                   })}
                                 </div>
-                                <div className="col-xl-12 pr-0 pt-3 text-right">
-                                  <button type="button" onClick={() => { this.handleAddToMyTraining(item) }} className="btn bg-root">Add to my training</button>
-                                </div>
+                                {AuthStorage.loggedIn &&
+                                  AuthStorage.userInfo.role.type === "creator" ? (<></>) : (
+                                    <div className="col-xl-12 pr-0 pt-3 text-right">
+                                      <button type="button" onClick={() => { this.handleAddToMyTraining(item) }} className="btn bg-root">Add to my training</button>
+                                    </div>
+                                  )}
                               </footer>
                             </div>
                           </div>

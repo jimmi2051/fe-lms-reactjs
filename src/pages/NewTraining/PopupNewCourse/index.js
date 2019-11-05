@@ -155,7 +155,7 @@ class PopupNewCourse extends Component {
                 <div className="form-group">
                   <button
                     type="button"
-                    className="btn btn-info form-control"
+                    className="btn bg-root-active form-control"
                     onClick={this.handleNewCourse}
                   >
                     Add
@@ -167,7 +167,7 @@ class PopupNewCourse extends Component {
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn bg-root"
+                className="btn btn-secondary"
                 data-dismiss="modal"
                 onClick={this.props.handleShowPopup}
               >
