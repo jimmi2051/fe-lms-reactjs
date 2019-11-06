@@ -25,7 +25,8 @@ function mapStateToProps(state) {
       loadingListCourseFilter: state.listCourseFitler.listCourseFitler.loading,
       isCreatedCourseModule: state.listCourseFitler.isCreatedCourseModule.data,
       filterModuleByCourse: state.listModule.filterModuleByCourse.data,
-      loadingModuleByCourse: state.listModule.filterModuleByCourse.loading
+      loadingModuleByCourse: state.listModule.filterModuleByCourse.loading,
+      isCreatedLearningPath: state.isCreatedLearningPath.isCreatedLearningPath.data
     }
   };
 }
@@ -54,27 +55,27 @@ class Step3 extends Component {
     listCourse: [],
     listModuleChoosen_ver2: [],
     isShowListModule: false,
-    updateCouse: false
+    updateCouse: false,
+    currentTraining: {}
   };
 
   componentDidMount() {
     this.props.handleGetListModuleByUser(AuthStorage.userInfo._id);
-    const { isCreatedTraining } = this.props.store;
-    if (_.isUndefined(isCreatedTraining._id)) {
+    const { trainingCreated } = this.props;
+    this.setState({ currentTraining: trainingCreated });
+    if (_.isUndefined(trainingCreated._id)) {
       this.handleFilterListCourse("5d9a0516fa842c10ba72c543");
     } else {
       //this is hardcode must to fix
-      this.handleFilterListCourse(isCreatedTraining._id);
+      this.handleFilterListCourse(trainingCreated._id);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isCreatedModule, isCreatedTraining } = nextProps.store;
-    if (!_.isEqual(isCreatedTraining, this.props.store.isCreatedTraining)) {
-      this.handleFilterListCourse(isCreatedTraining._id);
-    }
-    if (!this.state.createdModule && !_.isUndefined(isCreatedModule._id)) {
-      this.setState({ createdModule: true });
+    const { currentTraining } = this.state;
+    const { isCreatedLearningPath } = nextProps.store;
+    if (!_.isEqual(isCreatedLearningPath, this.props.store.isCreatedLearningPath)) {
+      this.handleFilterListCourse(currentTraining._id);
     }
   }
 
@@ -98,7 +99,7 @@ class Step3 extends Component {
       });
     });
     this.setState({
-      currentCourse: listCourseFitler[0].courses[0],
+      currentCourse: listCourse.length > 0 ? listCourseFitler[0].courses[0] : {},
       listCourse
     });
   };
@@ -136,14 +137,14 @@ class Step3 extends Component {
   };
 
   handleStepThree = () => {
-    const {notifySuccess,notifyError} = this.props;
+    const { notifySuccess, notifyError } = this.props;
     const { listModuleChoosen_ver2, currentCourse } = this.state;
     const courses = [currentCourse];
     listModuleChoosen_ver2.map((item, index) => {
       const position = index + 1;
       const modules = [item];
       if (index === listModuleChoosen_ver2.length - 1) {
-        notifySuccess("Nofitication",`List modules of training "${currentCourse.name}" has been updated successfully.`)
+        notifySuccess("Nofitication", `List modules of training "${currentCourse.name}" has been updated successfully.`)
         this.setState({ listModuleChoosen_ver2: [] });
         this.handleCreateCourseModule(courses, position, modules, true);
       } else {

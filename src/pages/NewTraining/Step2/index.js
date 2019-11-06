@@ -23,7 +23,8 @@ function mapStateToProps(state) {
       loadingListCourseUser: state.isCreatedCourse.listCourseByUser.loading,
       isCreatedLearningPath: state.isCreatedTraining.isCreatedLearningPath.data,
       loadingCreatedLearningPath:
-        state.isCreatedTraining.isCreatedLearningPath.loading
+        state.isCreatedTraining.isCreatedLearningPath.loading,
+      
     }
   };
 }
@@ -44,10 +45,7 @@ class Step2 extends Component {
     messageErr: ""
   };
   componentDidMount() {
-    // this.props.handleGetListCourse();
     this.props.handleGetListCourseByUser(AuthStorage.userInfo._id);
-  }
-  componentWillReceiveProps(nextProps) {
   }
 
   handleAddLearningPath = (
@@ -60,8 +58,7 @@ class Step2 extends Component {
 
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, (response) => {
-    });
+    addLearningPath(payload, (response) => {});
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {

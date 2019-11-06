@@ -294,6 +294,7 @@ class NewTraining extends Component {
                   handleStepThree={this.handleStepThree}
                   notifySuccess={this.notifySuccess}
                   notifyError={this.notifyError}
+                  trainingCreated={this.state.trainingCreated}
                 />
               )}
               {this.state.step === 2 && (
