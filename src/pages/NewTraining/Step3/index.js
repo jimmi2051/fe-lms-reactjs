@@ -86,7 +86,9 @@ class Step3 extends Component {
       const { listCourseFitler } = this.props.store;
       this.handleProcessData(listCourseFitler);
       //Get Module of first course if exists
-      this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+      if (listCourseFitler.length > 0) {
+        this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+      }
     });
   };
 
@@ -226,14 +228,18 @@ class Step3 extends Component {
           {createdModule && (
             <h3 className="text-success pl-3">MODULE HAVE BEEN CREATED</h3>
           )}{" "}
-          <div className="form-group" style={{ width: "30%" }}>
+          <div className="form-group" >
             <button
               type="button"
               className="form-control btn bg-root"
               onClick={this.handleShowPopup}
+              style={{ width: "30%" }}
             >
               Add new module
             </button>
+            <small className="form-text text-muted">
+              Note: With the course already exists module, you can't edit or add more module for it.
+          </small>
           </div>
         </div>
         {listCourse.length > 0 && (

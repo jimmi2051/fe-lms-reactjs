@@ -67,22 +67,22 @@ class PopupListContent extends Component {
     if (!_.isNull(option)) {
       this.setState({ currentContent: option.value });
     }
-    this.setState({ messageErr: "", messageSuc: "" })
   }
 
   handleUpdateContent_ver2 = () => {
+    const { notifySuccess, notifyError } = this.props;
     const { currentContent } = this.state;
     if (!this.props.handleAddContent(currentContent)) {
-      this.setState({ messageErr: "Content already exists. " })
+      notifyError("Notification", "Error: Content already exists.")
     }
     else {
-      this.setState({ messageSuc: "Add successfully content. " })
+      notifySuccess("Notification", "Add successfully content.")
     }
   };
 
   render() {
     const { isShow } = this.props;
-    const { listContentSelect, messageErr, messageSuc, currentContent } = this.state;
+    const { listContentSelect, currentContent } = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -118,14 +118,6 @@ class PopupListContent extends Component {
             </div>
             <div className="modal-body">
               <div className="row">
-                <div className="col-xl-12">
-                  {messageErr !== "" && (
-                    <label className="text-danger">{messageErr}</label>
-                  )}
-                  {messageSuc !== "" && (
-                    <label className="text-success">{messageSuc}</label>
-                  )}
-                </div>
                 <div className="col-xl-12">
                   {listContentSelect.length > 0 && (
                     <Select
@@ -194,15 +186,10 @@ class PopupListContent extends Component {
                     </div>
                   )}
                 </div>
-                <div className="col-xl-12 mt-3">
-                  <div className="form-group">
-                    <button type="button" className="btn bg-root" onClick={this.handleUpdateContent_ver2}>Add content</button>
-                  </div>
-
-                </div>
               </div>
             </div>
             <div className="modal-footer">
+              <button type="button" className="btn bg-root" onClick={this.handleUpdateContent_ver2}>Add content</button>
               <button
                 type="button"
                 className="btn btn-secondary"

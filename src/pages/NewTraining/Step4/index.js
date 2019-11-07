@@ -58,7 +58,6 @@ class Step4 extends Component {
     listModule: [],
     isFetchContent: false,
     listContentChoosen: [],
-    isUpdateContent: false,
     isShowDetailContent: false,
     currentContent: {},
     isShowNewContent: false
@@ -67,7 +66,9 @@ class Step4 extends Component {
     const { listCourseFitler, loadingListCourseFilter } = this.props.store;
     if (!loadingListCourseFilter && listCourseFitler.length > 0) {
       this.handleProcessData(listCourseFitler);
-      this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+      if (listCourseFitler.length > 0) {
+        this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+      }
     }
     //Get All Content
     this.handleGetContentByUserId(AuthStorage.userInfo._id);
@@ -97,13 +98,13 @@ class Step4 extends Component {
   handleGetContentByUserId = id => {
     const { getContent } = this.props.action;
     const payload = { id };
-    getContent(payload, () => {});
+    getContent(payload, () => { });
   };
 
   handleGetContentByModule = module_id => {
     const { getContentByModule } = this.props.action;
     const payload = { id: module_id };
-    getContentByModule(payload, () => {});
+    getContentByModule(payload, () => { });
   };
 
   handleChangeCourse = course => {
@@ -137,13 +138,13 @@ class Step4 extends Component {
   handleChangeCourse_ver2 = options => {
     if (!_.isNull(options)) {
       this.handleGetModuleByCourse(options.value._id);
-      this.setState({ currentCourse: options.value, isUpdateContent: false });
+      this.setState({ currentCourse: options.value });
     }
   };
 
   handleShowContent_ver2 = options => {
     this.handleGetContentByModule(options.value._id);
-    this.setState({ currentModule: options.value, isUpdateContent: false });
+    this.setState({ currentModule: options.value });
   };
 
   handleShowListContent_ver2 = () => {
@@ -168,10 +169,12 @@ class Step4 extends Component {
 
   handleUpdateContentForModule = () => {
     const { listContentChoosen } = this.state;
+    const { notifySuccess, notifyError } = this.props
     listContentChoosen.map(async (item, index) => {
       if (index === listContentChoosen.length - 1) {
         this.handleUpdateContent(item, true);
-        this.setState({ isUpdateContent: true, listContentChoosen: [] });
+        this.setState({ listContentChoosen: [] });
+        notifySuccess("Notification", "The module has successfully updated content");
       } else {
         this.handleUpdateContent(item, false);
       }
@@ -211,7 +214,7 @@ class Step4 extends Component {
 
   handleCloseNewContent = () => {
     this.setState({
-      isShowNewContent:!this.state.isShowNewContent
+      isShowNewContent: !this.state.isShowNewContent
     })
   }
 
@@ -227,11 +230,11 @@ class Step4 extends Component {
       listCourse,
       listModule,
       listContentChoosen,
-      isUpdateContent,
       isShowDetailContent,
       currentContent,
       isShowNewContent
     } = this.state;
+    const { notifySuccess, notifyError } = this.props;
     return (
       <div className="row">
         {!loadingListContent && (
@@ -240,33 +243,42 @@ class Step4 extends Component {
             currentModule={currentModule}
             handleShowListContent={this.handleShowListContent_ver2}
             handleAddContent={this.handleAddContent}
+            notifySuccess={notifySuccess}
+            notifyError={notifyError}
           />
         )}
-        {!loadingListContent && (
-          <PopupNewContent
-            isShow={isShowNewContent}
-            handleCloseNewContent={this.handleCloseNewContent}
-            handleGetContentByUserId={this.handleGetContentByUserId}
-            // currentModule={currentModule}
-            // handleShowListContent={this.handleShowListContent_ver2}
-            // handleAddContent={this.handleAddContent}
-          />
+        {!loadingListContent && (<PopupNewContent
+          isShow={isShowNewContent}
+          handleCloseNewContent={this.handleCloseNewContent}
+          handleGetContentByUserId={this.handleGetContentByUserId}
+          // currentModule={currentModule}
+          // handleShowListContent={this.handleShowListContent_ver2}
+          // handleAddContent={this.handleAddContent}
+          notifySuccess={notifySuccess}
+          notifyError={notifyError}
+        />
         )}
+
         <PopupDetailContent
           isShow={isShowDetailContent}
           currentContent={currentContent}
           handleCloseDetailContent={this.handleCloseDetailContent}
         />
         <div className="col-xl-12">
-          <div className="form-group" style={{ width: "30%" }}>
+          <div className="form-group">
             <button
               type="button"
               className="form-control btn bg-root"
               onClick={this.handleCloseNewContent}
+              style={{ width: "30%" }}
             >
               Add new content
             </button>
+            <small className="form-text text-muted">
+              Note: With the module already exists content, you can't edit or add more content for it.
+          </small>
           </div>
+
         </div>
         {listCourse.length > 0 && (
           <div className="col-xl-6 list-course mb-3">
@@ -296,11 +308,6 @@ class Step4 extends Component {
               noOptionsMessage={inputValue => "No module found"}
               placeholder="-- Select module --"
             />
-          </div>
-        )}
-        {isUpdateContent && (
-          <div className="col-xl-12">
-            <label className="text-success">Update successfully content</label>
           </div>
         )}
         <div className="col-xl-12">
@@ -364,24 +371,24 @@ class Step4 extends Component {
                   );
                 })
               ) : (
-                <tr>
-                  <td colSpan="3">
-                    <button
-                      onClick={() => this.handleShowListContent_ver2()}
-                      className="btn bg-root"
-                    >
-                      Add content
+                  <tr>
+                    <td colSpan="3">
+                      <button
+                        onClick={() => this.handleShowListContent_ver2()}
+                        className="btn bg-root"
+                      >
+                        Add content
                     </button>
-                  </td>
-                </tr>
-              )}
+                    </td>
+                  </tr>
+                )}
             </tbody>
           </table>
         </div>
         {listContentByModule.length === 0 && (
           <div className="form-group col-xl-12">
             <button
-              className="btn bg-root"
+              className="btn bg-root-active"
               type="button"
               onClick={this.handleUpdateContentForModule}
               style={{ width: "100%" }}
@@ -391,9 +398,9 @@ class Step4 extends Component {
           </div>
         )}
         <div className="form-group col-xl-12">
-        <Link to="/admin/training">
-          <button className="btn bg-root" style={{ width: "100%" }}>
-            DONE
+          <Link to="/admin/training">
+            <button className="btn bg-root" style={{ width: "100%" }}>
+              DONE
           </button>
           </Link>
         </div>

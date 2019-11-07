@@ -97,16 +97,21 @@ class PopupNewContent extends Component {
   };
 
   handleCreateData = (data, content) => {
-    const {handleGetContentByUserId} = this.props
+    const {handleGetContentByUserId,notifySuccess, notifyError} = this.props
     const payload = { data, content };
     const { createData } = this.props.action;
     createData(payload, () => {
       const { isCreateData } = this.props.store;
       if (isCreateData._id) {
         handleGetContentByUserId(AuthStorage.userInfo._id);
-        this.setState({ createdContent: true });
-        this.handleResetForm();
-        this.form.reset();
+        // this.setState({ createdContent: true });
+        // this.handleResetForm();
+        // this.form.reset();
+        this.handleClosePopup();
+        notifySuccess("Notification","Data has been created successfully.")
+      }
+      else{
+        notifySuccess("Notification","Error! Something when wrong. Please wait a few minutes and try again.")
       }
     });
   };

@@ -24,7 +24,7 @@ function mapStateToProps(state) {
       isCreatedLearningPath: state.isCreatedTraining.isCreatedLearningPath.data,
       loadingCreatedLearningPath:
         state.isCreatedTraining.isCreatedLearningPath.loading,
-      
+
     }
   };
 }
@@ -58,7 +58,7 @@ class Step2 extends Component {
 
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, (response) => {});
+    addLearningPath(payload, (response) => { });
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -116,7 +116,7 @@ class Step2 extends Component {
       return
     }
     const { trainingCreated } = this.props;
-    if(!trainingCreated._id){
+    if (!trainingCreated._id) {
       notifyError("Nofitication", "Error! Something when wrong. Please wait a few minutes and try again. Thanks");
       return
     }
@@ -202,11 +202,12 @@ class Step2 extends Component {
           />
         )}
         <div className="col-xl-12">
-          <div className="form-group" style={{ width: "30%" }}>
+          <div className="form-group">
             <button
               type="button"
               className="form-control btn bg-root"
               onClick={this.handleShowPopup}
+              style={{ width: "30%" }}
             >
               Add new course
             </button>
