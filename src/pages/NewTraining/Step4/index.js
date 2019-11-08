@@ -98,13 +98,13 @@ class Step4 extends Component {
   handleGetContentByUserId = id => {
     const { getContent } = this.props.action;
     const payload = { id };
-    getContent(payload, () => { });
+    getContent(payload, () => {});
   };
 
   handleGetContentByModule = module_id => {
     const { getContentByModule } = this.props.action;
     const payload = { id: module_id };
-    getContentByModule(payload, () => { });
+    getContentByModule(payload, () => {});
   };
 
   handleChangeCourse = course => {
@@ -169,12 +169,15 @@ class Step4 extends Component {
 
   handleUpdateContentForModule = () => {
     const { listContentChoosen } = this.state;
-    const { notifySuccess, notifyError } = this.props
+    const { notifySuccess, notifyError } = this.props;
     listContentChoosen.map(async (item, index) => {
       if (index === listContentChoosen.length - 1) {
         this.handleUpdateContent(item, true);
         this.setState({ listContentChoosen: [] });
-        notifySuccess("Notification", "The module has successfully updated content");
+        notifySuccess(
+          "Notification",
+          "The module has successfully updated content"
+        );
       } else {
         this.handleUpdateContent(item, false);
       }
@@ -215,8 +218,8 @@ class Step4 extends Component {
   handleCloseNewContent = () => {
     this.setState({
       isShowNewContent: !this.state.isShowNewContent
-    })
-  }
+    });
+  };
 
   render() {
     const {
@@ -247,16 +250,17 @@ class Step4 extends Component {
             notifyError={notifyError}
           />
         )}
-        {!loadingListContent && (<PopupNewContent
-          isShow={isShowNewContent}
-          handleCloseNewContent={this.handleCloseNewContent}
-          handleGetContentByUserId={this.handleGetContentByUserId}
-          // currentModule={currentModule}
-          // handleShowListContent={this.handleShowListContent_ver2}
-          // handleAddContent={this.handleAddContent}
-          notifySuccess={notifySuccess}
-          notifyError={notifyError}
-        />
+        {!loadingListContent && (
+          <PopupNewContent
+            isShow={isShowNewContent}
+            handleCloseNewContent={this.handleCloseNewContent}
+            handleGetContentByUserId={this.handleGetContentByUserId}
+            // currentModule={currentModule}
+            // handleShowListContent={this.handleShowListContent_ver2}
+            // handleAddContent={this.handleAddContent}
+            notifySuccess={notifySuccess}
+            notifyError={notifyError}
+          />
         )}
 
         <PopupDetailContent
@@ -275,10 +279,10 @@ class Step4 extends Component {
               Add new content
             </button>
             <small className="form-text text-muted">
-              Note: With the module already exists content, you can't edit or add more content for it.
-          </small>
+              Note: With the module already exists content, you can't edit or
+              add more content for it.
+            </small>
           </div>
-
         </div>
         {listCourse.length > 0 && (
           <div className="col-xl-6 list-course mb-3">
@@ -371,17 +375,17 @@ class Step4 extends Component {
                   );
                 })
               ) : (
-                  <tr>
-                    <td colSpan="3">
-                      <button
-                        onClick={() => this.handleShowListContent_ver2()}
-                        className="btn bg-root"
-                      >
-                        Add content
+                <tr>
+                  <td colSpan="3">
+                    <button
+                      onClick={() => this.handleShowListContent_ver2()}
+                      className="btn bg-root"
+                    >
+                      Add content
                     </button>
-                    </td>
-                  </tr>
-                )}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -401,7 +405,7 @@ class Step4 extends Component {
           <Link to="/admin/training">
             <button className="btn bg-root" style={{ width: "100%" }}>
               DONE
-          </button>
+            </button>
           </Link>
         </div>
       </div>

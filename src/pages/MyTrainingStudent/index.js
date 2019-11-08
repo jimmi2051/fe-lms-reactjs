@@ -27,7 +27,8 @@ function mapStateToProps(state) {
       isAddTraining: state.isAddTraining.isAddTraining.data,
       loadingAddTraining: state.isAddTraining.isAddTraining.loading,
       listTrainingLearn: state.listTrainingLearn.listTrainingLearn.data,
-      loadingListTrainingLearn: state.listTrainingLearn.listTrainingLearn.loading,
+      loadingListTrainingLearn:
+        state.listTrainingLearn.listTrainingLearn.loading
     }
   };
 }
@@ -56,7 +57,7 @@ class ListTraining extends Component {
     totalPage: -1,
     activePage: 1,
     categoryId: ""
-  }
+  };
   componentDidMount() {
     this.handleGetMyTraining(AuthStorage.userInfo._id);
     this.handleGetCategory();
@@ -65,20 +66,33 @@ class ListTraining extends Component {
 
   handleGetTotalPage = () => {
     const { keySearch, categoryId } = this.state;
-    fetch(`https://be-lms.tk/trainings?${keySearch !== "" ? `name_contains=${keySearch}&` : ``}${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}activityusers.users._id=${AuthStorage.userInfo._id}`)
-      .then(response => { return response.json() })
-      .then(result => {
-        this.setState({ totalPage: result.length })
+    fetch(
+      `https://be-lms.tk/trainings?${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }${
+        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
+      }activityusers.users._id=${AuthStorage.userInfo._id}`
+    )
+      .then(response => {
+        return response.json();
       })
-  }
+      .then(result => {
+        this.setState({ totalPage: result.length });
+      });
+  };
 
-  handleGetMyTraining = (userId) => {
+  handleGetMyTraining = userId => {
     const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
-    const payload = { keySearch, startItemPage, itemPerPage, userId, categoryId };
+    const payload = {
+      keySearch,
+      startItemPage,
+      itemPerPage,
+      userId,
+      categoryId
+    };
     const { getTrainingToLearn } = this.props.action;
-    getTrainingToLearn(payload, (response) => {
-    });
-  }
+    getTrainingToLearn(payload, response => {});
+  };
 
   handleGetCategory = () => {
     const payload = {};
@@ -88,11 +102,11 @@ class ListTraining extends Component {
 
   handleClosePopup = () => {
     this.setState({ addSuccess: false });
-  }
+  };
 
-  handleInputSearch = (e) => {
+  handleInputSearch = e => {
     this.setState({ keySearch: e.target.value });
-  }
+  };
 
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
@@ -111,12 +125,12 @@ class ListTraining extends Component {
     });
   }
 
-  fitlerCategory = (categoryId) => {
+  fitlerCategory = categoryId => {
     this.setState({ categoryId, startItemPage: 0 }, () => {
-      this.handleGetTotalPage()
+      this.handleGetTotalPage();
       this.handleGetMyTraining(AuthStorage.userInfo._id);
     });
-  }
+  };
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
@@ -139,32 +153,33 @@ class ListTraining extends Component {
     const { categoryId } = this.state;
 
     if (loadingCategoryAll || loadingListTrainingLearn) {
-      return (<div className="page-header">
-        <Header titleHeader="MY TRAINING" />
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <div className="breadcrumbs">
-                <ul className="flex flex-wrap align-items-center p-0 m-0">
-                  <li>
-                    <Link to="/">
-                      <i className="fa fa-home"></i> Home
-                    </Link>
-                  </li>
-                  <li>My Training</li>
-                </ul>
+      return (
+        <div className="page-header">
+          <Header titleHeader="MY TRAINING" />
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <div className="breadcrumbs">
+                  <ul className="flex flex-wrap align-items-center p-0 m-0">
+                    <li>
+                      <Link to="/">
+                        <i className="fa fa-home"></i> Home
+                      </Link>
+                    </li>
+                    <li>My Training</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="row courses-wrap-custom">
+              <div className="col-xl-12">
+                <Loading classOption="align-center-spinner" />
               </div>
             </div>
           </div>
-
-          <div className="row courses-wrap-custom">
-            <div className="col-xl-12">
-              <Loading classOption="align-center-spinner" />
-            </div>
-          </div>
         </div>
-      </div>
-      )
+      );
     }
     return (
       <div className="page-header">
@@ -191,26 +206,55 @@ class ListTraining extends Component {
 
           <div className="row courses-wrap-custom">
             <div className="col-xl-4">
-              <div className="sidebar" style={{ height: "100%", minHeight: "600px" }}>
+              <div
+                className="sidebar"
+                style={{ height: "100%", minHeight: "600px" }}
+              >
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">
-                    <input onKeyDown={this.beginSearch} className="form-control" onChange={this.handleInputSearch} placeholder="Search by training name." />
+                    <input
+                      onKeyDown={this.beginSearch}
+                      className="form-control"
+                      onChange={this.handleInputSearch}
+                      placeholder="Search by training name."
+                    />
                   </div>
                   <ul className="p-0 m-0">
                     {!loadingCategoryAll &&
-                      categoryAll.map(
-                        (item, index) => {
-                          return (
-                            <li key={index}>
-                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#"
-                                onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}>{item.name}</Link>
-                            </li>
-                          );
-                        }
-                      )}
+                      categoryAll.map((item, index) => {
+                        return (
+                          <li key={index}>
+                            <Link
+                              className={`${
+                                categoryId === item._id
+                                  ? "font-weight-bold"
+                                  : ""
+                              }`}
+                              to="#"
+                              onClick={e => {
+                                e.preventDefault();
+                                this.fitlerCategory(item._id);
+                              }}
+                            >
+                              {item.name}
+                            </Link>
+                          </li>
+                        );
+                      })}
                     <li>
-                      <Link to="#" className={`${categoryId === "" ? "font-weight-bold" : ""}`} onClick={(e) => { e.preventDefault(); this.fitlerCategory("") }}>VIEW ALL</Link>
+                      <Link
+                        to="#"
+                        className={`${
+                          categoryId === "" ? "font-weight-bold" : ""
+                        }`}
+                        onClick={e => {
+                          e.preventDefault();
+                          this.fitlerCategory("");
+                        }}
+                      >
+                        VIEW ALL
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -219,26 +263,38 @@ class ListTraining extends Component {
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
                 <div className="row mx-m-25">
-                  {!loadingListTrainingLearn
-                    && listTrainingLearn.data
-                    && _.isArray(listTrainingLearn.data.trainings) ?
+                  {!loadingListTrainingLearn &&
+                  listTrainingLearn.data &&
+                  _.isArray(listTrainingLearn.data.trainings) ? (
                     listTrainingLearn.data.trainings.map((item, index) => {
-                      const idx = _.findIndex(item.activityusers, activity => activity.users[0]._id === AuthStorage.userInfo._id);
+                      const idx = _.findIndex(
+                        item.activityusers,
+                        activity =>
+                          activity.users[0]._id === AuthStorage.userInfo._id
+                      );
                       const activityOfTraining = item.activityusers[idx];
                       let percent = 0;
-                      if (!_.isEmpty(activityOfTraining) && !_.isEmpty(activityOfTraining.courses)) {
-                        percent = (activityOfTraining.courses.length / item.learningpaths.length) * 100;
+                      if (
+                        !_.isEmpty(activityOfTraining) &&
+                        !_.isEmpty(activityOfTraining.courses)
+                      ) {
+                        percent =
+                          (activityOfTraining.courses.length /
+                            item.learningpaths.length) *
+                          100;
                       }
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              <Link to={{
-                                pathname: `training/${item._id}`,
-                                state: {
-                                  currentActivity: activityOfTraining
-                                }
-                              }}>
+                              <Link
+                                to={{
+                                  pathname: `training/${item._id}`,
+                                  state: {
+                                    currentActivity: activityOfTraining
+                                  }
+                                }}
+                              >
                                 <img
                                   src={
                                     _.isEmpty(item.thumbnail)
@@ -253,12 +309,14 @@ class ListTraining extends Component {
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  <Link to={{
-                                    pathname: `training/${item._id}`,
-                                    state: {
-                                      currentActivity: activityOfTraining
-                                    }
-                                  }}>
+                                  <Link
+                                    to={{
+                                      pathname: `training/${item._id}`,
+                                      state: {
+                                        currentActivity: activityOfTraining
+                                      }
+                                    }}
+                                  >
                                     {item.name}
                                   </Link>
                                 </h2>
@@ -270,8 +328,9 @@ class ListTraining extends Component {
                                         {item.users[0].firstName}{" "}
                                         {item.users[0].lastName}{" "}
                                       </a>
-                                    ) : <a href="#">Unknow author</a>}
-
+                                    ) : (
+                                      <a href="#">Unknow author</a>
+                                    )}
                                   </div>
                                   <div className="course-date">
                                     {moment(item.createdAt).format(
@@ -279,7 +338,8 @@ class ListTraining extends Component {
                                     )}
                                   </div>
                                   <div className="course-cost">
-                                    Scores earned: {activityOfTraining.totalMark}
+                                    Scores earned:{" "}
+                                    {activityOfTraining.totalMark}
                                   </div>
                                 </div>
                               </header>
@@ -287,7 +347,16 @@ class ListTraining extends Component {
                               <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
                                 <div className="pb-3" style={{ width: "100%" }}>
                                   <div className="progress">
-                                    <div className="progress-bar bg-root" role="progressbar" style={{ width: `${percent}%` }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{percent} %</div>
+                                    <div
+                                      className="progress-bar bg-root"
+                                      role="progressbar"
+                                      style={{ width: `${percent}%` }}
+                                      aria-valuenow="25"
+                                      aria-valuemin="0"
+                                      aria-valuemax="100"
+                                    >
+                                      {percent} %
+                                    </div>
                                   </div>
                                 </div>
                                 <Link
@@ -298,24 +367,31 @@ class ListTraining extends Component {
                                     }
                                   }}
                                 >
-                                  <button style={{ cursor: "pointer" }} type="button" className="btn bg-root">Continue learning</button>
+                                  <button
+                                    style={{ cursor: "pointer" }}
+                                    type="button"
+                                    className="btn bg-root"
+                                  >
+                                    Continue learning
+                                  </button>
                                 </Link>
                               </footer>
                             </div>
                           </div>
                         </div>
                       );
-                    }) : (
-                      <div className="col-xl-12">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    })
+                  ) : (
+                    <div className="col-xl-12">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                   {this.state.totalPage === 0 && (
                     <h5 className="col-xl-12 text-success">
-                      No training found. Please go to store training to add more training.
-                      </h5>
-                  )
-                  }
+                      No training found. Please go to store training to add more
+                      training.
+                    </h5>
+                  )}
                 </div>
                 <div className="row">
                   <div className="col-xl-12">
@@ -328,7 +404,6 @@ class ListTraining extends Component {
                         onChange={this.handlePageChange.bind(this)}
                       />
                     )}
-
                   </div>
                 </div>
               </div>

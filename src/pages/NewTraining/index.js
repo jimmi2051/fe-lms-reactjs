@@ -34,7 +34,7 @@ function mapStateToProps(state) {
       isCreatedCourse: state.isCreatedCourse.isCreatedCourse.data,
       loadingCreatedCourse: state.isCreatedCourse.isCreatedCourse.loading,
       categoryAll: state.trainingAll.categoryAll.data,
-      loadingCategoryAll: state.trainingAll.categoryAll.loading,
+      loadingCategoryAll: state.trainingAll.categoryAll.loading
     }
   };
 }
@@ -67,7 +67,7 @@ class NewTraining extends Component {
     createdCourse: false,
     level: "3",
     trainingCreated: "",
-    idxCategory: "-1",
+    idxCategory: "-1"
   };
   componentDidMount() {
     this.handleGetCategory();
@@ -83,40 +83,59 @@ class NewTraining extends Component {
   handleGetListModule = () => {
     const payload = {};
     const { getModule } = this.props.action;
-    getModule(payload, () => { });
+    getModule(payload, () => {});
   };
   //Handle get list Course
   handleGetListCourse = () => {
     const payload = {};
     const { getCourse } = this.props.action;
-    getCourse(payload, () => { });
+    getCourse(payload, () => {});
   };
 
   handleGetListCourseByUser = userId => {
     const payload = { id: userId };
     const { getCourseByUser } = this.props.action;
-    getCourseByUser(payload, () => { });
+    getCourseByUser(payload, () => {});
   };
 
   handleGetListModuleByUser = userId => {
     const payload = { id: userId };
     const { getModuleByUser } = this.props.action;
-    getModuleByUser(payload, () => { });
+    getModuleByUser(payload, () => {});
   };
 
   //Must improve level without hardcode
-  handleCreateTraining = (name, level, description, thumbnail, users, categorytrainings) => {
-    const payload = { name, level, description, thumbnail, users, categorytrainings };
+  handleCreateTraining = (
+    name,
+    level,
+    description,
+    thumbnail,
+    users,
+    categorytrainings
+  ) => {
+    const payload = {
+      name,
+      level,
+      description,
+      thumbnail,
+      users,
+      categorytrainings
+    };
     const { createTraining } = this.props.action;
     createTraining(payload, () => {
       const { isCreatedTraining } = this.props.store;
       if (!_.isUndefined(isCreatedTraining.id)) {
-        this.setState({ trainingCreated: isCreatedTraining })
-        this.notifySuccess("Nofitication", `Training ${isCreatedTraining.name} has been created successfully.`)
+        this.setState({ trainingCreated: isCreatedTraining });
+        this.notifySuccess(
+          "Nofitication",
+          `Training ${isCreatedTraining.name} has been created successfully.`
+        );
         this.setState({ step: 2 });
-      }
-      else {
-        this.notifyError("Nofitication", "Error! Create training failed. Please wait a few minutes and try again. Thanks")
+      } else {
+        this.notifyError(
+          "Nofitication",
+          "Error! Create training failed. Please wait a few minutes and try again. Thanks"
+        );
       }
     });
   };
@@ -128,10 +147,15 @@ class NewTraining extends Component {
       const { isCreatedModule } = this.props.store;
       if (!_.isUndefined(isCreatedModule._id)) {
         this.handleGetListModuleByUser(AuthStorage.userInfo._id);
-        this.notifySuccess("Nofitication", `Module ${isCreatedModule.name} has been created successfully.`)
-      }
-      else {
-        this.notifyError("Nofitication", "Error! Create module failed. Please wait a few minutes and try again. Thanks")
+        this.notifySuccess(
+          "Nofitication",
+          `Module ${isCreatedModule.name} has been created successfully.`
+        );
+      } else {
+        this.notifyError(
+          "Nofitication",
+          "Error! Create module failed. Please wait a few minutes and try again. Thanks"
+        );
       }
     });
   };
@@ -144,10 +168,15 @@ class NewTraining extends Component {
       const { isCreatedCourse } = this.props.store;
       if (!_.isUndefined(isCreatedCourse.id)) {
         this.handleGetListCourseByUser(AuthStorage.userInfo._id);
-        this.notifySuccess("Nofitication", `Course ${isCreatedCourse.name} has been created successfully.`)
-      }
-      else {
-        this.notifyError("Nofitication", "Error! Something when wrong. Please wait a few minutes and try again. Thanks")
+        this.notifySuccess(
+          "Nofitication",
+          `Course ${isCreatedCourse.name} has been created successfully.`
+        );
+      } else {
+        this.notifyError(
+          "Nofitication",
+          "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
+        );
       }
     });
   };
@@ -166,9 +195,11 @@ class NewTraining extends Component {
   handleStepOne = async title => {
     const { description, fileToUpload, level, idxCategory } = this.state;
     if (idxCategory === "-1" || title === "") {
-      this.notifyError("Nofitication", "Error! Please enter full field (*). It is required.");
-    }
-    else {
+      this.notifyError(
+        "Nofitication",
+        "Error! Please enter full field (*). It is required."
+      );
+    } else {
       const { categoryAll } = this.props.store;
       const categoryCurrent = categoryAll[idxCategory];
       let thumbnail = {};
@@ -192,7 +223,6 @@ class NewTraining extends Component {
         categoryCurrent
       );
     }
-
   };
 
   handleStepTwo = () => {
@@ -211,8 +241,8 @@ class NewTraining extends Component {
   };
 
   handleChangeLevel = level => {
-    this.setState({ level })
-  }
+    this.setState({ level });
+  };
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
@@ -225,9 +255,9 @@ class NewTraining extends Component {
     });
   };
 
-  handleChangeCategory = (idxCategory) => {
-    this.setState({ idxCategory })
-  }
+  handleChangeCategory = idxCategory => {
+    this.setState({ idxCategory });
+  };
 
   //#endregion
 
@@ -267,25 +297,27 @@ class NewTraining extends Component {
                   <ul className="card-text">
                     <li className={`${this.state.step === 1 && "bg-root"}`}>
                       Description
-                                        </li>
+                    </li>
                     <li className={`${this.state.step === 2 && "bg-root"}`}>
                       Learning Path Manage
-                                        </li>
+                    </li>
                     <li className={`${this.state.step === 3 && "bg-root"}`}>
                       Manage Module of Course
-                                        </li>
+                    </li>
                     <li className={`${this.state.step === 4 && "bg-root"}`}>
                       Activites
-                                        </li>
+                    </li>
                   </ul>
                 </div>
               </div>
             </div>
             <div className="col-xl-8">
-              {this.state.step === 4 && <Step4
-                notifySuccess={this.notifySuccess}
-                notifyError={this.notifyError}
-              />}
+              {this.state.step === 4 && (
+                <Step4
+                  notifySuccess={this.notifySuccess}
+                  notifyError={this.notifyError}
+                />
+              )}
               {this.state.step === 3 && (
                 <Step3
                   handleCreateModule={this.handleCreateModule}

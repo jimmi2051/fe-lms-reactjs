@@ -58,7 +58,7 @@ class PopupListContent extends Component {
   handleSubmit = () => {
     const { handleAddModuleToCourse_ver2 } = this.props;
     handleAddModuleToCourse_ver2(this.state.moduleSelected);
-    this.setState({moduleSelected: {}})
+    this.setState({ moduleSelected: {} });
     this.props.handleShowPopup();
   };
 

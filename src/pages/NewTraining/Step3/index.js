@@ -26,7 +26,8 @@ function mapStateToProps(state) {
       isCreatedCourseModule: state.listCourseFitler.isCreatedCourseModule.data,
       filterModuleByCourse: state.listModule.filterModuleByCourse.data,
       loadingModuleByCourse: state.listModule.filterModuleByCourse.loading,
-      isCreatedLearningPath: state.isCreatedLearningPath.isCreatedLearningPath.data
+      isCreatedLearningPath:
+        state.isCreatedLearningPath.isCreatedLearningPath.data
     }
   };
 }
@@ -74,7 +75,9 @@ class Step3 extends Component {
   componentWillReceiveProps(nextProps) {
     const { currentTraining } = this.state;
     const { isCreatedLearningPath } = nextProps.store;
-    if (!_.isEqual(isCreatedLearningPath, this.props.store.isCreatedLearningPath)) {
+    if (
+      !_.isEqual(isCreatedLearningPath, this.props.store.isCreatedLearningPath)
+    ) {
       this.handleFilterListCourse(currentTraining._id);
     }
   }
@@ -101,7 +104,8 @@ class Step3 extends Component {
       });
     });
     this.setState({
-      currentCourse: listCourse.length > 0 ? listCourseFitler[0].courses[0] : {},
+      currentCourse:
+        listCourse.length > 0 ? listCourseFitler[0].courses[0] : {},
       listCourse
     });
   };
@@ -146,7 +150,10 @@ class Step3 extends Component {
       const position = index + 1;
       const modules = [item];
       if (index === listModuleChoosen_ver2.length - 1) {
-        notifySuccess("Nofitication", `List modules of training "${currentCourse.name}" has been updated successfully.`)
+        notifySuccess(
+          "Nofitication",
+          `List modules of training "${currentCourse.name}" has been updated successfully.`
+        );
         this.setState({ listModuleChoosen_ver2: [] });
         this.handleCreateCourseModule(courses, position, modules, true);
       } else {
@@ -201,7 +208,7 @@ class Step3 extends Component {
       currentCourse,
       listCourse,
       isShowListModule,
-      listModuleChoosen_ver2,
+      listModuleChoosen_ver2
     } = this.state;
     const {
       listModuleByUser,
@@ -228,7 +235,7 @@ class Step3 extends Component {
           {createdModule && (
             <h3 className="text-success pl-3">MODULE HAVE BEEN CREATED</h3>
           )}{" "}
-          <div className="form-group" >
+          <div className="form-group">
             <button
               type="button"
               className="form-control btn bg-root"
@@ -238,8 +245,9 @@ class Step3 extends Component {
               Add new module
             </button>
             <small className="form-text text-muted">
-              Note: With the course already exists module, you can't edit or add more module for it.
-          </small>
+              Note: With the course already exists module, you can't edit or add
+              more module for it.
+            </small>
           </div>
         </div>
         {listCourse.length > 0 && (
@@ -270,7 +278,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -361,7 +369,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <Link to={`#`}>
@@ -408,24 +416,24 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-            <div className="col-xl-12 new-training mb-4">
-              <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
-                  <div className="col-12 col-md-6 px-25">
-                    <div
-                      className="course-content"
-                      onClick={this.handleShowPopupListModule}
-                    >
-                      <div className="course-content-wrap">
-                        <i className="fa fa-plus"></i>
-                        <h3>Add new item</h3>
-                      </div>
+          <div className="col-xl-12 new-training mb-4">
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                <div className="col-12 col-md-6 px-25">
+                  <div
+                    className="course-content"
+                    onClick={this.handleShowPopupListModule}
+                  >
+                    <div className="course-content-wrap">
+                      <i className="fa fa-plus"></i>
+                      <h3>Add new item</h3>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button

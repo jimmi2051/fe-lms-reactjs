@@ -39,13 +39,13 @@ class PopupListContent extends Component {
     this.handleProcessData(listContent);
   }
 
-  handleProcessData = (listContent) => {
+  handleProcessData = listContent => {
     let listContentSelect = [];
     listContent.map((item, index) => {
       listContentSelect.push({ value: item, label: item.name });
-    })
+    });
     this.setState({ listContentSelect, currentContent: listContent[0] });
-  }
+  };
 
   handleUpdateContent = content => {
     const { currentModule } = this.props;
@@ -63,20 +63,19 @@ class PopupListContent extends Component {
     this.props.handleShowListContent(this.props.currentModule);
   };
 
-  handleChange = (option) => {
+  handleChange = option => {
     if (!_.isNull(option)) {
       this.setState({ currentContent: option.value });
     }
-  }
+  };
 
   handleUpdateContent_ver2 = () => {
     const { notifySuccess, notifyError } = this.props;
     const { currentContent } = this.state;
     if (!this.props.handleAddContent(currentContent)) {
-      notifyError("Notification", "Error: Content already exists.")
-    }
-    else {
-      notifySuccess("Notification", "Add successfully content.")
+      notifyError("Notification", "Error: Content already exists.");
+    } else {
+      notifySuccess("Notification", "Add successfully content.");
     }
   };
 
@@ -94,9 +93,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -179,7 +178,9 @@ class PopupListContent extends Component {
                         <Slide
                           // question={currentContent.relationData.data.question}
                           // answer={currentContent.relationData.data.answer}
-                          slideItem={currentContent.relationData.data.slideItems}
+                          slideItem={
+                            currentContent.relationData.data.slideItems
+                          }
                           isView
                         />
                       )}
@@ -189,7 +190,13 @@ class PopupListContent extends Component {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn bg-root" onClick={this.handleUpdateContent_ver2}>Add content</button>
+              <button
+                type="button"
+                className="btn bg-root"
+                onClick={this.handleUpdateContent_ver2}
+              >
+                Add content
+              </button>
               <button
                 type="button"
                 className="btn btn-secondary"

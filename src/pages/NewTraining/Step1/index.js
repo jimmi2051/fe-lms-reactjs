@@ -11,7 +11,7 @@ class Step1 extends Component {
     const file = e.target.files[0];
     const url = reader.readAsDataURL(file);
 
-    reader.onloadend = function (e) {
+    reader.onloadend = function(e) {
       this.setState({
         imgSrc: [reader.result]
       });
@@ -25,9 +25,13 @@ class Step1 extends Component {
     this.props.handleStepOne(title.value);
   };
   render() {
-    const { handleChangeLevel,
-      categoryAll, loadingCategoryAll,
-      idxCategory, handleChangeCategory } = this.props;
+    const {
+      handleChangeLevel,
+      categoryAll,
+      loadingCategoryAll,
+      idxCategory,
+      handleChangeCategory
+    } = this.props;
     return (
       <div className="row no-gutters">
         <div className="col-xl-12">
@@ -71,7 +75,13 @@ class Step1 extends Component {
           </div>
           <div className="form-group">
             <label>Select level for training</label>
-            <select className="form-control" defaultValue="3" onChange={e => { handleChangeLevel(e.target.value) }}>
+            <select
+              className="form-control"
+              defaultValue="3"
+              onChange={e => {
+                handleChangeLevel(e.target.value);
+              }}
+            >
               <option value="1">1 - Basic</option>
               <option value="2">2 - Semi-medium</option>
               <option value="3">3 - Medium</option>
@@ -84,13 +94,18 @@ class Step1 extends Component {
           </div>
           <div className="form-group">
             <label>Category (*)</label>
-            <select className="form-control" value={idxCategory} onChange={e => { handleChangeCategory(e.target.value) }}>
+            <select
+              className="form-control"
+              value={idxCategory}
+              onChange={e => {
+                handleChangeCategory(e.target.value);
+              }}
+            >
               <option value="-1">-- Select category --</option>
-              {!loadingCategoryAll && categoryAll.map((item, index) => {
-                return (
-                  <option value={index}>{item.name}</option>
-                )
-              })}
+              {!loadingCategoryAll &&
+                categoryAll.map((item, index) => {
+                  return <option value={index}>{item.name}</option>;
+                })}
             </select>
           </div>
           <div className="form-group">

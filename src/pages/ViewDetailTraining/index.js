@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { getTrainingById, updateActivity, addToMyTraining } from "redux/action/training";
+import {
+  getTrainingById,
+  updateActivity,
+  addToMyTraining
+} from "redux/action/training";
 import AuthStorage from "utils/AuthStorage";
 import ActivityStorage from "utils/ActivityStorage";
 import _ from "lodash";
@@ -19,7 +23,7 @@ function mapStateToProps(state) {
     store: {
       training: state.training.training.data,
       loadingTraining: state.training.training.loading,
-      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data,
+      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data
     }
   };
 }
@@ -56,11 +60,9 @@ class TrainingDetail extends Component {
   componentDidMount() {
     try {
       const { currentTraining } = this.props.location.state;
-      this.setState({ currentTraining })
-    }
-    catch
-    {
-      this.props.history.push("/trainings")
+      this.setState({ currentTraining });
+    } catch {
+      this.props.history.push("/trainings");
     }
     const { id } = this.props.match.params;
     this.handleGetTrainingById(id);
@@ -68,23 +70,25 @@ class TrainingDetail extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { training, loadingTraining } = nextProps.store;
-    if (!loadingTraining && (_.isEmpty(training.data.training) || _.isEmpty(training))) {
-      this.props.history.push("/trainings")
+    if (
+      !loadingTraining &&
+      (_.isEmpty(training.data.training) || _.isEmpty(training))
+    ) {
+      this.props.history.push("/trainings");
     }
   }
 
   handleGetTrainingById = id => {
     const payload = { id };
     const { getTrainingById } = this.props.action;
-    getTrainingById(payload, () => { });
+    getTrainingById(payload, () => {});
   };
 
   handleChangeContent = currentContentChoosen => {
     let { currentContent } = this.state;
     if (_.isEqual(currentContent, currentContentChoosen)) {
-      this.setState({ currentContent: {} })
-    }
-    else {
+      this.setState({ currentContent: {} });
+    } else {
       this.setState({ currentContent: currentContentChoosen });
     }
   };
@@ -92,9 +96,8 @@ class TrainingDetail extends Component {
   handleChangeCourse = currentCourseChoosen => {
     let { currentCourse } = this.state;
     if (_.isEqual(currentCourse, currentCourseChoosen)) {
-      this.setState({ currentCourse: {} })
-    }
-    else {
+      this.setState({ currentCourse: {} });
+    } else {
       this.setState({ currentCourse: currentCourseChoosen });
     }
   };
@@ -102,17 +105,16 @@ class TrainingDetail extends Component {
   handleChangeModule = currentModuleChoosen => {
     let { currentModule } = this.state;
     if (_.isEqual(currentModule, currentModuleChoosen)) {
-      this.setState({ currentModule: {} })
-    }
-    else {
+      this.setState({ currentModule: {} });
+    } else {
       this.setState({ currentModule: currentModuleChoosen });
     }
   };
 
-  processDataToListMenu = (training) => {
+  processDataToListMenu = training => {
     let listMenu = [];
     training.learningpaths.map((path, index) => {
-      let menuLv1 = {}
+      let menuLv1 = {};
       menuLv1.key = `first-level-node-${index + 1}`;
       menuLv1.label = `${path.courses[0].name} | Total Modules: ${path.courses[0].relationcoursemodules.length}`;
       let tempCourse = path.courses[0];
@@ -120,55 +122,69 @@ class TrainingDetail extends Component {
       menuLv1.value = tempCourse;
       menuLv1.nodes = [];
       path.courses[0].relationcoursemodules.map((itemCourse, indexCourse) => {
-        let menuLv2 = {}
+        let menuLv2 = {};
         menuLv2.key = `second-level-node-${indexCourse + 1}`;
-        menuLv2.label = `${itemCourse.modules[0].name} | Total Contents: ${itemCourse.modules[0].contents.length}`
+        menuLv2.label = `${itemCourse.modules[0].name} | Total Contents: ${itemCourse.modules[0].contents.length}`;
         menuLv2.value = itemCourse.modules[0];
-        menuLv2.nodes = []
+        menuLv2.nodes = [];
         itemCourse.modules[0].contents.map((itemContent, indexContent) => {
-          let menuLv3 = {}
+          let menuLv3 = {};
           menuLv3.key = `third-level-node-${indexContent + 1}`;
           menuLv3.label = itemContent.name;
-          menuLv3.value = itemContent
-          menuLv3.nodes = []
+          menuLv3.value = itemContent;
+          menuLv3.nodes = [];
           menuLv2.nodes.push(menuLv3);
-        })
+        });
         menuLv1.nodes.push(menuLv2);
-      })
+      });
       listMenu.push(menuLv1);
-    })
+    });
     return listMenu;
-  }
+  };
 
-  handeSelectMenu = (item) => {
+  handeSelectMenu = item => {
     this.setState({ isFinishStudying: false });
     if (item.level === 0) {
-      this.setState({ currentCourse: item.value, currentModule: {}, currentContent: {} })
+      this.setState({
+        currentCourse: item.value,
+        currentModule: {},
+        currentContent: {}
+      });
     }
     if (item.level === 1) {
-      this.setState({ currentCourse: {}, currentModule: item.value, currentContent: {} })
+      this.setState({
+        currentCourse: {},
+        currentModule: item.value,
+        currentContent: {}
+      });
     }
     if (item.level === 2) {
-      this.setState({ currentCourse: {}, currentModule: {}, currentContent: item.value })
+      this.setState({
+        currentCourse: {},
+        currentModule: {},
+        currentContent: item.value
+      });
     }
-  }
+  };
 
-  handleAddToMyTraining = (training) => {
+  handleAddToMyTraining = training => {
     if (!AuthStorage.loggedIn) {
       this.props.history.push("/login");
       return;
     }
     if (this.checkTrainingExists(training._id)) {
-      this.notifyError("Notification", "This training already exists in your list.")
-    }
-    else {
+      this.notifyError(
+        "Notification",
+        "This training already exists in your list."
+      );
+    } else {
       const user = AuthStorage.userInfo;
       const { addToMyTraining } = this.props.action;
       const payload = {
         training,
-        user,
-      }
-      addToMyTraining(payload, (response) => {
+        user
+      };
+      addToMyTraining(payload, response => {
         if (response._id) {
           let nextActivityStorage = ActivityStorage.value;
           let tempActivity = response;
@@ -176,23 +192,31 @@ class TrainingDetail extends Component {
           tempActivity.users[0] = tempActivity.users[0]._id;
           nextActivityStorage.activityusers.push(tempActivity);
           ActivityStorage.value = nextActivityStorage;
-          this.notifySuccess("Notification", "Add training to store successfully.");
-        }
-        else {
-          this.notifyError("Notification", "Something when wrong. Please wait a few minutes and try again. Thanks.")
+          this.notifySuccess(
+            "Notification",
+            "Add training to store successfully."
+          );
+        } else {
+          this.notifyError(
+            "Notification",
+            "Something when wrong. Please wait a few minutes and try again. Thanks."
+          );
         }
       });
     }
-  }
+  };
 
-  checkTrainingExists = (trainingId) => {
-    console.log("ActivityStorage.activityUsers", ActivityStorage.activityUsers)
-    const idx = _.findIndex(ActivityStorage.activityUsers, activity => activity.trainings[0] === trainingId)
+  checkTrainingExists = trainingId => {
+    console.log("ActivityStorage.activityUsers", ActivityStorage.activityUsers);
+    const idx = _.findIndex(
+      ActivityStorage.activityUsers,
+      activity => activity.trainings[0] === trainingId
+    );
     if (idx > -1) {
       return true;
     }
     return false;
-  }
+  };
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
@@ -220,7 +244,7 @@ class TrainingDetail extends Component {
                     <li>
                       <Link to="/">
                         <i className="fa fa-home"></i> Home
-                    </Link>
+                      </Link>
                     </li>
                     <li>Training</li>
                   </ul>
@@ -237,7 +261,7 @@ class TrainingDetail extends Component {
     const detailTraining = training.data.training;
 
     if (_.isEmpty(detailTraining) || detailTraining.length === 0) {
-      return (<></>)
+      return <></>;
     }
 
     const listMenu = this.processDataToListMenu(detailTraining);
@@ -263,7 +287,13 @@ class TrainingDetail extends Component {
                     </Link>
                   </li>
                   <li>
-                    <a href="" onClick={(e) => { e.preventDefault(); this.resetTraining(); }}>{`Training "${detailTraining.name}"`}</a>
+                    <a
+                      href=""
+                      onClick={e => {
+                        e.preventDefault();
+                        this.resetTraining();
+                      }}
+                    >{`Training "${detailTraining.name}"`}</a>
                   </li>
                 </ul>
               </div>
@@ -276,11 +306,31 @@ class TrainingDetail extends Component {
                 <h3>share</h3>
 
                 <ul className="flex flex-wrap align-items-center p-0 m-0">
-                  <li><a href="#"><i className="fa fa-facebook"></i></a></li>
-                  <li><a href="#"><i className="fa fa-twitter"></i></a></li>
-                  <li><a href="#"><i className="fa fa-google-plus"></i></a></li>
-                  <li><a href="#"><i className="fa fa-instagram"></i></a></li>
-                  <li><a href="#"><i className="fa fa-thumb-tack"></i></a></li>
+                  <li>
+                    <a href="#">
+                      <i className="fa fa-facebook"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i className="fa fa-twitter"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i className="fa fa-google-plus"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i className="fa fa-instagram"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i className="fa fa-thumb-tack"></i>
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -289,13 +339,17 @@ class TrainingDetail extends Component {
               <div className="single-course-wrap">
                 <div className="course-info flex flex-wrap align-items-center">
                   <div className="course-author flex flex-wrap align-items-center mt-3">
-                    <img src="https://be-lms.tk/uploads/6a8cd6609b024ee5b3a7239eae0d3111.png" alt="" />
+                    <img
+                      src="https://be-lms.tk/uploads/6a8cd6609b024ee5b3a7239eae0d3111.png"
+                      alt=""
+                    />
 
                     <div className="author-wrap">
                       <label className="m-0">Teacher</label>
                       <div className="author-name">
                         <a href="#">
-                          {detailTraining.users && detailTraining.users.length > 0
+                          {detailTraining.users &&
+                          detailTraining.users.length > 0
                             ? `${detailTraining.users[0].firstName} ${detailTraining.users[0].lastName}`
                             : "Unknown author"}
                         </a>
@@ -304,23 +358,45 @@ class TrainingDetail extends Component {
                   </div>
                   <div className="course-cats mt-3">
                     <label className="m-0">Categories</label>
-                    <div className="author-name"><a href="#">{detailTraining.categorytrainings && detailTraining.categorytrainings.length > 0 && detailTraining.categorytrainings[0].name}</a></div>
+                    <div className="author-name">
+                      <a href="#">
+                        {detailTraining.categorytrainings &&
+                          detailTraining.categorytrainings.length > 0 &&
+                          detailTraining.categorytrainings[0].name}
+                      </a>
+                    </div>
                   </div>
 
                   <div className="course-students mt-3">
                     <label className="m-0">Student</label>
-                    <div className="author-name"><a href="#">{detailTraining.activityusers.length} (REGISTERED)</a></div>
+                    <div className="author-name">
+                      <a href="#">
+                        {detailTraining.activityusers.length} (REGISTERED)
+                      </a>
+                    </div>
                   </div>
                   {AuthStorage.loggedIn &&
-                    AuthStorage.userInfo.role.type === "creator" ? (<></>) : (
-                      <div className="buy-course mt-3">
-                        <a className="btn" href="#" onClick={(e) => { e.preventDefault(); this.handleAddToMyTraining(this.state.currentTraining) }} >ADD to cart</a>
-                      </div>
-                    )}
+                  AuthStorage.userInfo.role.type === "creator" ? (
+                    <></>
+                  ) : (
+                    <div className="buy-course mt-3">
+                      <a
+                        className="btn"
+                        href="#"
+                        onClick={e => {
+                          e.preventDefault();
+                          this.handleAddToMyTraining(
+                            this.state.currentTraining
+                          );
+                        }}
+                      >
+                        ADD to cart
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="single-course-cont-section">
-
                 <h2>Descrption: </h2>
                 <div
                   className="description"
@@ -328,19 +404,21 @@ class TrainingDetail extends Component {
                     __html: detailTraining.description
                   }}
                 />
-                <img src={`${REACT_APP_URL_API}${detailTraining.thumbnail.url}`} alt="#" />
+                <img
+                  src={`${REACT_APP_URL_API}${detailTraining.thumbnail.url}`}
+                  alt="#"
+                />
                 <h4 className="t-level">Level: </h4>
                 <div className="level">
-                  {detailTraining.level !== "" && starOfTraining.map((item, index) => {
-                    return (
-                      <span key={index} className="fa fa-star checked"></span>
-                    )
-                  })}
+                  {detailTraining.level !== "" &&
+                    starOfTraining.map((item, index) => {
+                      return (
+                        <span key={index} className="fa fa-star checked"></span>
+                      );
+                    })}
                   <h4 className="t-created-date">Created At: </h4>
                   <div className="created-date">
-                    {moment(detailTraining.createdAt).format(
-                      "MMM. D, YYYY"
-                    )}
+                    {moment(detailTraining.createdAt).format("MMM. D, YYYY")}
                   </div>
                 </div>
               </div>
@@ -348,18 +426,22 @@ class TrainingDetail extends Component {
                 <header className="entry-header flex flex-wrap justify-content-between align-items-center">
                   <h2>Curriculum For This Course</h2>
 
-                  <div className="number-of-lectures">{detailTraining.learningpaths.length} Lectures</div>
+                  <div className="number-of-lectures">
+                    {detailTraining.learningpaths.length} Lectures
+                  </div>
 
                   <div className="total-lectures-time">###</div>
                 </header>
                 <div className="entry-contents">
-                  {listMenu.length > 0 && (<TreeMenu
-                    data={listMenu}
-                    // initialOpenNodes={this.state.initiallyOpenProperties}
-                    hasSearch={false}
-                    onClickItem={this.handeSelectMenu}
-                    ref="treeMenu"
-                  />)}
+                  {listMenu.length > 0 && (
+                    <TreeMenu
+                      data={listMenu}
+                      // initialOpenNodes={this.state.initiallyOpenProperties}
+                      hasSearch={false}
+                      onClickItem={this.handeSelectMenu}
+                      ref="treeMenu"
+                    />
+                  )}
                 </div>
               </div>
             </div>

@@ -25,15 +25,19 @@ class PageNotFound extends Component {
           </div>
           <div className="row courses-wrap-custom">
             <div className="col-xl-12 text-center">
-              <h4>We're sorry, the page you requested could not be found.
-            <br />Please go back to the homepage or contact us at{" "}
-                <a href="mailto:admin@gmail.com" className="text-info">admin@gmail.com</a>
+              <h4>
+                We're sorry, the page you requested could not be found.
+                <br />
+                Please go back to the homepage or contact us at{" "}
+                <a href="mailto:admin@gmail.com" className="text-info">
+                  admin@gmail.com
+                </a>
               </h4>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
-export default PageNotFound
+export default PageNotFound;

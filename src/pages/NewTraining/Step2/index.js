@@ -23,8 +23,7 @@ function mapStateToProps(state) {
       loadingListCourseUser: state.isCreatedCourse.listCourseByUser.loading,
       isCreatedLearningPath: state.isCreatedTraining.isCreatedLearningPath.data,
       loadingCreatedLearningPath:
-        state.isCreatedTraining.isCreatedLearningPath.loading,
-
+        state.isCreatedTraining.isCreatedLearningPath.loading
     }
   };
 }
@@ -55,10 +54,9 @@ class Step2 extends Component {
     markForCourse,
     isRequired
   ) => {
-
     const { addLearningPath } = this.props.action;
     const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, (response) => { });
+    addLearningPath(payload, response => {});
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -112,13 +110,19 @@ class Step2 extends Component {
     const { notifySuccess, notifyError } = this.props;
     const { listCourseChoosen_ver2 } = this.state;
     if (listCourseChoosen_ver2.length === 0) {
-      notifyError("Nofitication", "Error! You must add least one course to training.")
-      return
+      notifyError(
+        "Nofitication",
+        "Error! You must add least one course to training."
+      );
+      return;
     }
     const { trainingCreated } = this.props;
     if (!trainingCreated._id) {
-      notifyError("Nofitication", "Error! Something when wrong. Please wait a few minutes and try again. Thanks");
-      return
+      notifyError(
+        "Nofitication",
+        "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
+      );
+      return;
     }
     const trainings = [trainingCreated];
     if (this.validateCourse(listCourseChoosen_ver2)) {
@@ -135,7 +139,10 @@ class Step2 extends Component {
           isRequired
         );
         if (index === listCourseChoosen_ver2.length - 1) {
-          notifySuccess("Nofitication", `Learning path of training "${trainingCreated.name}" has been updated successfully.`)
+          notifySuccess(
+            "Nofitication",
+            `Learning path of training "${trainingCreated.name}" has been updated successfully.`
+          );
           this.props.handleStepTwo();
         }
       });
@@ -146,10 +153,7 @@ class Step2 extends Component {
 
   validateCourse = listCourse => {
     let isValidate = false;
-    const findIndex = _.findIndex(
-      listCourse,
-      item => item.required === true
-    );
+    const findIndex = _.findIndex(listCourse, item => item.required === true);
     if (findIndex > -1) {
       isValidate = true;
     }
@@ -159,7 +163,7 @@ class Step2 extends Component {
   handleInputMark = (index, mark) => {
     let { listCourseChoosen_ver2 } = this.state;
     listCourseChoosen_ver2[index].mark = mark;
-    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => { });
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => {});
   };
 
   handleCheckRequired = (index, checked) => {
@@ -229,7 +233,7 @@ class Step2 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -294,7 +298,7 @@ class Step2 extends Component {
                                   <label
                                     className={`${
                                       messageErr !== "" ? "text-danger" : ""
-                                      } form-check-label`}
+                                    } form-check-label`}
                                     htmlFor="gridCheck"
                                   >
                                     Mandatory

@@ -66,10 +66,12 @@ class PopupNewModule extends Component {
       AuthStorage.userInfo
     );
     this.form.reset();
-    this.setState({description: "",
-    fileToUpload: [],
-    nameFile: "",
-    imgSrc: ""})
+    this.setState({
+      description: "",
+      fileToUpload: [],
+      nameFile: "",
+      imgSrc: ""
+    });
     this.props.handleShowPopup();
   };
 
@@ -113,57 +115,57 @@ class PopupNewModule extends Component {
               </button>
             </div>
             <div className="modal-body">
-            <form ref={form => (this.form = form)}>
-              <div className="form-group">
-                <label>Title (*)</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter module title here"
-                  ref="title"
-                />
-              </div>
-              <div className="form-group">
-                <label>Description (*)</label>
-                <CKEditor
-                  handleChangeDescription={this.handleChangeDescription}
-                  defaultData="Enter data in here..."
-                />
-              </div>
-              <div className="form-group">
-                <label>Thumbnail</label>
-                <div className="custom-file">
+              <form ref={form => (this.form = form)}>
+                <div className="form-group">
+                  <label>Title (*)</label>
                   <input
-                    type="file"
-                    className="custom-file-input"
-                    onChange={this.fileSelectHandler}
-                    id="customFile"
-                    lang="en"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter module title here"
+                    ref="title"
                   />
-                  <label className="custom-file-label" htmlFor="customFile">
-                    {this.state.nameFile !== ""
-                      ? this.state.nameFile
-                      : "Choose file"}
-                  </label>
                 </div>
-              </div>
-              {this.state.imgSrc !== "" && (
-                <div className="mt-3 text-center mb-3">
-                  <img src={this.state.imgSrc} alt="" />
+                <div className="form-group">
+                  <label>Description (*)</label>
+                  <CKEditor
+                    handleChangeDescription={this.handleChangeDescription}
+                    defaultData="Enter data in here..."
+                  />
                 </div>
-              )}
-              <div className="form-group">
-                <button
-                  type="button"
-                  className="btn btn-info form-control"
-                  onClick={this.handleNewModule}
-                >
-                  Add
-                </button>
-              </div>
+                <div className="form-group">
+                  <label>Thumbnail</label>
+                  <div className="custom-file">
+                    <input
+                      type="file"
+                      className="custom-file-input"
+                      onChange={this.fileSelectHandler}
+                      id="customFile"
+                      lang="en"
+                    />
+                    <label className="custom-file-label" htmlFor="customFile">
+                      {this.state.nameFile !== ""
+                        ? this.state.nameFile
+                        : "Choose file"}
+                    </label>
+                  </div>
+                </div>
+                {this.state.imgSrc !== "" && (
+                  <div className="mt-3 text-center mb-3">
+                    <img src={this.state.imgSrc} alt="" />
+                  </div>
+                )}
+                <div className="form-group">
+                  <button
+                    type="button"
+                    className="btn btn-info form-control"
+                    onClick={this.handleNewModule}
+                  >
+                    Add
+                  </button>
+                </div>
               </form>
             </div>
-            
+
             <div className="modal-footer">
               <button
                 type="button"

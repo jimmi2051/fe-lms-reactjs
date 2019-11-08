@@ -58,7 +58,7 @@ class PopupListContent extends Component {
   handleSubmit = () => {
     const { handleAddCourseToPath_ver2 } = this.props;
     handleAddCourseToPath_ver2(this.state.courseSelected);
-    this.setState({courseSelected: {}})
+    this.setState({ courseSelected: {} });
     this.props.handleShowPopup();
   };
 
@@ -76,9 +76,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >

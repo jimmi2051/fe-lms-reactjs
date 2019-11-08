@@ -23,7 +23,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators({ createContent, createData }, dispatch)
-  }
+  };
 };
 
 const typeContent = [
@@ -64,22 +64,22 @@ class PopupNewContent extends Component {
     listNameFile: [],
     errorQuestion: "",
     createdContent: false,
-    questions: [{
-      question: "",
-      answers: [
-        {
-          anw: "",
-          result: false
-        }
-      ]
-    }],
+    questions: [
+      {
+        question: "",
+        answers: [
+          {
+            anw: "",
+            result: false
+          }
+        ]
+      }
+    ]
   };
 
+  componentDidMount() {}
 
-
-  componentDidMount() { }
-
-  //#region Handle Action Redux 
+  //#region Handle Action Redux
   handleCreateContent = (name, type, user) => {
     const payload = {
       name,
@@ -97,7 +97,7 @@ class PopupNewContent extends Component {
   };
 
   handleCreateData = (data, content) => {
-    const {handleGetContentByUserId,notifySuccess, notifyError} = this.props
+    const { handleGetContentByUserId, notifySuccess, notifyError } = this.props;
     const payload = { data, content };
     const { createData } = this.props.action;
     createData(payload, () => {
@@ -108,15 +108,16 @@ class PopupNewContent extends Component {
         // this.handleResetForm();
         // this.form.reset();
         this.handleClosePopup();
-        notifySuccess("Notification","Data has been created successfully.")
-      }
-      else{
-        notifySuccess("Notification","Error! Something when wrong. Please wait a few minutes and try again.")
+        notifySuccess("Notification", "Data has been created successfully.");
+      } else {
+        notifySuccess(
+          "Notification",
+          "Error! Something when wrong. Please wait a few minutes and try again."
+        );
       }
     });
   };
   //#endregion
-
 
   //#region Handle submit button create new content
 
@@ -137,7 +138,7 @@ class PopupNewContent extends Component {
     if (currentType === "Question") {
       this.handleSubmitQuestion();
     }
-  }
+  };
 
   handleSubmitTextNormal = () => {
     const { currentType, content } = this.state;
@@ -161,8 +162,8 @@ class PopupNewContent extends Component {
       contents.push({
         title: titleContent.value,
         content: content.value
-      })
-    })
+      });
+    });
     const data = {
       title: title.value,
       description: description.value,
@@ -217,16 +218,15 @@ class PopupNewContent extends Component {
             let sliceResponse = result[0].url.split("/");
             url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
           });
+      } catch {
+        url = "uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png";
       }
-      catch{
-        url = "uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-      }
-      // Add slideItem to list 
+      // Add slideItem to list
       slideItems.push({
         title: titleContent.value,
         content: contentSlide.value,
         imgUrl: url
-      })
+      });
       // Process with last element in Array
       if (index === countTextTest.length - 1) {
         const data = {
@@ -235,10 +235,14 @@ class PopupNewContent extends Component {
           slideItems
         };
         this.setState({ data }, () => {
-          this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+          this.handleCreateContent(
+            name.value,
+            currentType,
+            AuthStorage.userInfo
+          );
         });
       }
-    })
+    });
   };
 
   handleSubmitQuestion = () => {
@@ -269,7 +273,7 @@ class PopupNewContent extends Component {
   };
 
   handleChangeDescription = content => {
-    this.setState({ content }, () => { });
+    this.setState({ content }, () => {});
   };
 
   handleResetForm = () => {
@@ -285,34 +289,36 @@ class PopupNewContent extends Component {
       slideBackground: [],
       listNameFile: [],
       errorQuestion: "",
-      questions: [{
-        question: "",
-        answers: [
-          {
-            anw: "",
-            result: false
-          }
-        ]
-      }]
-    })
-  }
+      questions: [
+        {
+          question: "",
+          answers: [
+            {
+              anw: "",
+              result: false
+            }
+          ]
+        }
+      ]
+    });
+  };
 
   handleAddMoreContent = () => {
     let { countTextTest } = this.state;
     countTextTest.push(countTextTest[countTextTest.length - 1] + 1);
     this.setState({ countTextTest });
-  }
+  };
 
-  handleValidateQuestion = (listAnswer) => {
+  handleValidateQuestion = listAnswer => {
     const findIndex = _.findIndex(listAnswer, answer => answer.result === true);
     if (findIndex > -1) {
       return true;
     }
     return false;
-  }
+  };
   handleResetError = () => {
     this.setState({ errorQuestion: "" });
-  }
+  };
 
   //#endregion
 
@@ -325,7 +331,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
 
-      reader.onloadend = function (e) {
+      reader.onloadend = function(e) {
         this.setState({
           videoSrc: [reader.result]
         });
@@ -333,33 +339,36 @@ class PopupNewContent extends Component {
 
       fileToUpload.push(files[0]);
       this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
-    }
-    catch{ }
+    } catch {}
   };
 
   slideSelectHander = e => {
     try {
       let files = e.target.files;
-      let { fileToUpload, slideBackground, countTextTest, listNameFile } = this.state;
+      let {
+        fileToUpload,
+        slideBackground,
+        countTextTest,
+        listNameFile
+      } = this.state;
       const reader = new FileReader();
       const file = files[0];
       const url = reader.readAsDataURL(file);
       const index = countTextTest.length - 1;
-      reader.onloadend = function (e) {
+      reader.onloadend = function(e) {
         slideBackground[index] = [reader.result];
         this.setState({
           slideBackground
         });
       }.bind(this);
       fileToUpload.push(files[0]);
-      listNameFile[index] = files[0].name
+      listNameFile[index] = files[0].name;
       this.setState({ fileToUpload: fileToUpload, listNameFile });
-    }
-    catch{ }
-  }
+    } catch {}
+  };
   //#endregion
 
-  readFileQuestion = (e) => {
+  readFileQuestion = e => {
     const file = e.target.files[0];
     try {
       Papa.parse(file, {
@@ -371,7 +380,7 @@ class PopupNewContent extends Component {
           let { questions } = this.state;
           questions = [];
           result.data.map((item, index) => {
-            let question = {}
+            let question = {};
             question.question = item["Question"];
             question.answers = [
               {
@@ -385,8 +394,7 @@ class PopupNewContent extends Component {
               {
                 anw: item["Option 3"],
                 result: false
-              }
-              ,
+              },
               {
                 anw: item["Option 4"],
                 result: false
@@ -394,34 +402,35 @@ class PopupNewContent extends Component {
             ];
             const resultTrue = parseInt(item["Correct Answer"]) - 1;
             question.answers[resultTrue].result = true;
-            questions.push(question)
-          })
+            questions.push(question);
+          });
           this.setState({ questions: [...questions] });
         }
       });
-    }
-    catch{
+    } catch {
       this.setState({
-        questions: [{
-          question: "",
-          answers: [
-            {
-              anw: "",
-              result: false
-            }
-          ]
-        }],
-      })
+        questions: [
+          {
+            question: "",
+            answers: [
+              {
+                anw: "",
+                result: false
+              }
+            ]
+          }
+        ]
+      });
     }
-  }
+  };
 
   handleChangeTitleQuestion = (idxQuestion, value) => {
     let { questions } = this.state;
     questions[idxQuestion].question = value;
     this.setState({
       questions: [...questions]
-    })
-  }
+    });
+  };
 
   handleChangeAnswerQuestion = (idxQuestion, idxAnswer, event) => {
     let { questions } = this.state;
@@ -429,25 +438,22 @@ class PopupNewContent extends Component {
     const value = target.type === "checkbox" ? target.checked : target.value;
     if (target.type === "checkbox") {
       questions[idxQuestion].answers[idxAnswer].result = value;
-    }
-    else {
+    } else {
       questions[idxQuestion].answers[idxAnswer].anw = value;
     }
     this.setState({
       questions: [...questions]
-    })
-  }
+    });
+  };
 
-  handleAddMoreAnswer_ver2 = (idxQuestion) => {
+  handleAddMoreAnswer_ver2 = idxQuestion => {
     let { questions } = this.state;
-    questions[idxQuestion].answers.push(
-      {
-        anw: "",
-        result: false
-      }
-    )
-    this.setState({ questions: [...questions] })
-  }
+    questions[idxQuestion].answers.push({
+      anw: "",
+      result: false
+    });
+    this.setState({ questions: [...questions] });
+  };
 
   handleAddMoreQuest_ver2 = () => {
     let { questions } = this.state;
@@ -459,17 +465,27 @@ class PopupNewContent extends Component {
           result: false
         }
       ]
-    })
-    this.setState({ questions: [...questions] })
-  }
+    });
+    this.setState({ questions: [...questions] });
+  };
 
   render() {
     const { isShow } = this.props;
-    const { currentType, countTextTest, videoSrc, listNameFile, slideBackground, errorQuestion, createdContent } = this.state;
+    const {
+      currentType,
+      countTextTest,
+      videoSrc,
+      listNameFile,
+      slideBackground,
+      errorQuestion,
+      createdContent
+    } = this.state;
     const { questions } = this.state;
     return (
       <div
-        className={`modal new-content bd-example-modal-lg fade ${isShow ? "show" : ""}`}
+        className={`modal new-content bd-example-modal-lg fade ${
+          isShow ? "show" : ""
+        }`}
         id="exampleModal"
         tabIndex="-1"
         role="dialog"
@@ -478,9 +494,9 @@ class PopupNewContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -489,7 +505,7 @@ class PopupNewContent extends Component {
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
                 Create new content
-							</h5>
+              </h5>
               <button
                 type="button"
                 className="close"
@@ -504,7 +520,9 @@ class PopupNewContent extends Component {
               <div className="row">
                 {createdContent && (
                   <div className="col-xl-12">
-                    <h5 className="text text-success">Created successfully content</h5>
+                    <h5 className="text text-success">
+                      Created successfully content
+                    </h5>
                   </div>
                 )}
 
@@ -567,7 +585,10 @@ class PopupNewContent extends Component {
                               lang="en"
                               accept="video/mp4,video/x-m4v,video/*"
                             />
-                            <label className="custom-file-label" htmlFor="customFile">
+                            <label
+                              className="custom-file-label"
+                              htmlFor="customFile"
+                            >
                               {this.state.nameFile !== ""
                                 ? this.state.nameFile
                                 : "Choose file"}
@@ -608,36 +629,50 @@ class PopupNewContent extends Component {
                         <div className="card">
                           <div className="card-header">List content</div>
                           <div className="card-body">
-                            {countTextTest.length > 0 && countTextTest.map((item, index) => {
-                              return (
-                                <div key={index}>
-                                  <div className="form-group">
-                                    <label> Title for content {item}: </label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="Enter title ... "
-                                      ref={`titleContent${item}`}
-                                    />
+                            {countTextTest.length > 0 &&
+                              countTextTest.map((item, index) => {
+                                return (
+                                  <div key={index}>
+                                    <div className="form-group">
+                                      <label> Title for content {item}: </label>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Enter title ... "
+                                        ref={`titleContent${item}`}
+                                      />
+                                    </div>
+                                    <div className="form-group">
+                                      <label>Content {item}: (*)</label>
+                                      <textarea
+                                        className="form-control"
+                                        rows="3"
+                                        ref={`content${item}`}
+                                      />
+                                    </div>
                                   </div>
-                                  <div className="form-group">
-                                    <label>Content {item}: (*)</label>
-                                    <textarea className="form-control" rows="3" ref={`content${item}`} />
-                                  </div>
-                                </div>
-                              )
-                            })}
+                                );
+                              })}
                           </div>
                         </div>
                         <div className="form-group">
                           <small className="form-text text-muted">
-                            Note: The right answers, in asterix like *correctWord*.
-																<br />
+                            Note: The right answers, in asterix like
+                            *correctWord*.
+                            <br />
                             Example: Hello, My name *is* Thanh.
-												</small>
+                          </small>
                         </div>
                         <div className="form-group">
-                          <button className="btn bg-root" onClick={(e) => { e.preventDefault(); this.handleAddMoreContent() }}>Add more content</button>
+                          <button
+                            className="btn bg-root"
+                            onClick={e => {
+                              e.preventDefault();
+                              this.handleAddMoreContent();
+                            }}
+                          >
+                            Add more content
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -668,54 +703,71 @@ class PopupNewContent extends Component {
                         <div className="card">
                           <div className="card-header">List slide</div>
                           <div className="card-body">
-                            {countTextTest.length > 0 && countTextTest.map((item, index) => {
-                              return (
-                                <div key={index}>
-                                  <div className="form-group">
-                                    <label> Title for slide {item}: </label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="Enter title ... "
-                                      ref={`titleSlide${item}`}
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Content {item}: (*)</label>
-                                    <textarea className="form-control" rows="3" ref={`contentSlide${item}`} />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Background Image {item}: </label>
-                                    <div className="custom-file">
+                            {countTextTest.length > 0 &&
+                              countTextTest.map((item, index) => {
+                                return (
+                                  <div key={index}>
+                                    <div className="form-group">
+                                      <label> Title for slide {item}: </label>
                                       <input
-                                        type="file"
-                                        className="custom-file-input"
-                                        onChange={this.slideSelectHander}
-                                        id="customFile"
-                                        lang="en"
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Enter title ... "
+                                        ref={`titleSlide${item}`}
                                       />
-                                      <label className="custom-file-label" htmlFor="customFile">
-                                        {listNameFile.length > 0
-                                          ? listNameFile[index]
-                                          : "Choose file"}
-                                      </label>
                                     </div>
+                                    <div className="form-group">
+                                      <label>Content {item}: (*)</label>
+                                      <textarea
+                                        className="form-control"
+                                        rows="3"
+                                        ref={`contentSlide${item}`}
+                                      />
+                                    </div>
+                                    <div className="form-group">
+                                      <label>Background Image {item}: </label>
+                                      <div className="custom-file">
+                                        <input
+                                          type="file"
+                                          className="custom-file-input"
+                                          onChange={this.slideSelectHander}
+                                          id="customFile"
+                                          lang="en"
+                                        />
+                                        <label
+                                          className="custom-file-label"
+                                          htmlFor="customFile"
+                                        >
+                                          {listNameFile.length > 0
+                                            ? listNameFile[index]
+                                            : "Choose file"}
+                                        </label>
+                                      </div>
+                                    </div>
+                                    {slideBackground.length > 0 && (
+                                      <div className="mt-3 text-center mb-3">
+                                        <img
+                                          src={slideBackground[index]}
+                                          alt=""
+                                        />
+                                      </div>
+                                    )}
                                   </div>
-                                  {slideBackground.length > 0 && (
-                                    <div className="mt-3 text-center mb-3">
-                                      <img src={slideBackground[index]} alt="" />
-                                    </div>
-                                  )}
-                                </div>
-                              )
-                            })}
+                                );
+                              })}
                           </div>
                         </div>
                         <div className="form-group">
-                          <button className="btn bg-root" type="button" onClick={(e) => {
-                            e.preventDefault();
-                            this.handleAddMoreContent();
-                          }}>Add more slide</button>
+                          <button
+                            className="btn bg-root"
+                            type="button"
+                            onClick={e => {
+                              e.preventDefault();
+                              this.handleAddMoreContent();
+                            }}
+                          >
+                            Add more slide
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -781,7 +833,6 @@ class PopupNewContent extends Component {
                         <div className="form-group">
                           <label>Import Question from File CSV</label>
                           <div className="custom-file">
-
                             <input
                               type="file"
                               className="custom-file-input"
@@ -789,71 +840,125 @@ class PopupNewContent extends Component {
                               id="customFile"
                               lang="en"
                             />
-                            <label className="custom-file-label" htmlFor="customFile">
+                            <label
+                              className="custom-file-label"
+                              htmlFor="customFile"
+                            >
                               Choose file
-																			</label>
+                            </label>
                           </div>
                         </div>
                         <div className="form-group">
                           <small className="form-text text-muted">
                             Accept file *.csv
-												</small>
+                          </small>
                         </div>
                         <div className="card">
                           <div className="card-header">List questions</div>
                           <div className="card-body">
-                            {questions.length > 0 && questions.map((item, index) => {
-                              return (
-                                <div key={index}>
-                                  {errorQuestion !== "" && errorQuestion === index && (
+                            {questions.length > 0 &&
+                              questions.map((item, index) => {
+                                return (
+                                  <div key={index}>
+                                    {errorQuestion !== "" &&
+                                      errorQuestion === index && (
+                                        <div className="form-group">
+                                          <label className="text-danger">
+                                            Please choose one correct answer.
+                                          </label>
+                                        </div>
+                                      )}
                                     <div className="form-group">
-                                      <label className="text-danger">Please choose one correct answer.</label>
+                                      <label> Question {index + 1}: </label>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Enter title ... "
+                                        value={item.question}
+                                        onChange={e =>
+                                          this.handleChangeTitleQuestion(
+                                            index,
+                                            e.target.value
+                                          )
+                                        }
+                                      />
                                     </div>
-                                  )}
-                                  <div className="form-group">
-                                    <label> Question {index + 1}: </label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="Enter title ... "
-                                      value={item.question}
-                                      onChange={e => this.handleChangeTitleQuestion(index, e.target.value)}
-                                    />
+                                    {item.answers.length > 0 &&
+                                      item.answers.map((ans, indexAns) => {
+                                        return (
+                                          <>
+                                            <div className="form-group">
+                                              <label>
+                                                Answer {indexAns + 1}: (*)
+                                              </label>
+                                              <textarea
+                                                onChange={e =>
+                                                  this.handleChangeAnswerQuestion(
+                                                    index,
+                                                    indexAns,
+                                                    e
+                                                  )
+                                                }
+                                                className="form-control"
+                                                rows="2"
+                                                value={ans.anw}
+                                              />
+                                            </div>
+                                            <div className="form-check">
+                                              <input
+                                                onChange={e =>
+                                                  this.handleChangeAnswerQuestion(
+                                                    index,
+                                                    indexAns,
+                                                    e
+                                                  )
+                                                }
+                                                onClick={this.handleResetError}
+                                                type="checkbox"
+                                                checked={ans.result}
+                                              />
+                                              <label
+                                                className={`${
+                                                  errorQuestion !== "" &&
+                                                  errorQuestion === index
+                                                    ? "text-danger"
+                                                    : ""
+                                                } form-check-label`}
+                                              >
+                                                Correct Answer
+                                              </label>
+                                            </div>
+                                          </>
+                                        );
+                                      })}
+                                    <div className="form-group">
+                                      <button
+                                        className="btn bg-root"
+                                        type="button"
+                                        onClick={e => {
+                                          e.preventDefault();
+                                          this.handleAddMoreAnswer_ver2(index);
+                                        }}
+                                      >
+                                        Add more answer
+                                      </button>
+                                    </div>
                                   </div>
-                                  {
-                                    item.answers.length > 0 && item.answers.map((ans, indexAns) => {
-                                      return (
-                                        <>
-                                          <div className="form-group">
-                                            <label>Answer {indexAns + 1}: (*)</label>
-                                            <textarea onChange={e => this.handleChangeAnswerQuestion(index, indexAns, e)} className="form-control" rows="2" value={ans.anw} />
-                                          </div>
-                                          <div className="form-check">
-                                            <input onChange={e => this.handleChangeAnswerQuestion(index, indexAns, e)} onClick={this.handleResetError} type="checkbox" checked={ans.result} />
-                                            <label className={`${errorQuestion !== "" && errorQuestion === index ? "text-danger" : ""} form-check-label`}>
-                                              Correct Answer
-																						</label>
-                                          </div>
-                                        </>
-                                      )
-                                    })
-                                  }
-                                  <div className="form-group">
-                                    <button className="btn bg-root" type="button" onClick={(e) => {
-                                      e.preventDefault();
-                                      this.handleAddMoreAnswer_ver2(index);
-                                    }}>Add more answer</button>
-                                  </div>
-                                </div>
-                              )
-                            })}
+                                );
+                              })}
                           </div>
                         </div>
                         <div className="form-group">
-                          <button className="btn bg-root" type="button" onClick={(e) => {
-                            e.preventDefault();
-                            this.handleAddMoreQuest_ver2()
-                          }}>Add more question</button>
+                          <button
+                            className="btn bg-root"
+                            type="button"
+                            onClick={e => {
+                              e.preventDefault();
+                              this.handleAddMoreQuest_ver2();
+                            }}
+                          >
+                            Add more question
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -868,7 +973,7 @@ class PopupNewContent extends Component {
                 onClick={this.handleSubmitCreate}
               >
                 Create
-							</button>
+              </button>
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -876,7 +981,7 @@ class PopupNewContent extends Component {
                 onClick={this.handleClosePopup}
               >
                 Close
-							</button>
+              </button>
             </div>
           </div>
         </div>

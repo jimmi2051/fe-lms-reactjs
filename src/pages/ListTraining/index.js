@@ -2,16 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import {
-  getTrainingByUser,
-  getAllCategory
-} from "redux/action/training";
+import { getTrainingByUser, getAllCategory } from "redux/action/training";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import Pagination from "react-js-pagination";
-import Loading from "components/Loading"
+import Loading from "components/Loading";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
@@ -20,7 +17,7 @@ function mapStateToProps(state) {
       listTraining: state.listTraining.listTraining.data,
       loadingListTraining: state.listTraining.listTraining.loading,
       categoryAll: state.trainingAll.categoryAll.data,
-      loadingCategoryAll: state.trainingAll.categoryAll.loading,
+      loadingCategoryAll: state.trainingAll.categoryAll.loading
     }
   };
 }
@@ -45,21 +42,29 @@ class ListTraining extends Component {
     activePage: 1,
     startItemPage: 0,
     itemPerPage: 4
-  }
+  };
   componentDidMount() {
     this.handleGetTraining(AuthStorage.userInfo._id);
     this.handleGetCategory();
-    this.handleGetTotalPage(AuthStorage.userInfo._id)
+    this.handleGetTotalPage(AuthStorage.userInfo._id);
   }
 
-  handleGetTotalPage = (userId) => {
+  handleGetTotalPage = userId => {
     const { keySearch, categoryId } = this.state;
-    fetch(`https://be-lms.tk/trainings?${keySearch !== "" ? `name_contains=${keySearch}&` : ``}${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}users._id=${userId}`)
-      .then(response => { return response.json() })
-      .then(result => {
-        this.setState({ totalPage: result.length })
+    fetch(
+      `https://be-lms.tk/trainings?${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }${
+        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
+      }users._id=${userId}`
+    )
+      .then(response => {
+        return response.json();
       })
-  }
+      .then(result => {
+        this.setState({ totalPage: result.length });
+      });
+  };
 
   handleGetCategory = () => {
     const payload = {};
@@ -69,21 +74,27 @@ class ListTraining extends Component {
 
   handleGetTraining = userId => {
     const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
-    const payload = { id: userId, keySearch, startItemPage, itemPerPage, categoryId };
+    const payload = {
+      id: userId,
+      keySearch,
+      startItemPage,
+      itemPerPage,
+      categoryId
+    };
     const { getTrainingByUser } = this.props.action;
     getTrainingByUser(payload);
   };
 
-  handleInputSearch = (e) => {
+  handleInputSearch = e => {
     this.setState({ keySearch: e.target.value });
-  }
+  };
 
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0, activePage: 1 }, () => {
         this.handleGetTotalPage(AuthStorage.userInfo._id);
         this.handleGetTraining(AuthStorage.userInfo._id);
-      })
+      });
     }
   };
 
@@ -95,12 +106,12 @@ class ListTraining extends Component {
     });
   }
 
-  fitlerCategory = (categoryId) => {
-    this.setState({ categoryId, startItemPage: 0,activePage: 1 }, () => {
-      this.handleGetTotalPage(AuthStorage.userInfo._id)
+  fitlerCategory = categoryId => {
+    this.setState({ categoryId, startItemPage: 0, activePage: 1 }, () => {
+      this.handleGetTotalPage(AuthStorage.userInfo._id);
       this.handleGetTraining(AuthStorage.userInfo._id);
     });
-  }
+  };
 
   render() {
     const { categoryId } = this.state;
@@ -131,27 +142,56 @@ class ListTraining extends Component {
 
           <div className="row courses-wrap-custom">
             <div className="col-xl-4">
-              <div className="sidebar" style={{ height: "100%", minHeight: "600px" }}>
+              <div
+                className="sidebar"
+                style={{ height: "100%", minHeight: "600px" }}
+              >
                 <div className="cat-links">
                   <h2>Categories</h2>
                   <div className="form-group">
-                    <input value={this.state.keySearch} onKeyDown={this.beginSearch} className="form-control" onChange={this.handleInputSearch} placeholder="Search by training name." />
+                    <input
+                      value={this.state.keySearch}
+                      onKeyDown={this.beginSearch}
+                      className="form-control"
+                      onChange={this.handleInputSearch}
+                      placeholder="Search by training name."
+                    />
                   </div>
                   <ul className="p-0 m-0">
                     {!loadingCategoryAll &&
-                      categoryAll.map(
-                        (item, index) => {
-                          return (
-                            <li key={index}>
-                              <Link className={`${categoryId === item._id ? "font-weight-bold" : ""}`} to="#"
-                                onClick={(e) => { e.preventDefault(); this.fitlerCategory(item._id) }}
-                              >{item.name}</Link>
-                            </li>
-                          );
-                        }
-                      )}
+                      categoryAll.map((item, index) => {
+                        return (
+                          <li key={index}>
+                            <Link
+                              className={`${
+                                categoryId === item._id
+                                  ? "font-weight-bold"
+                                  : ""
+                              }`}
+                              to="#"
+                              onClick={e => {
+                                e.preventDefault();
+                                this.fitlerCategory(item._id);
+                              }}
+                            >
+                              {item.name}
+                            </Link>
+                          </li>
+                        );
+                      })}
                     <li>
-                      <Link to="#" className={`${categoryId === "" ? "font-weight-bold" : ""}`} onClick={(e) => { e.preventDefault(); this.fitlerCategory("") }}>VIEW ALL</Link>
+                      <Link
+                        to="#"
+                        className={`${
+                          categoryId === "" ? "font-weight-bold" : ""
+                        }`}
+                        onClick={e => {
+                          e.preventDefault();
+                          this.fitlerCategory("");
+                        }}
+                      >
+                        VIEW ALL
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -166,11 +206,11 @@ class ListTraining extends Component {
                       className="btn btn-success text-white"
                     >
                       CREATE NEW TRAINING
-                  </Link>
+                    </Link>
                   </div>
                 </div>
                 <div className="row mx-m-25">
-                  {!loadingListTraining ?
+                  {!loadingListTraining ? (
                     listTraining.map((item, index) => {
                       let starOfTraining = [];
                       for (let i = 0; i < parseInt(item.level); i++) {
@@ -214,22 +254,27 @@ class ListTraining extends Component {
                               <footer className="entry-footer flex flex-wrap align-items-center">
                                 <h4 className="t-level mb-0">Level: </h4>
                                 <div className="level pl-3">
-                                  {item.level !== "" && starOfTraining.map((item, index) => {
-                                    return (
-                                      <span key={index} className="fa fa-star checked"></span>
-                                    )
-                                  })}
+                                  {item.level !== "" &&
+                                    starOfTraining.map((item, index) => {
+                                      return (
+                                        <span
+                                          key={index}
+                                          className="fa fa-star checked"
+                                        ></span>
+                                      );
+                                    })}
                                 </div>
                               </footer>
                             </div>
                           </div>
                         </div>
                       );
-                    }) : (
-                      <div className="col-xl-12 mt-3">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    })
+                  ) : (
+                    <div className="col-xl-12 mt-3">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="row">
