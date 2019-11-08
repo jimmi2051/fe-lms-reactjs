@@ -74,11 +74,14 @@ class Step3 extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { currentTraining } = this.state;
-    const { isCreatedLearningPath } = nextProps.store;
+    const { isCreatedLearningPath, isCreatedCourseModule } = nextProps.store;
     if (
       !_.isEqual(isCreatedLearningPath, this.props.store.isCreatedLearningPath)
     ) {
       this.handleFilterListCourse(currentTraining._id);
+    }
+    if (!_.isEqual(isCreatedCourseModule, this.props.store.isCreatedCourseModule) && isCreatedCourseModule._id) {
+      this.handleGetModuleByCourse(isCreatedCourseModule.courses[0]._id)
     }
   }
 
@@ -114,10 +117,10 @@ class Step3 extends Component {
     const { addCourseModule } = this.props.action;
     const payload = { courses, position, modules };
     addCourseModule(payload, () => {
-      if (lastIndex) {
-        const { currentCourse } = this.state;
-        this.handleGetModuleByCourse(currentCourse._id);
-      }
+      // if (lastIndex) {
+      //   const { currentCourse } = this.state;
+      //   this.handleGetModuleByCourse(currentCourse._id);
+      // }
     });
   };
 
@@ -278,7 +281,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -369,13 +372,13 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <Link to={`#`}>
                             <img
                               src={
-                                _.isEmpty(item.modules[0].thumbnail)
+                                item.modules && item.modules.length > 0 && _.isEmpty(item.modules[0].thumbnail)
                                   ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
                                   : `${REACT_APP_URL_API}${item.modules[0].thumbnail.url}`
                               }
@@ -416,24 +419,24 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-          <div className="col-xl-12 new-training mb-4">
-            <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
-                <div className="col-12 col-md-6 px-25">
-                  <div
-                    className="course-content"
-                    onClick={this.handleShowPopupListModule}
-                  >
-                    <div className="course-content-wrap">
-                      <i className="fa fa-plus"></i>
-                      <h3>Add new item</h3>
+            <div className="col-xl-12 new-training mb-4">
+              <div className="featured-courses courses-wrap">
+                <div className="row mx-m-25">
+                  <div className="col-12 col-md-6 px-25">
+                    <div
+                      className="course-content"
+                      onClick={this.handleShowPopupListModule}
+                    >
+                      <div className="course-content-wrap">
+                        <i className="fa fa-plus"></i>
+                        <h3>Add new item</h3>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button

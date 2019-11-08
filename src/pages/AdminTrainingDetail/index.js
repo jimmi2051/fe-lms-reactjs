@@ -272,7 +272,7 @@ class TrainingDetail extends Component {
                       <div className="level pl-2">
                         {detailTraining.level !== "" &&
                           starOfTraining.map((item, index) => {
-                            return <span className="fa fa-star checked"></span>;
+                            return <span key={index} className="fa fa-star checked"></span>;
                           })}
                       </div>
                       <h4 className="t-total-course">Total courses:</h4>
