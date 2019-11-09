@@ -65,7 +65,7 @@ class Step3 extends Component {
     const { trainingCreated } = this.props;
     this.setState({ currentTraining: trainingCreated });
     if (_.isUndefined(trainingCreated._id)) {
-      this.handleFilterListCourse("5d9a0516fa842c10ba72c543");
+      this.handleFilterListCourse("5dc699a09246ca274406c775");
     } else {
       //this is hardcode must to fix
       this.handleFilterListCourse(trainingCreated._id);
@@ -81,7 +81,7 @@ class Step3 extends Component {
       this.handleFilterListCourse(currentTraining._id);
     }
     if (!_.isEqual(isCreatedCourseModule, this.props.store.isCreatedCourseModule) && isCreatedCourseModule._id) {
-      this.handleGetModuleByCourse(isCreatedCourseModule.courses[0]._id)
+      this.handleGetModuleByCourse(isCreatedCourseModule.course._id)
     }
   }
 
@@ -93,7 +93,7 @@ class Step3 extends Component {
       this.handleProcessData(listCourseFitler);
       //Get Module of first course if exists
       if (listCourseFitler.length > 0) {
-        this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+        this.handleGetModuleByCourse(listCourseFitler[0].course._id);
       }
     });
   };
@@ -102,26 +102,21 @@ class Step3 extends Component {
     let listCourse = [];
     listCourseFitler.map((item, index) => {
       listCourse.push({
-        value: item.courses[0],
-        label: item.courses[0].name
+        value: item.course,
+        label: item.course.name
       });
     });
     this.setState({
       currentCourse:
-        listCourse.length > 0 ? listCourseFitler[0].courses[0] : {},
+        listCourse.length > 0 ? listCourseFitler[0].course : {},
       listCourse
     });
   };
 
-  handleCreateCourseModule = (courses, position, modules, lastIndex) => {
+  handleCreateCourseModule = (course, position, module) => {
     const { addCourseModule } = this.props.action;
-    const payload = { courses, position, modules };
-    addCourseModule(payload, () => {
-      // if (lastIndex) {
-      //   const { currentCourse } = this.state;
-      //   this.handleGetModuleByCourse(currentCourse._id);
-      // }
-    });
+    const payload = { course, position, module };
+    addCourseModule(payload, () => { });
   };
 
   handleSubmit = () => {
@@ -148,20 +143,18 @@ class Step3 extends Component {
   handleStepThree = () => {
     const { notifySuccess, notifyError } = this.props;
     const { listModuleChoosen_ver2, currentCourse } = this.state;
-    const courses = [currentCourse];
+    const course = currentCourse._id;
     listModuleChoosen_ver2.map((item, index) => {
       const position = index + 1;
-      const modules = [item];
+      const module = item._id;
       if (index === listModuleChoosen_ver2.length - 1) {
         notifySuccess(
           "Nofitication",
           `List modules of training "${currentCourse.name}" has been updated successfully.`
         );
         this.setState({ listModuleChoosen_ver2: [] });
-        this.handleCreateCourseModule(courses, position, modules, true);
-      } else {
-        this.handleCreateCourseModule(courses, position, modules, false);
       }
+      this.handleCreateCourseModule(course, position, module, true);
     });
   };
 
@@ -378,9 +371,9 @@ class Step3 extends Component {
                           <Link to={`#`}>
                             <img
                               src={
-                                item.modules && item.modules.length > 0 && _.isEmpty(item.modules[0].thumbnail)
+                                item.module && _.isEmpty(item.module.thumbnail)
                                   ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                  : `${REACT_APP_URL_API}${item.modules[0].thumbnail.url}`
+                                  : `${REACT_APP_URL_API}${item.module.thumbnail.url}`
                               }
                               alt=""
                               height="200px"
@@ -391,14 +384,14 @@ class Step3 extends Component {
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                              <Link to={`#`}>{item.modules[0].name}</Link>
+                              <Link to={`#`}>{item.module.name}</Link>
                             </h2>
 
                             <div className="entry-meta flex flex-wrap align-items-center">
                               <div className="course-author">
                                 <label>
                                   Created date:{" "}
-                                  {moment(item.modules[0].createdAt).format(
+                                  {moment(item.module.createdAt).format(
                                     "DD/MM/YYYY"
                                   )}
                                 </label>
@@ -444,7 +437,7 @@ class Step3 extends Component {
               style={{ width: "100%" }}
               onClick={this.handleStepThree}
             >
-              UPDATE COURSE
+              SAVE
             </button>
           )}
 
@@ -453,7 +446,7 @@ class Step3 extends Component {
             style={{ width: "100%" }}
             onClick={this.props.handleStepThree}
           >
-            SAVE & CONTINUE
+            SKIP & CONTINUE
           </button>
         </div>
       </div>

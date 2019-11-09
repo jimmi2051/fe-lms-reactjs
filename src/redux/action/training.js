@@ -31,7 +31,7 @@ export const createTraining = (payload, next, nextErr) => {
 };
 
 export const addLearningPath = (payload, next, nextErr) => {
-  const { trainings, courses, position, markForCourse, isRequired } = payload;
+  const { training, course, position, markForCourse, isRequired } = payload;
   return {
     type: SINGLE_API,
     payload: {
@@ -44,8 +44,8 @@ export const addLearningPath = (payload, next, nextErr) => {
         method: "POST"
       },
       params: {
-        trainings,
-        courses,
+        training,
+        course,
         position,
         markForCourse,
         isRequired
@@ -90,7 +90,7 @@ export const getTrainingById = (payload, next, nextErr) => {
             _id
             position
             markForCourse
-            courses{
+            course{
               _id
               name
               numberOfSection
@@ -102,7 +102,7 @@ export const getTrainingById = (payload, next, nextErr) => {
               relationcoursemodules{
                 _id
                 position
-                modules{
+                module{
                   _id
                   name
                   description
@@ -136,7 +136,7 @@ export const getTrainingById = (payload, next, nextErr) => {
           activityusers{
             courses
             totalMark
-            users{
+            user{
               _id
             }
           }
@@ -247,9 +247,10 @@ export const getTrainingToLearn = (payload, next, nextErr) => {
           {
             activityusers:
             {
-              users:
+              user:
               {
-                _id:"${userId}"}
+                _id:"${userId}"
+              }
             },
             ${categoryId !== "" ? `categorytrainings:{_id:"${categoryId}",}` : ``}
             ${keySearch !== "" ? `name_contains:"${keySearch}",` : ``}
@@ -277,7 +278,7 @@ export const getTrainingToLearn = (payload, next, nextErr) => {
             _id
             courses
             totalMark
-            users{
+            user{
               _id
             }
           }

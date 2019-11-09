@@ -192,7 +192,7 @@ class PopupListContent extends Component {
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn bg-root"
+                className="btn bg-root-active"
                 onClick={this.handleUpdateContent_ver2}
               >
                 Add content

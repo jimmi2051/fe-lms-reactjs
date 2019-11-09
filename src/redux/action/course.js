@@ -46,7 +46,7 @@ export const getCourseByTraining = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `learningpaths?trainings._id=${id}&_sort=position:asc`,
+      uri: `learningpaths?training._id=${id}&_sort=position:asc`,
       beforeCallType: "FILTER_COURSE_BY_TRAINING_REQUEST",
       successType: "FILTER_COURSE_BY_TRAINING_SUCCESS",
       afterSuccess: next,
@@ -70,7 +70,7 @@ export const getCourseByUser = (payload, next, nextErr) => {
 };
 
 export const addCourseModule = (payload, next, nextErr) => {
-  const { courses, position, modules } = payload;
+  const { course, position, module } = payload;
   return {
     type: SINGLE_API,
     payload: {
@@ -83,9 +83,9 @@ export const addCourseModule = (payload, next, nextErr) => {
         method: "POST"
       },
       params: {
-        courses,
+        course,
         position,
-        modules
+        module
       }
     }
   };

@@ -25,7 +25,7 @@ class PopupNewModule extends Component {
     nameFile: "",
     imgSrc: ""
   };
-  componentDidMount() {}
+  componentDidMount() { }
 
   fileSelectHandler = e => {
     let files = e.target.files;
@@ -33,7 +33,7 @@ class PopupNewModule extends Component {
     const reader = new FileReader();
     const file = files[0];
     const url = reader.readAsDataURL(file);
-    reader.onloadend = function(e) {
+    reader.onloadend = function (e) {
       this.setState({
         imgSrc: reader.result
       });
@@ -93,9 +93,9 @@ class PopupNewModule extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -154,22 +154,20 @@ class PopupNewModule extends Component {
                     <img src={this.state.imgSrc} alt="" />
                   </div>
                 )}
-                <div className="form-group">
-                  <button
-                    type="button"
-                    className="btn btn-info form-control"
-                    onClick={this.handleNewModule}
-                  >
-                    Add
-                  </button>
-                </div>
               </form>
             </div>
 
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn bg-root"
+                className="btn bg-root-active"
+                onClick={this.handleNewModule}
+              >
+                Add
+                  </button>
+              <button
+                type="button"
+                className="btn bg-secondary"
                 data-dismiss="modal"
                 onClick={this.props.handleShowPopup}
               >

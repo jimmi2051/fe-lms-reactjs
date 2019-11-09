@@ -67,7 +67,7 @@ class Step4 extends Component {
     if (!loadingListCourseFilter && listCourseFitler.length > 0) {
       this.handleProcessData(listCourseFitler);
       if (listCourseFitler.length > 0) {
-        this.handleGetModuleByCourse(listCourseFitler[0].courses[0]._id);
+        this.handleGetModuleByCourse(listCourseFitler[0].course._id);
       }
     }
     //Get All Content
@@ -80,31 +80,33 @@ class Step4 extends Component {
     getModuleByCourse(payload, () => {
       const { filterModuleByCourse } = this.props.store;
       let listModule = [];
-      filterModuleByCourse.map((item, index) => {
+      filterModuleByCourse && filterModuleByCourse.map((item, index) => {
         listModule.push({
-          value: item.modules[0],
-          label: item.modules[0].name
+          value: item.module,
+          label: item.module.name
         });
       });
       const { isFetchContent } = this.state;
       if (!isFetchContent) {
-        this.handleGetContentByModule(filterModuleByCourse[0].modules[0]._id);
+        this.handleGetContentByModule(filterModuleByCourse
+          && filterModuleByCourse.length > 0
+          && filterModuleByCourse[0].module._id);
         this.setState({ isFetchContent: true });
       }
-      this.setState({ listModule: listModule });
+      this.setState({ listModule: listModule, currentModule: listModule[0].value });
     });
   };
 
   handleGetContentByUserId = id => {
     const { getContent } = this.props.action;
     const payload = { id };
-    getContent(payload, () => {});
+    getContent(payload, () => { });
   };
 
   handleGetContentByModule = module_id => {
     const { getContentByModule } = this.props.action;
     const payload = { id: module_id };
-    getContentByModule(payload, () => {});
+    getContentByModule(payload, () => { });
   };
 
   handleChangeCourse = course => {
@@ -125,12 +127,12 @@ class Step4 extends Component {
     let listCourse = [];
     listCourseFitler.map((item, index) => {
       listCourse.push({
-        value: item.courses[0],
-        label: item.courses[0].name
+        value: item.course,
+        label: item.course.name
       });
     });
     this.setState({
-      currentCourse: listCourseFitler[0].courses[0],
+      currentCourse: listCourseFitler[0].course,
       listCourse
     });
   };
@@ -375,17 +377,17 @@ class Step4 extends Component {
                   );
                 })
               ) : (
-                <tr>
-                  <td colSpan="3">
-                    <button
-                      onClick={() => this.handleShowListContent_ver2()}
-                      className="btn bg-root"
-                    >
-                      Add content
+                  <tr>
+                    <td colSpan="3">
+                      <button
+                        onClick={() => this.handleShowListContent_ver2()}
+                        className="btn bg-root"
+                      >
+                        Add content
                     </button>
-                  </td>
-                </tr>
-              )}
+                    </td>
+                  </tr>
+                )}
             </tbody>
           </table>
         </div>

@@ -42,7 +42,7 @@ class PopupListContent extends Component {
     listCourseByUser.map((item, index) => {
       options.push({ value: item, label: item.name });
     });
-    this.setState({ courseSelected: options[0].value });
+    // this.setState({ courseSelected: options[0].value });
   };
 
   handleClosePopup = () => {
@@ -76,9 +76,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -109,10 +109,10 @@ class PopupListContent extends Component {
                       isSearchable={true}
                       onChange={this.handleChange}
                       options={options}
-                      defaultValue={options[0]}
+                      // defaultValue={options[0]}
                       isClearable={true}
                       noOptionsMessage={inputValue => "No course found"}
-                      placeholder="-- Select course --"
+                      placeholder="-- Search by course name --"
                     />
                   )}
                 </div>
@@ -174,8 +174,9 @@ class PopupListContent extends Component {
                 className="btn bg-root"
                 data-dismiss="modal"
                 onClick={this.handleSubmit}
+                disabled={_.isEmpty(courseSelected)}
               >
-                OK
+                Add
               </button>
               <button
                 type="button"

@@ -48,15 +48,15 @@ class Step2 extends Component {
   }
 
   handleAddLearningPath = (
-    trainings,
-    courses,
+    training,
+    course,
     position,
     markForCourse,
     isRequired
   ) => {
     const { addLearningPath } = this.props.action;
-    const payload = { trainings, courses, position, markForCourse, isRequired };
-    addLearningPath(payload, response => {});
+    const payload = { training, course, position, markForCourse, isRequired };
+    addLearningPath(payload, response => { });
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -124,16 +124,16 @@ class Step2 extends Component {
       );
       return;
     }
-    const trainings = [trainingCreated];
+    const training = trainingCreated._id;
     if (this.validateCourse(listCourseChoosen_ver2)) {
       listCourseChoosen_ver2.map(async (item, index) => {
         const position = index + 1;
         const markForCourse = item.mark;
         const isRequired = item.required;
-        const courses = [item.course];
+        const course = item.course._id;
         await this.handleAddLearningPath(
-          trainings,
-          courses,
+          training,
+          course,
           position,
           markForCourse,
           isRequired
@@ -163,7 +163,7 @@ class Step2 extends Component {
   handleInputMark = (index, mark) => {
     let { listCourseChoosen_ver2 } = this.state;
     listCourseChoosen_ver2[index].mark = mark;
-    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => {});
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => { });
   };
 
   handleCheckRequired = (index, checked) => {
@@ -233,7 +233,7 @@ class Step2 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -298,7 +298,7 @@ class Step2 extends Component {
                                   <label
                                     className={`${
                                       messageErr !== "" ? "text-danger" : ""
-                                    } form-check-label`}
+                                      } form-check-label`}
                                     htmlFor="gridCheck"
                                   >
                                     Mandatory

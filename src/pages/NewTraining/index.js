@@ -59,7 +59,7 @@ const mapDispatchToProps = dispatch => {
 
 class NewTraining extends Component {
   state = {
-    step: 1,
+    step: 3,
     isShow: false,
     description: "",
     fileToUpload: [],
@@ -83,25 +83,25 @@ class NewTraining extends Component {
   handleGetListModule = () => {
     const payload = {};
     const { getModule } = this.props.action;
-    getModule(payload, () => {});
+    getModule(payload, () => { });
   };
   //Handle get list Course
   handleGetListCourse = () => {
     const payload = {};
     const { getCourse } = this.props.action;
-    getCourse(payload, () => {});
+    getCourse(payload, () => { });
   };
 
   handleGetListCourseByUser = userId => {
     const payload = { id: userId };
     const { getCourseByUser } = this.props.action;
-    getCourseByUser(payload, () => {});
+    getCourseByUser(payload, () => { });
   };
 
   handleGetListModuleByUser = userId => {
     const payload = { id: userId };
     const { getModuleByUser } = this.props.action;
-    getModuleByUser(payload, () => {});
+    getModuleByUser(payload, () => { });
   };
 
   //Must improve level without hardcode

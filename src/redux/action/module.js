@@ -58,7 +58,7 @@ export const getModuleByCourse = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `relationcoursemodules?courses._id=${id}&_sort=position:asc`,
+      uri: `relationcoursemodules?course._id=${id}&_sort=position:asc`,
       beforeCallType: "FILTER_MODULE_BY_COURSE_REQUEST",
       successType: "FILTER_MODULE_BY_COURSE_SUCCESS",
       afterSuccess: next,

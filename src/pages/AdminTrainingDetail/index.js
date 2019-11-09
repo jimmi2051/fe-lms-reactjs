@@ -68,7 +68,7 @@ class TrainingDetail extends Component {
   handleGetTrainingById = id => {
     const payload = { id };
     const { getTrainingById } = this.props.action;
-    getTrainingById(payload, () => {});
+    getTrainingById(payload, () => { });
   };
 
   handleChangeContent = currentContentChoosen => {
@@ -103,18 +103,18 @@ class TrainingDetail extends Component {
     training.learningpaths.map((path, index) => {
       let menuLv1 = {};
       menuLv1.key = `first-level-node-${index + 1}`;
-      menuLv1.label = `${path.courses[0].name}`;
-      let tempCourse = path.courses[0];
+      menuLv1.label = `${path.course.name}`;
+      let tempCourse = path.course;
       tempCourse.totalMark = path.markForCourse;
       menuLv1.value = tempCourse;
       menuLv1.nodes = [];
-      path.courses[0].relationcoursemodules.map((itemCourse, indexCourse) => {
+      path.course.relationcoursemodules.map((itemCourse, indexCourse) => {
         let menuLv2 = {};
         menuLv2.key = `second-level-node-${indexCourse + 1}`;
-        menuLv2.label = itemCourse.modules[0].name;
-        menuLv2.value = itemCourse.modules[0];
+        menuLv2.label = itemCourse.module.name;
+        menuLv2.value = itemCourse.module;
         menuLv2.nodes = [];
-        itemCourse.modules[0].contents.map((itemContent, indexContent) => {
+        itemCourse.module.contents.map((itemContent, indexContent) => {
           let menuLv3 = {};
           menuLv3.key = `third-level-node-${indexContent + 1}`;
           menuLv3.label = itemContent.name;
