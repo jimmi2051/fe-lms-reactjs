@@ -65,7 +65,7 @@ class Step3 extends Component {
     const { trainingCreated } = this.props;
     this.setState({ currentTraining: trainingCreated });
     if (_.isUndefined(trainingCreated._id)) {
-      this.handleFilterListCourse("5dc699a09246ca274406c775");
+      // this.handleFilterListCourse("5dc699a09246ca274406c775");
     } else {
       //this is hardcode must to fix
       this.handleFilterListCourse(trainingCreated._id);
