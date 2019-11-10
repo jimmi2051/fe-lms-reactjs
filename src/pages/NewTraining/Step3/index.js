@@ -11,7 +11,7 @@ import Select from "react-select";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import PopupListModule from "pages/NewTraining/PopupListModule";
-
+import Loading from "components/Loading";
 function mapStateToProps(state) {
   return {
     store: {
@@ -50,14 +50,14 @@ const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 class Step3 extends Component {
   state = {
-    createdModule: false,
     isShow: false,
     currentCourse: {},
     listCourse: [],
     listModuleChoosen_ver2: [],
     isShowListModule: false,
     updateCouse: false,
-    currentTraining: {}
+    currentTraining: {},
+    isLoading:false
   };
 
   componentDidMount() {
@@ -65,7 +65,7 @@ class Step3 extends Component {
     const { trainingCreated } = this.props;
     this.setState({ currentTraining: trainingCreated });
     if (_.isUndefined(trainingCreated._id)) {
-      // this.handleFilterListCourse("5dc699a09246ca274406c775");
+      this.handleFilterListCourse("5dc8310cec10d97f29757bdc");
     } else {
       //this is hardcode must to fix
       this.handleFilterListCourse(trainingCreated._id);
@@ -199,17 +199,18 @@ class Step3 extends Component {
   render() {
     const messageErr = "";
     const {
-      createdModule,
       isShow,
       currentCourse,
       listCourse,
       isShowListModule,
-      listModuleChoosen_ver2
+      listModuleChoosen_ver2,
+      isLoading
     } = this.state;
     const {
       listModuleByUser,
       loadingListModuleByUser,
-      filterModuleByCourse
+      filterModuleByCourse,
+      loadingModuleByCourse
     } = this.props.store;
     return (
       <div className="row new-training-step3">
@@ -228,9 +229,6 @@ class Step3 extends Component {
           />
         )}
         <div className="col-xl-12">
-          {createdModule && (
-            <h3 className="text-success pl-3">MODULE HAVE BEEN CREATED</h3>
-          )}{" "}
           <div className="form-group">
             <button
               type="button"
@@ -286,7 +284,7 @@ class Step3 extends Component {
                           >
                             <i className="fa fa-remove"></i>
                           </button>
-                          <Link to={`#`}>
+                          {/* <Link to={`#`}> */}
                             <img
                               src={
                                 _.isEmpty(item.thumbnail)
@@ -296,13 +294,14 @@ class Step3 extends Component {
                               alt=""
                               height="200px"
                             />
-                          </Link>
+                          {/* </Link> */}
                         </figure>
 
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                              <Link to={`#`}>{item.name}</Link>
+                            {item.name}
+                              {/* <Link to={`#`}></Link> */}
                             </h2>
 
                             <div className="entry-meta flex flex-wrap align-items-center">
@@ -355,7 +354,7 @@ class Step3 extends Component {
             </div>
           </div>
         )}
-        {filterModuleByCourse.length > 0 ? (
+        {!loadingModuleByCourse ? (
           <div className="col-xl-12 new-training">
             <div className="featured-courses courses-wrap">
               <div className="row mx-m-25">
@@ -368,7 +367,7 @@ class Step3 extends Component {
                           } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
-                          <Link to={`#`}>
+                          {/* <Link to={`#`}> */}
                             <img
                               src={
                                 item.module && _.isEmpty(item.module.thumbnail)
@@ -378,13 +377,14 @@ class Step3 extends Component {
                               alt=""
                               height="200px"
                             />
-                          </Link>
+                          {/* </Link> */}
                         </figure>
 
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                              <Link to={`#`}>{item.module.name}</Link>
+                            {item.module.name}
+                              {/* <Link to={`#`}></Link> */}
                             </h2>
 
                             <div className="entry-meta flex flex-wrap align-items-center">
@@ -411,10 +411,26 @@ class Step3 extends Component {
               </div>
             </div>
           </div>
-        ) : (
+        ) :(
+          <div className="col-xl-12 new-training mb-4">
+              <div className="featured-courses courses-wrap">
+                <div className="row mx-m-25">
+                  <div className="col-12 col-md-12 px-25">
+                      <Loading classOption="align-center-spinner"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+        )}
+        {!loadingModuleByCourse && filterModuleByCourse.length === 0 && (
             <div className="col-xl-12 new-training mb-4">
               <div className="featured-courses courses-wrap">
                 <div className="row mx-m-25">
+                {isLoading?(
+                  <div className="col-12 col-md-12 px-25">
+                      <Loading classOption="align-center-spinner"/>
+                  </div>
+                ):(
                   <div className="col-12 col-md-6 px-25">
                     <div
                       className="course-content"
@@ -426,6 +442,8 @@ class Step3 extends Component {
                       </div>
                     </div>
                   </div>
+                )}
+                 
                 </div>
               </div>
             </div>
@@ -436,8 +454,9 @@ class Step3 extends Component {
               className="btn bg-root-active mb-3"
               style={{ width: "100%" }}
               onClick={this.handleStepThree}
+              disabled={isLoading}
             >
-              SAVE
+            {isLoading?(<Loading classOption="align-center-spinner"/>):"SAVE"}
             </button>
           )}
 

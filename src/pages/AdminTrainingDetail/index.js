@@ -14,8 +14,9 @@ import { withRouter } from "react-router";
 import TreeMenu from "react-simple-tree-menu";
 import Loading from "components/Loading";
 import moment from "moment";
+import { ToastContainer } from "react-toastr";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
-
+let toastr;
 function mapStateToProps(state) {
   return {
     store: {
@@ -46,7 +47,6 @@ class TrainingDetail extends Component {
     initiallyOpenProperties: [],
     currentActivity: {},
     isLastContent: -1,
-    isFinishStudying: false,
     keyCourse: "",
     keyModule: ""
   };
@@ -130,7 +130,6 @@ class TrainingDetail extends Component {
   };
 
   handeSelectMenu = item => {
-    this.setState({ isFinishStudying: false });
     if (item.level === 0) {
       this.setState({
         currentCourse: item.value,
@@ -151,6 +150,10 @@ class TrainingDetail extends Component {
         currentModule: {},
         currentContent: item.value
       });
+      if(!item.value.relationData)
+      {
+        this.notifyError("Notification","Warning! This content is updating. Please try another content. ")
+      }
     }
   };
 
@@ -162,12 +165,22 @@ class TrainingDetail extends Component {
     });
   };
 
+  notifySuccess = (title, content) => {
+    toastr.success(content, title, {
+      closeButton: true
+    });
+  };
+  notifyError = (title, content) => {
+    toastr.warning(content, title, {
+      closeButton: true
+    });
+  };
+
   render() {
     const {
       currentContent,
       currentCourse,
       currentModule,
-      isFinishStudying,
       keyCourse,
       keyModule
     } = this.state;
@@ -214,6 +227,10 @@ class TrainingDetail extends Component {
     return (
       <div className="page-header">
         <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
+        <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -329,7 +346,7 @@ class TrainingDetail extends Component {
                     )}
                   </div>
                 )}
-                {!_.isEmpty(currentContent) && (
+                {!_.isEmpty(currentContent) && currentContent.relationData && (
                   <div className="detail-content">
                     <h4 className="detail-content-title">
                       {currentContent.relationData.data.title}

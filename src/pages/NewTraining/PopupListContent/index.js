@@ -134,7 +134,7 @@ class PopupListContent extends Component {
                   )}
                 </div>
                 <div className="col-xl-12 pt-4">
-                  {!_.isEmpty(currentContent) && (
+                  {!_.isEmpty(currentContent) && currentContent.relationData ? (
                     <div className="detail-content">
                       <h4 className="detail-content-title">
                         {currentContent.relationData.data.title}
@@ -184,6 +184,12 @@ class PopupListContent extends Component {
                           isView
                         />
                       )}
+                    </div>
+                  ):(
+                    <div className="text text-center">
+                      <h5 className="text-warning">
+                        This content is updating. Please choose another content. Thanks
+                      </h5>
                     </div>
                   )}
                 </div>

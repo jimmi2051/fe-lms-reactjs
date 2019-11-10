@@ -14,8 +14,9 @@ import TreeMenu from "react-simple-tree-menu";
 import Loading from "components/Loading";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastr";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
-
+let toastr;
 function mapStateToProps(state) {
     return {
         store: {
@@ -46,7 +47,6 @@ class TrainingDetail extends Component {
         initiallyOpenProperties: [],
         currentActivity: {},
         isLastContent: -1,
-        isFinishStudying: false,
         keyCourse: "",
         keyModule: ""
     };
@@ -133,7 +133,6 @@ class TrainingDetail extends Component {
     };
 
     handeSelectMenu = item => {
-        this.setState({ isFinishStudying: false });
         if (item.level === 0) {
             this.setState({
                 currentCourse: item.value,
@@ -180,6 +179,10 @@ class TrainingDetail extends Component {
                 keyCourse,
                 keyModule
             });
+            if(!item.value.relationData)
+            {
+              this.notifyError("Notification","Warning! This content is updating. Please try another content. ")
+            }
         }
     };
 
@@ -226,10 +229,6 @@ class TrainingDetail extends Component {
         const { updateActivity } = this.props.action;
         const payload = { id, courses, totalMark };
         updateActivity(payload, () => {
-            const { isUpdateActivity } = this.props.store;
-            if (isUpdateActivity._id) {
-                this.setState({ isFinishStudying: true });
-            }
         });
     };
 
@@ -343,12 +342,22 @@ class TrainingDetail extends Component {
         }
     };
 
+    notifySuccess = (title, content) => {
+      toastr.success(content, title, {
+        closeButton: true
+      });
+    };
+    notifyError = (title, content) => {
+      toastr.warning(content, title, {
+        closeButton: true
+      });
+    };
+
     render() {
         const {
             currentContent,
             currentCourse,
             currentModule,
-            isFinishStudying,
             keyCourse,
             keyModule
         } = this.state;
@@ -395,6 +404,10 @@ class TrainingDetail extends Component {
         }
         return (
             <div className="page-header">
+                    <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
                 <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
                 <div className="container">
                     <div className="row">
@@ -542,13 +555,8 @@ class TrainingDetail extends Component {
                                         </div>
                                     </div>
                                 )}
-                                {!_.isEmpty(currentContent) && (
+                                {!_.isEmpty(currentContent) && currentContent.relationData && (
                                     <div className="detail-content">
-                                        {isFinishStudying && (
-                                            <h3 className="text-success">
-                                                Congratulation!! You have pass this content.{" "}
-                                            </h3>
-                                        )}
                                         <h4 className="detail-content-title">
                                             {currentContent.relationData.data.title}
                                         </h4>

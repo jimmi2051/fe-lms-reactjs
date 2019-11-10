@@ -49,7 +49,6 @@ class TrainingDetail extends Component {
         initiallyOpenProperties: [],
         currentActivity: {},
         isLastContent: -1,
-        isFinishStudying: false,
         keyCourse: "",
         keyModule: "",
         addTraining: {},
@@ -143,7 +142,6 @@ class TrainingDetail extends Component {
     };
 
     handeSelectMenu = item => {
-        this.setState({ isFinishStudying: false });
         if (item.level === 0) {
             this.setState({
                 currentCourse: item.value,

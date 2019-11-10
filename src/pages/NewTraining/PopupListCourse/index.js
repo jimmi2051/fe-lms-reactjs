@@ -24,7 +24,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const options = [];
+let options = [];
 
 class PopupListContent extends Component {
   state = {
@@ -39,6 +39,7 @@ class PopupListContent extends Component {
   }
 
   processData = listCourseByUser => {
+    options = [];
     listCourseByUser.map((item, index) => {
       options.push({ value: item, label: item.name });
     });
@@ -123,9 +124,10 @@ class PopupListContent extends Component {
                         <div className="col-12 col-md-12 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              <Link
+                              {/* <Link
+                                target="_blank"
                                 to={`/admin/training/${courseSelected._id}`}
-                              >
+                              > */}
                                 <img
                                   src={
                                     _.isEmpty(courseSelected.thumbnail)
@@ -135,17 +137,13 @@ class PopupListContent extends Component {
                                   alt=""
                                   height="200px"
                                 />
-                              </Link>
+                              {/* </Link> */}
                             </figure>
 
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  <Link
-                                    to={`/admin/training/${courseSelected._id}`}
-                                  >
                                     {courseSelected.name}
-                                  </Link>
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">

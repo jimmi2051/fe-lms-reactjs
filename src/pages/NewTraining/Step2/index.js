@@ -9,7 +9,7 @@ import AuthStorage from "utils/AuthStorage";
 import { Link } from "react-router-dom";
 import PopupListCourse from "pages/NewTraining/PopupListCourse";
 import moment from "moment";
-
+import Loading from "components/Loading";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -37,7 +37,7 @@ class Step2 extends Component {
   state = {
     isShow: false,
     courseActived: {},
-
+    isLoading: false,
     isShowListCourse: false,
 
     listCourseChoosen_ver2: [],
@@ -109,11 +109,13 @@ class Step2 extends Component {
   handleStepTwo = () => {
     const { notifySuccess, notifyError } = this.props;
     const { listCourseChoosen_ver2 } = this.state;
+    this.setState({isLoading:true})
     if (listCourseChoosen_ver2.length === 0) {
       notifyError(
         "Nofitication",
         "Error! You must add least one course to training."
       );
+      this.setState({isLoading:false})
       return;
     }
     const { trainingCreated } = this.props;
@@ -122,6 +124,7 @@ class Step2 extends Component {
         "Nofitication",
         "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
       );
+      this.setState({isLoading:false})
       return;
     }
     const training = trainingCreated._id;
@@ -148,6 +151,7 @@ class Step2 extends Component {
       });
     } else {
       this.setState({ messageErr: "Must choose one course is a mandatory." });
+      this.setState({isLoading:false})
     }
   };
 
@@ -186,7 +190,8 @@ class Step2 extends Component {
       isShow,
       isShowListCourse,
       listCourseChoosen_ver2,
-      messageErr
+      messageErr,
+      isLoading
     } = this.state;
     const { listCourseByUser, loadingListCourseUser } = this.props.store;
     return (
@@ -245,7 +250,7 @@ class Step2 extends Component {
                           >
                             <i className="fa fa-remove"></i>
                           </button>
-                          <Link to={`#`}>
+                          {/* <Link to={`#`}> */}
                             <img
                               src={
                                 _.isEmpty(item.course.thumbnail)
@@ -255,13 +260,13 @@ class Step2 extends Component {
                               alt=""
                               height="200px"
                             />
-                          </Link>
+                          {/* </Link> */}
                         </figure>
 
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                              <Link to={`#`}>{item.course.name}</Link>
+                              {item.course.name}
                             </h2>
 
                             <div className="entry-meta flex flex-wrap align-items-center">
@@ -370,8 +375,10 @@ class Step2 extends Component {
             className="btn bg-root"
             style={{ width: "100%" }}
             onClick={this.handleStepTwo}
+            disabled={isLoading}
           >
-            SAVE & CONTINUE
+          {isLoading?(<Loading classOption="align-center-spinner"/>):"SAVE & CONTINUE"}
+            
           </button>
         </div>
       </div>

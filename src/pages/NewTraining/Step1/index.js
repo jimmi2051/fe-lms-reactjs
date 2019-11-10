@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import CKEditor from "components/CKEditor";
-
+import Loading from "components/Loading";
 class Step1 extends Component {
   state = {
     nameFile: "",
-    imgSrc: ""
+    imgSrc: "",
+    isLoading: false
   };
   handleSelectFile = e => {
     const reader = new FileReader();
@@ -22,6 +23,7 @@ class Step1 extends Component {
   };
   handleSubmit = () => {
     const { title } = this.refs;
+    this.setState({isLoading:true})
     this.props.handleStepOne(title.value);
   };
   render() {
@@ -32,6 +34,7 @@ class Step1 extends Component {
       idxCategory,
       handleChangeCategory
     } = this.props;
+    const {isLoading} = this.state;
     return (
       <div className="row no-gutters">
         <div className="col-xl-12">
@@ -74,7 +77,7 @@ class Step1 extends Component {
             )}
           </div>
           <div className="form-group">
-            <label>Select level for training</label>
+            <label>Select level for training (*)</label>
             <select
               className="form-control"
               defaultValue="3"
@@ -104,7 +107,7 @@ class Step1 extends Component {
               <option value="-1">-- Select category --</option>
               {!loadingCategoryAll &&
                 categoryAll.map((item, index) => {
-                  return <option value={index}>{item.name}</option>;
+                  return <option key={index} value={index}>{item.name}</option>;
                 })}
             </select>
           </div>
@@ -123,8 +126,9 @@ class Step1 extends Component {
             className="btn bg-root"
             style={{ width: "100%" }}
             onClick={this.handleSubmit}
+            disabled={isLoading}
           >
-            CONTINUE
+          {isLoading ? (<Loading classOption="align-center-spinner"/>) : "CONTINUE"}
           </button>
         </div>
       </div>

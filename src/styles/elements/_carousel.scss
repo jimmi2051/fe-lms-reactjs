@@ -45,3 +45,23 @@
         }
     }
 }
+
+.ck-content
+{
+  ul{
+    padding-left: 20px;
+    margin-bottom: 0px;
+    li{
+      display: list-item;
+      list-style-type: disc;
+      padding-left: 0px;
+    }
+  }
+  ol{
+    padding-left:20px;
+    margin-bottom: 0px;
+  }
+  p{
+    margin: 0px;
+  }
+}

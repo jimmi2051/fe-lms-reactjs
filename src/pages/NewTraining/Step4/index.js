@@ -15,7 +15,7 @@ import Select from "react-select";
 import PopupDetailContent from "pages/NewTraining/PopupDetailContent";
 import PopupNewContent from "pages/NewTraining/PopupNewContent";
 import { Link } from "react-router-dom";
-
+import Loading from "components/Loading";
 function mapStateToProps(state) {
   return {
     store: {
@@ -56,11 +56,13 @@ class Step4 extends Component {
     isShow: false,
     listCourse: [],
     listModule: [],
-    isFetchContent: false,
     listContentChoosen: [],
     isShowDetailContent: false,
     currentContent: {},
-    isShowNewContent: false
+    isShowNewContent: false,
+    course: {},
+    module: {},
+    isLoading: false,
   };
   componentDidMount() {
     const { listCourseFitler, loadingListCourseFilter } = this.props.store;
@@ -86,14 +88,11 @@ class Step4 extends Component {
           label: item.module.name
         });
       });
-      const { isFetchContent } = this.state;
-      if (!isFetchContent) {
         this.handleGetContentByModule(filterModuleByCourse
           && filterModuleByCourse.length > 0
           && filterModuleByCourse[0].module._id);
-        this.setState({ isFetchContent: true });
-      }
-      this.setState({ listModule: listModule, currentModule: listModule[0].value });
+      this.setState({ listModule: listModule, currentModule: listModule[0].value,
+        module: listModule[0] });
     });
   };
 
@@ -133,20 +132,21 @@ class Step4 extends Component {
     });
     this.setState({
       currentCourse: listCourseFitler[0].course,
-      listCourse
+      listCourse,
+      course: listCourse[0]
     });
   };
 
   handleChangeCourse_ver2 = options => {
     if (!_.isNull(options)) {
       this.handleGetModuleByCourse(options.value._id);
-      this.setState({ currentCourse: options.value });
+      this.setState({ currentCourse: options.value,course: options,listContentChoosen: [] });
     }
   };
 
   handleShowContent_ver2 = options => {
     this.handleGetContentByModule(options.value._id);
-    this.setState({ currentModule: options.value });
+    this.setState({ currentModule: options.value,module:options,listContentChoosen: [] });
   };
 
   handleShowListContent_ver2 = () => {
@@ -170,6 +170,7 @@ class Step4 extends Component {
   };
 
   handleUpdateContentForModule = () => {
+    this.setState({isLoading: true})
     const { listContentChoosen } = this.state;
     const { notifySuccess, notifyError } = this.props;
     listContentChoosen.map(async (item, index) => {
@@ -199,6 +200,7 @@ class Step4 extends Component {
       if (lastIndex) {
         const { currentModule } = this.state;
         this.handleGetContentByModule(currentModule._id);
+        this.setState({isLoading: false})
       }
     });
   };
@@ -237,7 +239,9 @@ class Step4 extends Component {
       listContentChoosen,
       isShowDetailContent,
       currentContent,
-      isShowNewContent
+      isShowNewContent,
+      course,module,
+      isLoading
     } = this.state;
     const { notifySuccess, notifyError } = this.props;
     return (
@@ -294,7 +298,7 @@ class Step4 extends Component {
               isSearchable={true}
               onChange={this.handleChangeCourse_ver2}
               options={listCourse}
-              defaultValue={listCourse[0]}
+              value={course}
               isClearable={true}
               noOptionsMessage={inputValue => "No course found"}
               placeholder="-- Select course --"
@@ -309,7 +313,7 @@ class Step4 extends Component {
               isSearchable={true}
               onChange={this.handleShowContent_ver2}
               options={listModule}
-              defaultValue={listModule[0]}
+              value={module}
               isClearable={true}
               noOptionsMessage={inputValue => "No module found"}
               placeholder="-- Select module --"
@@ -355,7 +359,7 @@ class Step4 extends Component {
                     </tr>
                   );
                 })}
-              {!loadingListContentByModule && listContentByModule.length > 0 ? (
+              {!loadingListContentByModule ?
                 listContentByModule.map((item, index) => {
                   return (
                     <tr key={index}>
@@ -375,16 +379,23 @@ class Step4 extends Component {
                       </td>
                     </tr>
                   );
-                })
-              ) : (
+                }):(
                   <tr>
-                    <td colSpan="3">
-                      <button
+                    <td colSpan="4">
+                    <Loading classOption="align-center-spinner"/>
+                    </td>
+                  </tr>
+                )}
+                {!loadingListContentByModule && listContentByModule.length === 0 && (
+                  <tr>
+                    <td colSpan="4">
+                      {isLoading?(<Loading classOption="align-center-spinner"/>):(<button
                         onClick={() => this.handleShowListContent_ver2()}
                         className="btn bg-root"
                       >
                         Add content
-                    </button>
+                    </button>)}
+                    
                     </td>
                   </tr>
                 )}
@@ -398,8 +409,9 @@ class Step4 extends Component {
               type="button"
               onClick={this.handleUpdateContentForModule}
               style={{ width: "100%" }}
+              disabled={isLoading}
             >
-              UPDATE CONTENT FOR MODULE
+            {isLoading?(<Loading classOption="align-center-spinner"/>) :"UPDATE CONTENT FOR MODULE"}
             </button>
           </div>
         )}
