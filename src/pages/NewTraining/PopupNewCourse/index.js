@@ -154,18 +154,17 @@ class PopupNewCourse extends Component {
                     <img src={this.state.imgSrc} alt="" />
                   </div>
                 )}
-              
               </form>
             </div>
 
             <div className="modal-footer">
-            <button
-                    type="button"
-                    className="btn bg-root-active"
-                    onClick={this.handleNewCourse}
-                  >
-                    Add
-                  </button>
+              <button
+                type="button"
+                className="btn bg-root-active"
+                onClick={this.handleNewCourse}
+              >
+                Add
+              </button>
               <button
                 type="button"
                 className="btn btn-secondary"

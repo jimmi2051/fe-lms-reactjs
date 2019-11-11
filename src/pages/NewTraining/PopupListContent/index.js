@@ -185,10 +185,11 @@ class PopupListContent extends Component {
                         />
                       )}
                     </div>
-                  ):(
+                  ) : (
                     <div className="text text-center">
                       <h5 className="text-warning">
-                        This content is updating. Please choose another content. Thanks
+                        This content is updating. Please choose another content.
+                        Thanks
                       </h5>
                     </div>
                   )}

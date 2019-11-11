@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -20,17 +21,16 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Navbar extends Component {
-
   state = {
     keySearch: ""
-  }
-  componentDidMount() { }
+  };
+  componentDidMount() {}
   logout = () => {
     this.props.action.logoutRequest();
   };
-  handleChangeSearch = (e) => {
-    this.setState({ keySearch: e.target.value })
-  }
+  handleChangeSearch = e => {
+    this.setState({ keySearch: e.target.value });
+  };
   render() {
     const { pathname } = this.props.location;
     const { keySearch } = this.state;
@@ -65,7 +65,7 @@ class Navbar extends Component {
                         pathname: `trainings`,
                         state: {
                           keySearch
-                        },
+                        }
                       }}
                     >
                       <button
@@ -91,19 +91,19 @@ class Navbar extends Component {
                         </li>
                       </>
                     ) : (
-                        <>
-                          <li>
-                            <Link to="/profile">
-                              {AuthStorage.userInfo.username}
-                            </Link>
-                          </li>
-                          <li>
-                            <Link onClick={this.logout} to="/login">
-                              Log out
+                      <>
+                        <li>
+                          <Link to="/profile">
+                            {AuthStorage.userInfo.username}
                           </Link>
-                          </li>
-                        </>
-                      )}
+                        </li>
+                        <li>
+                          <Link onClick={this.logout} to="/login">
+                            Log out
+                          </Link>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -117,7 +117,10 @@ class Navbar extends Component {
               <div className="col-9 col-lg-3">
                 <div className="site-branding">
                   <h1 className="site-title">
-                    <Link to="/"> L<span>MS</span></Link>
+                    <Link to="/">
+                      {" "}
+                      L<span>MS</span>
+                    </Link>
                   </h1>
                 </div>
               </div>
@@ -138,11 +141,13 @@ class Navbar extends Component {
                           >
                             <Link to="/">Home</Link>
                           </li>
-                          <li className={
-                            pathname === "/trainings"
-                              ? "current-menu-item"
-                              : ""
-                          }>
+                          <li
+                            className={
+                              pathname === "/trainings"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                          >
                             <Link to="/trainings">Store Training</Link>
                           </li>
                           <li
@@ -168,21 +173,29 @@ class Navbar extends Component {
                     {AuthStorage.loggedIn &&
                       AuthStorage.userInfo.role.type === "user" && (
                         <>
-                          <li className={pathname === "/" ? "current-menu-item" : ""}>
+                          <li
+                            className={
+                              pathname === "/" ? "current-menu-item" : ""
+                            }
+                          >
                             <Link to="/">Home</Link>
                           </li>
-                          <li className={
-                            pathname === "/my-training"
-                              ? "current-menu-item"
-                              : ""
-                          }>
+                          <li
+                            className={
+                              pathname === "/my-training"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                          >
                             <Link to="/my-training">My Training</Link>
                           </li>
-                          <li className={
-                            pathname === "/trainings"
-                              ? "current-menu-item"
-                              : ""
-                          }>
+                          <li
+                            className={
+                              pathname === "/trainings"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                          >
                             <Link to="/trainings">Store Training</Link>
                           </li>
                           <li>
@@ -195,17 +208,21 @@ class Navbar extends Component {
                       )}
                     {!AuthStorage.loggedIn && (
                       <>
-                        <li className={pathname === "/" ? "current-menu-item" : ""}>
+                        <li
+                          className={
+                            pathname === "/" ? "current-menu-item" : ""
+                          }
+                        >
                           <Link to="/">Home</Link>
                         </li>
                         <li>
                           <a href="#">About</a>
                         </li>
-                        <li className={
-                          pathname === "/trainings"
-                            ? "current-menu-item"
-                            : ""
-                        }>
+                        <li
+                          className={
+                            pathname === "/trainings" ? "current-menu-item" : ""
+                          }
+                        >
                           <Link to="/trainings">Trainings</Link>
                         </li>
                         <li>
@@ -216,7 +233,6 @@ class Navbar extends Component {
                         </li>
                       </>
                     )}
-
                   </ul>
 
                   <div className="hamburger-menu d-lg-none">

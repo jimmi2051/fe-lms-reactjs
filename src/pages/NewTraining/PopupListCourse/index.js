@@ -77,9 +77,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -128,22 +128,22 @@ class PopupListContent extends Component {
                                 target="_blank"
                                 to={`/admin/training/${courseSelected._id}`}
                               > */}
-                                <img
-                                  src={
-                                    _.isEmpty(courseSelected.thumbnail)
-                                      ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                      : `${REACT_APP_URL_API}${courseSelected.thumbnail.url}`
-                                  }
-                                  alt=""
-                                  height="200px"
-                                />
+                              <img
+                                src={
+                                  _.isEmpty(courseSelected.thumbnail)
+                                    ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                    : `${REACT_APP_URL_API}${courseSelected.thumbnail.url}`
+                                }
+                                alt=""
+                                height="200px"
+                              />
                               {/* </Link> */}
                             </figure>
 
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                    {courseSelected.name}
+                                  {courseSelected.name}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">

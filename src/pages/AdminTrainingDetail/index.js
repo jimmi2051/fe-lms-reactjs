@@ -68,7 +68,7 @@ class TrainingDetail extends Component {
   handleGetTrainingById = id => {
     const payload = { id };
     const { getTrainingById } = this.props.action;
-    getTrainingById(payload, () => { });
+    getTrainingById(payload, () => {});
   };
 
   handleChangeContent = currentContentChoosen => {
@@ -150,9 +150,11 @@ class TrainingDetail extends Component {
         currentModule: {},
         currentContent: item.value
       });
-      if(!item.value.relationData)
-      {
-        this.notifyError("Notification","Warning! This content is updating. Please try another content. ")
+      if (!item.value.relationData) {
+        this.notifyError(
+          "Notification",
+          "Warning! This content is updating. Please try another content. "
+        );
       }
     }
   };
@@ -289,7 +291,12 @@ class TrainingDetail extends Component {
                       <div className="level pl-2">
                         {detailTraining.level !== "" &&
                           starOfTraining.map((item, index) => {
-                            return <span key={index} className="fa fa-star checked"></span>;
+                            return (
+                              <span
+                                key={index}
+                                className="fa fa-star checked"
+                              ></span>
+                            );
                           })}
                       </div>
                       <h4 className="t-total-course">Total courses:</h4>

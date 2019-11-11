@@ -62,7 +62,7 @@ class Step4 extends Component {
     isShowNewContent: false,
     course: {},
     module: {},
-    isLoading: false,
+    isLoading: false
   };
   componentDidMount() {
     const { listCourseFitler, loadingListCourseFilter } = this.props.store;
@@ -82,30 +82,36 @@ class Step4 extends Component {
     getModuleByCourse(payload, () => {
       const { filterModuleByCourse } = this.props.store;
       let listModule = [];
-      filterModuleByCourse && filterModuleByCourse.map((item, index) => {
-        listModule.push({
-          value: item.module,
-          label: item.module.name
+      filterModuleByCourse &&
+        filterModuleByCourse.map((item, index) => {
+          listModule.push({
+            value: item.module,
+            label: item.module.name
+          });
         });
+      this.handleGetContentByModule(
+        filterModuleByCourse &&
+          filterModuleByCourse.length > 0 &&
+          filterModuleByCourse[0].module._id
+      );
+      this.setState({
+        listModule: listModule,
+        currentModule: listModule[0].value,
+        module: listModule[0]
       });
-        this.handleGetContentByModule(filterModuleByCourse
-          && filterModuleByCourse.length > 0
-          && filterModuleByCourse[0].module._id);
-      this.setState({ listModule: listModule, currentModule: listModule[0].value,
-        module: listModule[0] });
     });
   };
 
   handleGetContentByUserId = id => {
     const { getContent } = this.props.action;
     const payload = { id };
-    getContent(payload, () => { });
+    getContent(payload, () => {});
   };
 
   handleGetContentByModule = module_id => {
     const { getContentByModule } = this.props.action;
     const payload = { id: module_id };
-    getContentByModule(payload, () => { });
+    getContentByModule(payload, () => {});
   };
 
   handleChangeCourse = course => {
@@ -140,13 +146,21 @@ class Step4 extends Component {
   handleChangeCourse_ver2 = options => {
     if (!_.isNull(options)) {
       this.handleGetModuleByCourse(options.value._id);
-      this.setState({ currentCourse: options.value,course: options,listContentChoosen: [] });
+      this.setState({
+        currentCourse: options.value,
+        course: options,
+        listContentChoosen: []
+      });
     }
   };
 
   handleShowContent_ver2 = options => {
     this.handleGetContentByModule(options.value._id);
-    this.setState({ currentModule: options.value,module:options,listContentChoosen: [] });
+    this.setState({
+      currentModule: options.value,
+      module: options,
+      listContentChoosen: []
+    });
   };
 
   handleShowListContent_ver2 = () => {
@@ -170,7 +184,7 @@ class Step4 extends Component {
   };
 
   handleUpdateContentForModule = () => {
-    this.setState({isLoading: true})
+    this.setState({ isLoading: true });
     const { listContentChoosen } = this.state;
     const { notifySuccess, notifyError } = this.props;
     listContentChoosen.map(async (item, index) => {
@@ -200,7 +214,7 @@ class Step4 extends Component {
       if (lastIndex) {
         const { currentModule } = this.state;
         this.handleGetContentByModule(currentModule._id);
-        this.setState({isLoading: false})
+        this.setState({ isLoading: false });
       }
     });
   };
@@ -240,7 +254,8 @@ class Step4 extends Component {
       isShowDetailContent,
       currentContent,
       isShowNewContent,
-      course,module,
+      course,
+      module,
       isLoading
     } = this.state;
     const { notifySuccess, notifyError } = this.props;
@@ -359,7 +374,7 @@ class Step4 extends Component {
                     </tr>
                   );
                 })}
-              {!loadingListContentByModule ?
+              {!loadingListContentByModule ? (
                 listContentByModule.map((item, index) => {
                   return (
                     <tr key={index}>
@@ -379,26 +394,30 @@ class Step4 extends Component {
                       </td>
                     </tr>
                   );
-                }):(
-                  <tr>
-                    <td colSpan="4">
-                    <Loading classOption="align-center-spinner"/>
-                    </td>
-                  </tr>
-                )}
-                {!loadingListContentByModule && listContentByModule.length === 0 && (
-                  <tr>
-                    <td colSpan="4">
-                      {isLoading?(<Loading classOption="align-center-spinner"/>):(<button
+                })
+              ) : (
+                <tr>
+                  <td colSpan="4">
+                    <Loading classOption="align-center-spinner" />
+                  </td>
+                </tr>
+              )}
+              {!loadingListContentByModule && listContentByModule.length === 0 && (
+                <tr>
+                  <td colSpan="4">
+                    {isLoading ? (
+                      <Loading classOption="align-center-spinner" />
+                    ) : (
+                      <button
                         onClick={() => this.handleShowListContent_ver2()}
                         className="btn bg-root"
                       >
                         Add content
-                    </button>)}
-                    
-                    </td>
-                  </tr>
-                )}
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -411,7 +430,11 @@ class Step4 extends Component {
               style={{ width: "100%" }}
               disabled={isLoading}
             >
-            {isLoading?(<Loading classOption="align-center-spinner"/>) :"UPDATE CONTENT FOR MODULE"}
+              {isLoading ? (
+                <Loading classOption="align-center-spinner" />
+              ) : (
+                "UPDATE CONTENT FOR MODULE"
+              )}
             </button>
           </div>
         )}

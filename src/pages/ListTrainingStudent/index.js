@@ -115,8 +115,8 @@ class ListTraining extends Component {
         if (response._id) {
           let nextActivityStorage = ActivityStorage.value;
           let tempActivity = response;
-          tempActivity.trainings[0] = tempActivity.trainings[0]._id;
-          tempActivity.users[0] = tempActivity.users[0]._id;
+          tempActivity.training = tempActivity.training._id;
+          tempActivity.user = tempActivity.user._id;
           nextActivityStorage.activityusers.push(tempActivity);
           ActivityStorage.value = nextActivityStorage;
           this.notifySuccess(
@@ -140,7 +140,7 @@ class ListTraining extends Component {
   checkTrainingExists = trainingId => {
     const idx = _.findIndex(
       ActivityStorage.activityUsers,
-      activity => activity.trainings[0] === trainingId
+      activity => activity.training === trainingId
     );
     if (idx > -1) {
       return true;

@@ -39,7 +39,7 @@ class PopupListContent extends Component {
   }
 
   processData = listModuleByUser => {
-    options=[];
+    options = [];
     listModuleByUser.map((item, index) => {
       options.push({ value: item, label: item.name });
     });
@@ -77,9 +77,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -127,15 +127,15 @@ class PopupListContent extends Component {
                               {/* <Link
                                 to={`/admin/training/${moduleSelected._id}`}
                               > */}
-                                <img
-                                  src={
-                                    _.isEmpty(moduleSelected.thumbnail)
-                                      ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                      : `${REACT_APP_URL_API}${moduleSelected.thumbnail.url}`
-                                  }
-                                  alt=""
-                                  height="200px"
-                                />
+                              <img
+                                src={
+                                  _.isEmpty(moduleSelected.thumbnail)
+                                    ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                    : `${REACT_APP_URL_API}${moduleSelected.thumbnail.url}`
+                                }
+                                alt=""
+                                height="200px"
+                              />
                               {/* </Link> */}
                             </figure>
 
@@ -145,7 +145,7 @@ class PopupListContent extends Component {
                                   {/* <Link
                                     to={`/admin/training/${moduleSelected._id}`}
                                   > */}
-                                    {moduleSelected.name}
+                                  {moduleSelected.name}
                                   {/* </Link> */}
                                 </h2>
 

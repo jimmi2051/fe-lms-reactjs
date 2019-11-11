@@ -13,7 +13,6 @@ function* authorize(payload, next, nextErr) {
     loading: false
   });
   if (response && response.jwt) {
-    // const isAuthen = payload.mfa_code ? true : false;
     const newUser = {
       address: response.user.address,
       blocked: response.user.blocked,
@@ -29,11 +28,11 @@ function* authorize(payload, next, nextErr) {
       createdAt: response.user.createdAt,
       updatedAt: response.user.updateAt,
       provider: response.user.provider,
-      id: response.user.id,
+      id: response.user.id
     };
     ActivityStorage.value = {
       activityusers: response.user.activityusers
-    }
+    };
     const data = {
       token: response.jwt,
       user: newUser
