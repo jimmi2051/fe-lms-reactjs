@@ -68,9 +68,9 @@ class ListTraining extends Component {
     const { keySearch, categoryId } = this.state;
     fetch(
       `https://be-lms.tk/trainings?${
-      keySearch !== "" ? `name_contains=${keySearch}&` : ``
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }${
-      categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
+        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
       }activityusers.user._id=${AuthStorage.userInfo._id}`
     )
       .then(response => {
@@ -91,7 +91,7 @@ class ListTraining extends Component {
       categoryId
     };
     const { getTrainingToLearn } = this.props.action;
-    getTrainingToLearn(payload, response => { });
+    getTrainingToLearn(payload, response => {});
   };
 
   handleGetCategory = () => {
@@ -230,7 +230,7 @@ class ListTraining extends Component {
                                 categoryId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                                }`}
+                              }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -247,7 +247,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           categoryId === "" ? "font-weight-bold" : ""
-                          }`}
+                        }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerCategory("");
@@ -264,101 +264,51 @@ class ListTraining extends Component {
               <div className="featured-courses courses-wrap">
                 <div className="row mx-m-25">
                   {!loadingListTrainingLearn &&
-                    listTrainingLearn.data &&
-                    _.isArray(listTrainingLearn.data.trainings) ? (
-                      listTrainingLearn.data.trainings.map((item, index) => {
-                        const idx = _.findIndex(
-                          item.activityusers,
-                          activity =>
-                            activity.user._id === AuthStorage.userInfo._id
-                        );
-                        const activityOfTraining = item.activityusers[idx];
-                        let percent = 0;
-                        if (
-                          !_.isEmpty(activityOfTraining) &&
-                          !_.isEmpty(activityOfTraining.courses)
-                        ) {
-                          percent =
-                            (activityOfTraining.courses.length /
-                              item.learningpaths.length) *
-                            100;
-                        }
-                        return (
-                          <div key={index} className="col-12 col-md-6 px-25">
-                            <div className="course-content">
-                              <figure className="course-thumbnail">
-                                <Link
-                                  to={{
-                                    pathname: `training/${item._id}`,
-                                    state: {
-                                      currentActivity: activityOfTraining
-                                    }
-                                  }}
-                                >
-                                  <img
-                                    src={
-                                      _.isEmpty(item.thumbnail)
-                                        ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                        : `${REACT_APP_URL_API}${item.thumbnail.url}`
-                                    }
-                                    alt=""
-                                  />
-                                </Link>
-                              </figure>
+                  listTrainingLearn.data &&
+                  _.isArray(listTrainingLearn.data.trainings) ? (
+                    listTrainingLearn.data.trainings.map((item, index) => {
+                      const idx = _.findIndex(
+                        item.activityusers,
+                        activity =>
+                          activity.user._id === AuthStorage.userInfo._id
+                      );
+                      const activityOfTraining = item.activityusers[idx];
+                      let percent = 0;
+                      if (
+                        !_.isEmpty(activityOfTraining) &&
+                        !_.isEmpty(activityOfTraining.courses)
+                      ) {
+                        percent =
+                          (activityOfTraining.courses.length /
+                            item.learningpaths.length) *
+                          100;
+                      }
+                      return (
+                        <div key={index} className="col-12 col-md-6 px-25">
+                          <div className="course-content">
+                            <figure className="course-thumbnail">
+                              <Link
+                                to={{
+                                  pathname: `training/${item._id}`,
+                                  state: {
+                                    currentActivity: activityOfTraining
+                                  }
+                                }}
+                              >
+                                <img
+                                  src={
+                                    _.isEmpty(item.thumbnail)
+                                      ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                      : `${REACT_APP_URL_API}${item.thumbnail.url}`
+                                  }
+                                  alt=""
+                                />
+                              </Link>
+                            </figure>
 
-                              <div className="course-content-wrap">
-                                <header className="entry-header">
-                                  <h2 className="entry-title">
-                                    <Link
-                                      to={{
-                                        pathname: `training/${item._id}`,
-                                        state: {
-                                          currentActivity: activityOfTraining
-                                        }
-                                      }}
-                                    >
-                                      {item.name}
-                                    </Link>
-                                  </h2>
-
-                                  <div className="entry-meta flex flex-wrap align-items-center">
-                                    <div className="course-author">
-                                      {item.users && item.users.length > 0 ? (
-                                        <a href="#">
-                                          {item.users[0].firstName}{" "}
-                                          {item.users[0].lastName}{" "}
-                                        </a>
-                                      ) : (
-                                          <a href="#">Unknow author</a>
-                                        )}
-                                    </div>
-                                    <div className="course-date">
-                                      {moment(item.createdAt).format(
-                                        "MMM. D, YYYY"
-                                      )}
-                                    </div>
-                                    <div className="course-cost">
-                                      Scores earned:{" "}
-                                      {activityOfTraining.totalMark}
-                                    </div>
-                                  </div>
-                                </header>
-
-                                <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
-                                  <div className="pb-3" style={{ width: "100%" }}>
-                                    <div className="progress">
-                                      <div
-                                        className="progress-bar bg-root"
-                                        role="progressbar"
-                                        style={{ width: `${percent}%` }}
-                                        aria-valuenow="25"
-                                        aria-valuemin="0"
-                                        aria-valuemax="100"
-                                      >
-                                        {percent} %
-                                    </div>
-                                    </div>
-                                  </div>
+                            <div className="course-content-wrap">
+                              <header className="entry-header">
+                                <h2 className="entry-title">
                                   <Link
                                     to={{
                                       pathname: `training/${item._id}`,
@@ -367,25 +317,75 @@ class ListTraining extends Component {
                                       }
                                     }}
                                   >
-                                    <button
-                                      style={{ cursor: "pointer" }}
-                                      type="button"
-                                      className="btn bg-root"
-                                    >
-                                      Continue learning
-                                  </button>
+                                    {item.name}
                                   </Link>
-                                </footer>
-                              </div>
+                                </h2>
+
+                                <div className="entry-meta flex flex-wrap align-items-center">
+                                  <div className="course-author">
+                                    {item.users && item.users.length > 0 ? (
+                                      <a href="#">
+                                        {item.users[0].firstName}{" "}
+                                        {item.users[0].lastName}{" "}
+                                      </a>
+                                    ) : (
+                                      <a href="#">Unknow author</a>
+                                    )}
+                                  </div>
+                                  <div className="course-date">
+                                    {moment(item.createdAt).format(
+                                      "MMM. D, YYYY"
+                                    )}
+                                  </div>
+                                  <div className="course-cost">
+                                    Scores earned:{" "}
+                                    {activityOfTraining.totalMark}
+                                  </div>
+                                </div>
+                              </header>
+
+                              <footer className="entry-footer flex flex-wrap justify-content-between align-items-center">
+                                <div className="pb-3" style={{ width: "100%" }}>
+                                  <div className="progress">
+                                    <div
+                                      className="progress-bar bg-root"
+                                      role="progressbar"
+                                      style={{ width: `${percent}%` }}
+                                      aria-valuenow="25"
+                                      aria-valuemin="0"
+                                      aria-valuemax="100"
+                                    >
+                                      {percent} %
+                                    </div>
+                                  </div>
+                                </div>
+                                <Link
+                                  to={{
+                                    pathname: `training/${item._id}`,
+                                    state: {
+                                      currentActivity: activityOfTraining
+                                    }
+                                  }}
+                                >
+                                  <button
+                                    style={{ cursor: "pointer" }}
+                                    type="button"
+                                    className="btn bg-root"
+                                  >
+                                    Continue learning
+                                  </button>
+                                </Link>
+                              </footer>
                             </div>
                           </div>
-                        );
-                      })
-                    ) : (
-                      <div className="col-xl-12">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="col-xl-12">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                   {this.state.totalPage === 0 && (
                     <h5 className="col-xl-12 text-success">
                       No training found. Please go to store training to add more

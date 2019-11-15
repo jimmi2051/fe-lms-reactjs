@@ -57,7 +57,7 @@ class Step3 extends Component {
     isShowListModule: false,
     updateCouse: false,
     currentTraining: {},
-    isLoading:false
+    isLoading: false
   };
 
   componentDidMount() {
@@ -80,8 +80,14 @@ class Step3 extends Component {
     ) {
       this.handleFilterListCourse(currentTraining._id);
     }
-    if (!_.isEqual(isCreatedCourseModule, this.props.store.isCreatedCourseModule) && isCreatedCourseModule._id) {
-      this.handleGetModuleByCourse(isCreatedCourseModule.course._id)
+    if (
+      !_.isEqual(
+        isCreatedCourseModule,
+        this.props.store.isCreatedCourseModule
+      ) &&
+      isCreatedCourseModule._id
+    ) {
+      this.handleGetModuleByCourse(isCreatedCourseModule.course._id);
     }
   }
 
@@ -107,8 +113,7 @@ class Step3 extends Component {
       });
     });
     this.setState({
-      currentCourse:
-        listCourse.length > 0 ? listCourseFitler[0].course : {},
+      currentCourse: listCourse.length > 0 ? listCourseFitler[0].course : {},
       listCourse
     });
   };
@@ -116,7 +121,7 @@ class Step3 extends Component {
   handleCreateCourseModule = (course, position, module) => {
     const { addCourseModule } = this.props.action;
     const payload = { course, position, module };
-    addCourseModule(payload, () => { });
+    addCourseModule(payload, () => {});
   };
 
   handleSubmit = () => {
@@ -272,7 +277,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -285,22 +290,22 @@ class Step3 extends Component {
                             <i className="fa fa-remove"></i>
                           </button>
                           {/* <Link to={`#`}> */}
-                            <img
-                              src={
-                                _.isEmpty(item.thumbnail)
-                                  ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                  : `${REACT_APP_URL_API}${item.thumbnail.url}`
-                              }
-                              alt=""
-                              height="200px"
-                            />
+                          <img
+                            src={
+                              _.isEmpty(item.thumbnail)
+                                ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                : `${REACT_APP_URL_API}${item.thumbnail.url}`
+                            }
+                            alt=""
+                            height="200px"
+                          />
                           {/* </Link> */}
                         </figure>
 
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                            {item.name}
+                              {item.name}
                               {/* <Link to={`#`}></Link> */}
                             </h2>
 
@@ -364,26 +369,26 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           {/* <Link to={`#`}> */}
-                            <img
-                              src={
-                                item.module && _.isEmpty(item.module.thumbnail)
-                                  ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                  : `${REACT_APP_URL_API}${item.module.thumbnail.url}`
-                              }
-                              alt=""
-                              height="200px"
-                            />
+                          <img
+                            src={
+                              item.module && _.isEmpty(item.module.thumbnail)
+                                ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                : `${REACT_APP_URL_API}${item.module.thumbnail.url}`
+                            }
+                            alt=""
+                            height="200px"
+                          />
                           {/* </Link> */}
                         </figure>
 
                         <div className="course-content-wrap">
                           <header className="entry-header">
                             <h2 className="entry-title">
-                            {item.module.name}
+                              {item.module.name}
                               {/* <Link to={`#`}></Link> */}
                             </h2>
 
@@ -411,26 +416,26 @@ class Step3 extends Component {
               </div>
             </div>
           </div>
-        ) :(
+        ) : (
           <div className="col-xl-12 new-training mb-4">
-              <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
-                  <div className="col-12 col-md-12 px-25">
-                      <Loading classOption="align-center-spinner"/>
-                  </div>
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                <div className="col-12 col-md-12 px-25">
+                  <Loading classOption="align-center-spinner" />
                 </div>
               </div>
             </div>
+          </div>
         )}
         {!loadingModuleByCourse && filterModuleByCourse.length === 0 && (
-            <div className="col-xl-12 new-training mb-4">
-              <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
-                {isLoading?(
+          <div className="col-xl-12 new-training mb-4">
+            <div className="featured-courses courses-wrap">
+              <div className="row mx-m-25">
+                {isLoading ? (
                   <div className="col-12 col-md-12 px-25">
-                      <Loading classOption="align-center-spinner"/>
+                    <Loading classOption="align-center-spinner" />
                   </div>
-                ):(
+                ) : (
                   <div className="col-12 col-md-6 px-25">
                     <div
                       className="course-content"
@@ -443,11 +448,10 @@ class Step3 extends Component {
                     </div>
                   </div>
                 )}
-                 
-                </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
         <div className="form-group col-xl-12">
           {filterModuleByCourse.length === 0 && (
             <button
@@ -456,7 +460,11 @@ class Step3 extends Component {
               onClick={this.handleStepThree}
               disabled={isLoading}
             >
-            {isLoading?(<Loading classOption="align-center-spinner"/>):"SAVE"}
+              {isLoading ? (
+                <Loading classOption="align-center-spinner" />
+              ) : (
+                "SAVE"
+              )}
             </button>
           )}
 

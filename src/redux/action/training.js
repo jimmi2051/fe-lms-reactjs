@@ -4,7 +4,14 @@
 import { SINGLE_API, GRAPHQL } from "./type";
 
 export const createTraining = (payload, next, nextErr) => {
-  const { name, level, description, thumbnail, users, categorytrainings } = payload;
+  const {
+    name,
+    level,
+    description,
+    thumbnail,
+    users,
+    categorytrainings
+  } = payload;
   const isActive = true;
   return {
     type: SINGLE_API,
@@ -24,7 +31,7 @@ export const createTraining = (payload, next, nextErr) => {
         description,
         thumbnail,
         users: [users],
-        categorytrainings: [categorytrainings],
+        categorytrainings: [categorytrainings]
       }
     }
   };
@@ -59,7 +66,11 @@ export const getTrainingByUser = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `trainings?users._id=${id}&${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ``}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      uri: `trainings?users._id=${id}&${
+        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ``
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }_start=${startItemPage}&_limit=${itemPerPage}`,
       beforeCallType: "GET_TRAINING_BY_REQUEST",
       successType: "GET_TRAINING_BY_SUCCESS",
       afterSuccess: next,
@@ -191,14 +202,18 @@ export const getAllTraining = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `trainings?${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ``}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      uri: `trainings?${
+        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ``
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }_start=${startItemPage}&_limit=${itemPerPage}`,
       beforeCallType: "GET_ALL_TRAINING_REQUEST",
       successType: "GET_ALL_TRAINING_SUCCESS",
       afterSuccess: next,
       afterError: nextErr
     }
-  }
-}
+  };
+};
 
 export const getAllCategory = (payload, next, nextErr) => {
   return {
@@ -210,8 +225,8 @@ export const getAllCategory = (payload, next, nextErr) => {
       afterSuccess: next,
       afterError: nextErr
     }
-  }
-}
+  };
+};
 
 export const addToMyTraining = (payload, next, nextErr) => {
   const { training, user } = payload;
@@ -227,8 +242,8 @@ export const addToMyTraining = (payload, next, nextErr) => {
         method: "POST"
       },
       params: {
-        users: [user],
-        trainings: [training],
+        user,
+        training,
         totalMark: 0,
         courses: []
       }
@@ -252,7 +267,11 @@ export const getTrainingToLearn = (payload, next, nextErr) => {
                 _id:"${userId}"
               }
             },
-            ${categoryId !== "" ? `categorytrainings:{_id:"${categoryId}",}` : ``}
+            ${
+              categoryId !== ""
+                ? `categorytrainings:{_id:"${categoryId}",}`
+                : ``
+            }
             ${keySearch !== "" ? `name_contains:"${keySearch}",` : ``}
           },
           limit: ${itemPerPage},

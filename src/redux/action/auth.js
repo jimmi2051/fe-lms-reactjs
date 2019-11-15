@@ -19,20 +19,3 @@ export function logoutRequest(next) {
     next
   };
 }
-
-export function registerRequest(payload = {}, next, nextErr) {
-  return {
-    type: "REGISTER_REQUEST",
-    payload,
-    next,
-    nextErr
-  };
-}
-export function verifyRequest(payload, next, nextErr) {
-  return {
-    type: "VERIFY_REQUEST",
-    payload,
-    next,
-    nextErr
-  };
-}

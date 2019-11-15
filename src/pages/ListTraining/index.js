@@ -53,9 +53,9 @@ class ListTraining extends Component {
     const { keySearch, categoryId } = this.state;
     fetch(
       `https://be-lms.tk/trainings?${
-      keySearch !== "" ? `name_contains=${keySearch}&` : ``
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }${
-      categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
+        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
       }users._id=${userId}`
     )
       .then(response => {
@@ -167,7 +167,7 @@ class ListTraining extends Component {
                                 categoryId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                                }`}
+                              }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -184,7 +184,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           categoryId === "" ? "font-weight-bold" : ""
-                          }`}
+                        }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerCategory("");
@@ -222,7 +222,11 @@ class ListTraining extends Component {
                             <figure className="course-thumbnail">
                               <Link to={`/admin/training/${item._id}`}>
                                 <img
-                                  src={`${item.thumbnail ? `${REACT_APP_URL_API}${item.thumbnail.url}` : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`}`}
+                                  src={`${
+                                    item.thumbnail
+                                      ? `${REACT_APP_URL_API}${item.thumbnail.url}`
+                                      : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
+                                  }`}
                                   alt=""
                                 />
                               </Link>
@@ -271,10 +275,10 @@ class ListTraining extends Component {
                       );
                     })
                   ) : (
-                      <div className="col-xl-12 mt-3">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    <div className="col-xl-12 mt-3">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="row">

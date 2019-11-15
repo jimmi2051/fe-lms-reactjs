@@ -10,17 +10,24 @@ class Slider extends Component {
     return (
       <div className="content-slide-normal">
         <h5 className="content-slide-normal__title">Content: </h5>
-        <Carousel useKeyboardArrows={true} dynamicHeight={true} showThumbs={false} showIndicators={false}>
+        <Carousel
+          useKeyboardArrows={true}
+          dynamicHeight={true}
+          showThumbs={false}
+          showIndicators={false}
+        >
           {slideItem &&
             slideItem.length > 0 &&
             slideItem.map((item, index) => {
               return (
-                <div key={index} className=""
-                // style={{
-                //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
-                //   /*`url(${props.backendDomain +
-                //     slide['imgBackgroundPath']['url']})`*/
-                // }}
+                <div
+                  key={index}
+                  className=""
+                  // style={{
+                  //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
+                  //   /*`url(${props.backendDomain +
+                  //     slide['imgBackgroundPath']['url']})`*/
+                  // }}
                 >
                   <img src={`${REACT_APP_URL_API}${item.imgUrl}`} alt="#" />
                   {/* <div className="slide-item-content col-xl-10">

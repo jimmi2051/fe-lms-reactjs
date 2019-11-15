@@ -23,7 +23,7 @@ class Step1 extends Component {
   };
   handleSubmit = () => {
     const { title } = this.refs;
-    this.setState({isLoading:true})
+    this.setState({ isLoading: true });
     this.props.handleStepOne(title.value);
   };
   render() {
@@ -34,7 +34,7 @@ class Step1 extends Component {
       idxCategory,
       handleChangeCategory
     } = this.props;
-    const {isLoading} = this.state;
+    const { isLoading } = this.state;
     return (
       <div className="row no-gutters">
         <div className="col-xl-12">
@@ -107,7 +107,11 @@ class Step1 extends Component {
               <option value="-1">-- Select category --</option>
               {!loadingCategoryAll &&
                 categoryAll.map((item, index) => {
-                  return <option key={index} value={index}>{item.name}</option>;
+                  return (
+                    <option key={index} value={index}>
+                      {item.name}
+                    </option>
+                  );
                 })}
             </select>
           </div>
@@ -128,7 +132,11 @@ class Step1 extends Component {
             onClick={this.handleSubmit}
             disabled={isLoading}
           >
-          {isLoading ? (<Loading classOption="align-center-spinner"/>) : "CONTINUE"}
+            {isLoading ? (
+              <Loading classOption="align-center-spinner" />
+            ) : (
+              "CONTINUE"
+            )}
           </button>
         </div>
       </div>

@@ -56,7 +56,7 @@ class Step2 extends Component {
   ) => {
     const { addLearningPath } = this.props.action;
     const payload = { training, course, position, markForCourse, isRequired };
-    addLearningPath(payload, response => { });
+    addLearningPath(payload, response => {});
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -109,13 +109,13 @@ class Step2 extends Component {
   handleStepTwo = () => {
     const { notifySuccess, notifyError } = this.props;
     const { listCourseChoosen_ver2 } = this.state;
-    this.setState({isLoading:true})
+    this.setState({ isLoading: true });
     if (listCourseChoosen_ver2.length === 0) {
       notifyError(
         "Nofitication",
         "Error! You must add least one course to training."
       );
-      this.setState({isLoading:false})
+      this.setState({ isLoading: false });
       return;
     }
     const { trainingCreated } = this.props;
@@ -124,7 +124,7 @@ class Step2 extends Component {
         "Nofitication",
         "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
       );
-      this.setState({isLoading:false})
+      this.setState({ isLoading: false });
       return;
     }
     const training = trainingCreated._id;
@@ -151,7 +151,7 @@ class Step2 extends Component {
       });
     } else {
       this.setState({ messageErr: "Must choose one course is a mandatory." });
-      this.setState({isLoading:false})
+      this.setState({ isLoading: false });
     }
   };
 
@@ -167,7 +167,7 @@ class Step2 extends Component {
   handleInputMark = (index, mark) => {
     let { listCourseChoosen_ver2 } = this.state;
     listCourseChoosen_ver2[index].mark = mark;
-    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => { });
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => {});
   };
 
   handleCheckRequired = (index, checked) => {
@@ -238,7 +238,7 @@ class Step2 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -251,23 +251,21 @@ class Step2 extends Component {
                             <i className="fa fa-remove"></i>
                           </button>
                           {/* <Link to={`#`}> */}
-                            <img
-                              src={
-                                _.isEmpty(item.course.thumbnail)
-                                  ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
-                                  : `${REACT_APP_URL_API}${item.course.thumbnail.url}`
-                              }
-                              alt=""
-                              height="200px"
-                            />
+                          <img
+                            src={
+                              _.isEmpty(item.course.thumbnail)
+                                ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                : `${REACT_APP_URL_API}${item.course.thumbnail.url}`
+                            }
+                            alt=""
+                            height="200px"
+                          />
                           {/* </Link> */}
                         </figure>
 
                         <div className="course-content-wrap">
                           <header className="entry-header">
-                            <h2 className="entry-title">
-                              {item.course.name}
-                            </h2>
+                            <h2 className="entry-title">{item.course.name}</h2>
 
                             <div className="entry-meta flex flex-wrap align-items-center">
                               <div className="course-author">
@@ -303,7 +301,7 @@ class Step2 extends Component {
                                   <label
                                     className={`${
                                       messageErr !== "" ? "text-danger" : ""
-                                      } form-check-label`}
+                                    } form-check-label`}
                                     htmlFor="gridCheck"
                                   >
                                     Mandatory
@@ -377,8 +375,11 @@ class Step2 extends Component {
             onClick={this.handleStepTwo}
             disabled={isLoading}
           >
-          {isLoading?(<Loading classOption="align-center-spinner"/>):"SAVE & CONTINUE"}
-            
+            {isLoading ? (
+              <Loading classOption="align-center-spinner" />
+            ) : (
+              "SAVE & CONTINUE"
+            )}
           </button>
         </div>
       </div>
