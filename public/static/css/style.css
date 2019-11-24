@@ -1330,18 +1330,6 @@ a.btn:hover {
     padding: 8px 0 8px 24px;
 }
 
-.cat-links ul li::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 0;
-    width: 8px;
-    height: 100%;
-    font-size: 14px;
-    font-family: 'FontAwesome';
-    color: #c0c1cd;;
-}
-
 .cat-links ul li:hover::before {
     color: #19c880;
 }
