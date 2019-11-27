@@ -2,13 +2,22 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { getTrainingByUser, getAllCategory } from "redux/action/training";
+import {
+  getTrainingByUser,
+  getAllCategory,
+  deleteTraining,
+  updateTraining
+} from "redux/action/training";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import Pagination from "react-js-pagination";
 import Loading from "components/Loading";
+import { ToastContainer } from "react-toastr";
+import PopupRemove from "pages/ListTraining/PopupRemove";
+let toastr;
+
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
@@ -27,13 +36,15 @@ const mapDispatchToProps = dispatch => {
     action: bindActionCreators(
       {
         getTrainingByUser,
-        getAllCategory
+        getAllCategory,
+        deleteTraining,
+        updateTraining
       },
       dispatch
     )
   };
 };
-
+const maxLevel = [1, 2, 3, 4, 5];
 class ListTraining extends Component {
   state = {
     totalPage: -1,
@@ -41,13 +52,74 @@ class ListTraining extends Component {
     categoryId: "",
     activePage: 1,
     startItemPage: 0,
-    itemPerPage: 4
+    itemPerPage: 4,
+    isOpen: false,
+    trainingId: "",
+    isUpdate: false,
+    nameChange: "",
+    levelChange: ""
   };
   componentDidMount() {
     this.handleGetTraining(AuthStorage.userInfo._id);
     this.handleGetCategory();
     this.handleGetTotalPage(AuthStorage.userInfo._id);
   }
+
+  handleDeleteTraining = id => {
+    const payload = { id };
+    const { deleteTraining } = this.props.action;
+    deleteTraining(payload, response => {
+      // console.log("response>>>", response);
+      if (response._id) {
+        this.handleGetTraining(AuthStorage.userInfo._id);
+        this.handleGetTotalPage(AuthStorage.userInfo._id);
+        this.notifySuccess(
+          "Notification",
+          `Remove ${response.name} successfully.`
+        );
+      } else {
+        this.notifyError(
+          "Notification",
+          `Something when wrong. Please wait a few minutes and try again.`
+        );
+      }
+    });
+  };
+
+  handleUpdateTraining = () => {
+    const { trainingId, nameChange, levelChange } = this.state;
+    const payload = {
+      id: trainingId,
+      name: nameChange,
+      level: levelChange
+    };
+    const { updateTraining } = this.props.action;
+    updateTraining(payload, response => {
+      if (response._id) {
+        // Refresh page
+        this.handleGetTraining(AuthStorage.userInfo._id);
+        this.handleGetTotalPage(AuthStorage.userInfo._id);
+        // Notify
+        this.notifySuccess(
+          "Notification",
+          `Update ${response.name} successfully.`
+        );
+        // Reset state
+        this.setState({
+          isUpdate: false,
+          trainingId: "",
+          nameChange: "",
+          levelChange: ""
+        });
+      } else {
+        this.notifyError(
+          "Notification",
+          `Something when wrong. Please wait a few minutes and try again.`
+        );
+      }
+      console.log("Console.log>>>", response);
+    });
+  };
 
   handleGetTotalPage = userId => {
     const { keySearch, categoryId } = this.state;
@@ -113,8 +185,63 @@ class ListTraining extends Component {
     });
   };
 
+  handleOpenPopup = () => {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  };
+
+  handleSetTrainingId = id => {
+    this.setState({ trainingId: id });
+  };
+
+  handleSubmitRemove = () => {
+    const { trainingId } = this.state;
+    this.handleDeleteTraining(trainingId);
+    this.setState({ trainingId: "" });
+    this.setState({ isOpen: false });
+  };
+
+  handleEnableUpdate = (name, level) => {
+    this.setState({ isUpdate: true, nameChange: name, levelChange: level });
+  };
+
+  handleSubmitUpdate = () => {
+    this.setState({ isUpdate: false });
+  };
+
+  handleCancelUpdate = () => {
+    this.setState({ isUpdate: false });
+  };
+
+  handleChangeName = e => {
+    this.setState({ nameChange: e.target.value });
+  };
+
+  handleChangeLevel = e => {
+    this.setState({ levelChange: e.target.value });
+  };
+
+  notifySuccess = (title, content) => {
+    toastr.success(content, title, {
+      closeButton: true
+    });
+  };
+
+  notifyError = (title, content) => {
+    toastr.error(content, title, {
+      closeButton: true
+    });
+  };
+
   render() {
-    const { categoryId } = this.state;
+    const {
+      categoryId,
+      isOpen,
+      isUpdate,
+      nameChange,
+      levelChange
+    } = this.state;
     const {
       loadingListTraining,
       listTraining,
@@ -123,6 +250,17 @@ class ListTraining extends Component {
     } = this.props.store;
     return (
       <div className="page-header">
+        {isOpen && (
+          <PopupRemove
+            isShow={isOpen}
+            handleClosePopup={this.handleOpenPopup}
+            handleSubmitRemove={this.handleSubmitRemove}
+          />
+        )}
+        <ToastContainer
+          ref={ref => (toastr = ref)}
+          className="toast-top-right"
+        />
         <Header titleHeader="MANAGE TRAINING" />
         <div className="container">
           <div className="row">
@@ -220,6 +358,56 @@ class ListTraining extends Component {
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
+                              {isUpdate ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-remove alert-danger"
+                                    onClick={() => {
+                                      this.handleCancelUpdate();
+                                    }}
+                                  >
+                                    <i className="fa fa-remove"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-update alert-info"
+                                    onClick={() => {
+                                      this.handleUpdateTraining();
+                                    }}
+                                  >
+                                    <i className="fa fa-save"></i>
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-remove alert-danger"
+                                    onClick={() => {
+                                      this.handleOpenPopup();
+                                      this.handleSetTrainingId(item._id);
+                                    }}
+                                  >
+                                    <i className="fa fa-remove"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-update alert-info"
+                                    onClick={() => {
+                                      // this.handleRemoveCourseToPath_ver2(index);
+                                      this.handleSetTrainingId(item._id);
+                                      this.handleEnableUpdate(
+                                        item.name,
+                                        item.level
+                                      );
+                                    }}
+                                  >
+                                    <i className="fa fa-pencil"></i>
+                                  </button>
+                                </>
+                              )}
+
                               <Link to={`/admin/training/${item._id}`}>
                                 <img
                                   src={`${
@@ -235,9 +423,18 @@ class ListTraining extends Component {
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  <Link to={`/admin/training/${item._id}`}>
-                                    {item.name}
-                                  </Link>
+                                  {isUpdate ? (
+                                    <textarea
+                                      value={nameChange}
+                                      onChange={this.handleChangeName}
+                                      className="form-control"
+                                      rows="2"
+                                    />
+                                  ) : (
+                                    <Link to={`/admin/training/${item._id}`}>
+                                      {item.name}
+                                    </Link>
+                                  )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
@@ -257,17 +454,36 @@ class ListTraining extends Component {
 
                               <footer className="entry-footer flex flex-wrap align-items-center">
                                 <h4 className="t-level mb-0">Level: </h4>
-                                <div className="level pl-3">
-                                  {item.level !== "" &&
-                                    starOfTraining.map((item, index) => {
-                                      return (
-                                        <span
-                                          key={index}
-                                          className="fa fa-star checked"
-                                        ></span>
-                                      );
-                                    })}
-                                </div>
+                                {isUpdate ? (
+                                  <div
+                                    className="level pl-3"
+                                    style={{ width: "70%" }}
+                                  >
+                                    <select
+                                      className="form-control"
+                                      value={levelChange}
+                                      onChange={this.handleChangeLevel}
+                                    >
+                                      {maxLevel.map((item, index) => {
+                                        return (
+                                          <option value={item}>{item}</option>
+                                        );
+                                      })}
+                                    </select>
+                                  </div>
+                                ) : (
+                                  <div className="level pl-3">
+                                    {item.level !== "" &&
+                                      starOfTraining.map((item, index) => {
+                                        return (
+                                          <span
+                                            key={index}
+                                            className="fa fa-star checked"
+                                          ></span>
+                                        );
+                                      })}
+                                  </div>
+                                )}
                               </footer>
                             </div>
                           </div>
@@ -300,7 +516,4 @@ class ListTraining extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ListTraining);
+export default connect(mapStateToProps, mapDispatchToProps)(ListTraining);

@@ -335,3 +335,41 @@ export const updateActivity = (payload, next, nextErr) => {
     }
   };
 };
+
+export const deleteTraining = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `trainings/${id}`,
+      beforeCallType: "DELETE_TRAINING_REQUEST",
+      successType: "DELETE_TRAINING_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "DELETE"
+      }
+    }
+  };
+};
+
+export const updateTraining = (payload, next, nextErr) => {
+  const { id, name, level } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `trainings/${id}`,
+      beforeCallType: "UPDATE_TRAINING_REQUEST",
+      successType: "UPDATE_TRAINING_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "PUT"
+      },
+      params: {
+        name,
+        level
+      }
+    }
+  };
+};
