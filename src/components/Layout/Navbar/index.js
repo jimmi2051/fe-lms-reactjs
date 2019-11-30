@@ -24,7 +24,7 @@ class Navbar extends Component {
   state = {
     keySearch: ""
   };
-  componentDidMount() {}
+  componentDidMount() { }
   logout = () => {
     this.props.action.logoutRequest();
   };
@@ -91,19 +91,19 @@ class Navbar extends Component {
                         </li>
                       </>
                     ) : (
-                      <>
-                        <li>
-                          <Link to="/profile">
-                            {AuthStorage.userInfo.username}
+                        <>
+                          <li>
+                            <Link to="/profile">
+                              {AuthStorage.userInfo.username}
+                            </Link>
+                          </li>
+                          <li>
+                            <Link onClick={this.logout} to="/login">
+                              Log out
                           </Link>
-                        </li>
-                        <li>
-                          <Link onClick={this.logout} to="/login">
-                            Log out
-                          </Link>
-                        </li>
-                      </>
-                    )}
+                          </li>
+                        </>
+                      )}
                   </ul>
                 </div>
               </div>
@@ -241,15 +241,30 @@ class Navbar extends Component {
                     <span></span>
                     <span></span>
                   </div>
+                  {AuthStorage.loggedIn &&
+                    AuthStorage.userInfo.role.type === "creator" && (
+                      <div className="header-bar-cart has-submenu">
+                        <a
+                          href="#"
+                          className="flex justify-content-center align-items-center has-menu"
+                        >
+                          <i className="fa fa-caret-down"></i>
+                        </a>
+                        <div className="sub-menu">
+                          <Link className={pathname === "/admin/course" ? "current-menu-item" : ""} to="/admin/course">
+                            Manage Course
+                      </Link>
+                          <a href="#">Manage Module</a>
+                          <a href="#">Manage Content</a>
+                        </div>
+                      </div>
+                    )}
+                  {(AuthStorage.loggedIn &&
+                    AuthStorage.userInfo.role.type === "user") || !AuthStorage.loggedIn && (<div class="header-bar-cart">
+                      <a href="#" class="flex justify-content-center align-items-center">
+                        <span aria-hidden="true" class="icon_bag_alt"></span></a>
+                    </div>)}
 
-                  <div className="header-bar-cart">
-                    <a
-                      href="#"
-                      className="flex justify-content-center align-items-center"
-                    >
-                      <span aria-hidden="true" className="icon_bag_alt"></span>
-                    </a>
-                  </div>
                 </nav>
               </div>
             </div>

@@ -18,6 +18,10 @@ export const initialState = {
   isCreatedCourseModule: {
     data: {},
     loading: true
+  },
+  listCoursePaging: {
+    data: {},
+    loading: true
   }
 };
 
@@ -66,6 +70,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isCreatedCourseModule: { data: action.payload, loading: false }
+      };
+    case "GET_LIST_COURSES_REQUEST":
+      return {
+        ...state,
+        listCoursePaging: { ...initialState.listCoursePaging }
+      };
+    case "GET_LIST_COURSES_SUCCESS":
+      return {
+        ...state,
+        listCoursePaging: { data: action.payload, loading: false }
       };
     default:
       return state;

@@ -117,7 +117,6 @@ class ListTraining extends Component {
           `Something when wrong. Please wait a few minutes and try again.`
         );
       }
-      console.log("Console.log>>>", response);
     });
   };
 
@@ -125,9 +124,9 @@ class ListTraining extends Component {
     const { keySearch, categoryId } = this.state;
     fetch(
       `https://be-lms.tk/trainings?${
-        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }${
-        categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
+      categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
       }users._id=${userId}`
     )
       .then(response => {
@@ -240,7 +239,8 @@ class ListTraining extends Component {
       isOpen,
       isUpdate,
       nameChange,
-      levelChange
+      levelChange,
+      traningId
     } = this.state;
     const {
       loadingListTraining,
@@ -305,7 +305,7 @@ class ListTraining extends Component {
                                 categoryId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                              }`}
+                                }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -322,7 +322,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           categoryId === "" ? "font-weight-bold" : ""
-                        }`}
+                          }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerCategory("");
@@ -358,7 +358,7 @@ class ListTraining extends Component {
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              {isUpdate ? (
+                              {isUpdate && traningId === item._id ? (
                                 <>
                                   <button
                                     type="button"
@@ -380,33 +380,33 @@ class ListTraining extends Component {
                                   </button>
                                 </>
                               ) : (
-                                <>
-                                  <button
-                                    type="button"
-                                    className="btn btn-remove alert-danger"
-                                    onClick={() => {
-                                      this.handleOpenPopup();
-                                      this.handleSetTrainingId(item._id);
-                                    }}
-                                  >
-                                    <i className="fa fa-remove"></i>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-update alert-info"
-                                    onClick={() => {
-                                      // this.handleRemoveCourseToPath_ver2(index);
-                                      this.handleSetTrainingId(item._id);
-                                      this.handleEnableUpdate(
-                                        item.name,
-                                        item.level
-                                      );
-                                    }}
-                                  >
-                                    <i className="fa fa-pencil"></i>
-                                  </button>
-                                </>
-                              )}
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="btn btn-remove alert-danger"
+                                      onClick={() => {
+                                        this.handleOpenPopup();
+                                        this.handleSetTrainingId(item._id);
+                                      }}
+                                    >
+                                      <i className="fa fa-remove"></i>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-update alert-info"
+                                      onClick={() => {
+                                        // this.handleRemoveCourseToPath_ver2(index);
+                                        this.handleSetTrainingId(item._id);
+                                        this.handleEnableUpdate(
+                                          item.name,
+                                          item.level
+                                        );
+                                      }}
+                                    >
+                                      <i className="fa fa-pencil"></i>
+                                    </button>
+                                  </>
+                                )}
 
                               <Link to={`/admin/training/${item._id}`}>
                                 <img
@@ -414,7 +414,7 @@ class ListTraining extends Component {
                                     item.thumbnail
                                       ? `${REACT_APP_URL_API}${item.thumbnail.url}`
                                       : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                  }`}
+                                    }`}
                                   alt=""
                                 />
                               </Link>
@@ -423,7 +423,7 @@ class ListTraining extends Component {
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  {isUpdate ? (
+                                  {isUpdate && traningId === item._id ? (
                                     <textarea
                                       value={nameChange}
                                       onChange={this.handleChangeName}
@@ -431,10 +431,10 @@ class ListTraining extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                    <Link to={`/admin/training/${item._id}`}>
-                                      {item.name}
-                                    </Link>
-                                  )}
+                                      <Link to={`/admin/training/${item._id}`}>
+                                        {item.name}
+                                      </Link>
+                                    )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
@@ -454,7 +454,7 @@ class ListTraining extends Component {
 
                               <footer className="entry-footer flex flex-wrap align-items-center">
                                 <h4 className="t-level mb-0">Level: </h4>
-                                {isUpdate ? (
+                                {isUpdate && traningId === item._id ? (
                                   <div
                                     className="level pl-3"
                                     style={{ width: "70%" }}
@@ -472,18 +472,18 @@ class ListTraining extends Component {
                                     </select>
                                   </div>
                                 ) : (
-                                  <div className="level pl-3">
-                                    {item.level !== "" &&
-                                      starOfTraining.map((item, index) => {
-                                        return (
-                                          <span
-                                            key={index}
-                                            className="fa fa-star checked"
-                                          ></span>
-                                        );
-                                      })}
-                                  </div>
-                                )}
+                                    <div className="level pl-3">
+                                      {item.level !== "" &&
+                                        starOfTraining.map((item, index) => {
+                                          return (
+                                            <span
+                                              key={index}
+                                              className="fa fa-star checked"
+                                            ></span>
+                                          );
+                                        })}
+                                    </div>
+                                  )}
                               </footer>
                             </div>
                           </div>
@@ -491,10 +491,10 @@ class ListTraining extends Component {
                       );
                     })
                   ) : (
-                    <div className="col-xl-12 mt-3">
-                      <Loading classOption="align-center-spinner" />
-                    </div>
-                  )}
+                      <div className="col-xl-12 mt-3">
+                        <Loading classOption="align-center-spinner" />
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="row">

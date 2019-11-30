@@ -39,10 +39,11 @@ import isCreateContent, { initialState as initCreateContent } from "./content";
 import isCreateData, { initialState as initCreateData } from "./content";
 
 import trainingAll, { initialState as initTrainingAll } from "./training"
-import listTrainingLearn, {initialState as initListTrainingLearn} from "./training";
+import listTrainingLearn, { initialState as initListTrainingLearn } from "./training";
 import categoryAll, { initialState as initCategoryAll } from "./training"
-import isAddTraining, {initialState as initIsAddTraining} from "./training"
-import isUpdateActivity, {initialState as initIsUpdateActivity} from "./training"
+import isAddTraining, { initialState as initIsAddTraining } from "./training"
+import isUpdateActivity, { initialState as initIsUpdateActivity } from "./training"
+import listCoursePaging, { initialState as initListCoursePaging } from "./course"
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -69,8 +70,9 @@ export const exampleInitialState = {
   trainingAll: initTrainingAll,
   categoryAll: initCategoryAll,
   isAddTraining: initIsAddTraining,
-  listTrainingLearn:initListTrainingLearn,
-  isUpdateActivity:initIsUpdateActivity
+  listTrainingLearn: initListTrainingLearn,
+  isUpdateActivity: initIsUpdateActivity,
+  listCoursePaging: initListCoursePaging
 };
 
 export default {
@@ -100,5 +102,6 @@ export default {
   categoryAll,
   isAddTraining,
   listTrainingLearn,
-  isUpdateActivity
+  isUpdateActivity,
+  listCoursePaging
 };

@@ -29,3 +29,69 @@
 .page-header{
   min-height: 84vh;
 }
+.navbar-submenu {
+  padding: 0px;
+  position: absolute;
+  display: none;
+  right: 30px;
+  background-color: #f5f6f8;
+  width: 85%;
+  z-index: 9999;
+  min-width: 160px;
+  text-align: center;
+  li {
+    list-style: none;
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+.has-submenu {
+  position: relative;
+  i {
+    line-height: 38px;
+    vertical-align: middle;
+  }
+  &:hover .sub-menu {
+    display: block;
+  }
+  a{
+    &:hover {
+      cursor: pointer;
+      color: #19c880;
+    }
+  }
+  
+}
+.sub-menu{
+  position: absolute;
+  margin-left: -65px;
+  right: 0px;
+  width: 180px;
+  text-align: right;
+  display: none;
+  a{
+    display: block;
+    width: 100%;
+    text-transform: uppercase;
+    padding-top: 15px;
+    position: relative;
+    &::before{
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 0;
+      width: 8px;
+      height: 100%;
+      font-size: 14px;
+      font-family: 'FontAwesome';
+      color: #c0c1cd;
+    }
+    &:hover{
+      color:#19c880;
+    }
+  }
+}
+.header-bar-cart{
+  position: relative;
+}
