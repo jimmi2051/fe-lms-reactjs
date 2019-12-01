@@ -240,7 +240,7 @@ class ListTraining extends Component {
       isUpdate,
       nameChange,
       levelChange,
-      traningId
+      trainingId
     } = this.state;
     const {
       loadingListTraining,
@@ -354,11 +354,14 @@ class ListTraining extends Component {
                       for (let i = 0; i < parseInt(item.level); i++) {
                         starOfTraining.push(i);
                       }
+                      console.log("training Id>>>>", trainingId);
+                      console.log("item._id", item._id);
+                      console.log("isUpdate>>>", isUpdate)
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              {isUpdate && traningId === item._id ? (
+                              {isUpdate && trainingId === item._id ? (
                                 <>
                                   <button
                                     type="button"
@@ -423,7 +426,7 @@ class ListTraining extends Component {
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  {isUpdate && traningId === item._id ? (
+                                  {isUpdate && trainingId === item._id ? (
                                     <textarea
                                       value={nameChange}
                                       onChange={this.handleChangeName}
@@ -454,7 +457,7 @@ class ListTraining extends Component {
 
                               <footer className="entry-footer flex flex-wrap align-items-center">
                                 <h4 className="t-level mb-0">Level: </h4>
-                                {isUpdate && traningId === item._id ? (
+                                {isUpdate && trainingId === item._id ? (
                                   <div
                                     className="level pl-3"
                                     style={{ width: "70%" }}
