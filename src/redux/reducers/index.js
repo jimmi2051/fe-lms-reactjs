@@ -44,6 +44,8 @@ import categoryAll, { initialState as initCategoryAll } from "./training"
 import isAddTraining, { initialState as initIsAddTraining } from "./training"
 import isUpdateActivity, { initialState as initIsUpdateActivity } from "./training"
 import listCoursePaging, { initialState as initListCoursePaging } from "./course"
+import listModulePaging, { initialState as initListModulePaging } from "./module"
+import listContentPaging, { initialState as initListContentPaging } from "./content"
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -72,7 +74,9 @@ export const exampleInitialState = {
   isAddTraining: initIsAddTraining,
   listTrainingLearn: initListTrainingLearn,
   isUpdateActivity: initIsUpdateActivity,
-  listCoursePaging: initListCoursePaging
+  listCoursePaging: initListCoursePaging,
+  listModulePaging: initListModulePaging,
+  listContentPaging: initListContentPaging
 };
 
 export default {
@@ -103,5 +107,7 @@ export default {
   isAddTraining,
   listTrainingLearn,
   isUpdateActivity,
-  listCoursePaging
+  listCoursePaging,
+  listModulePaging,
+  listContentPaging
 };

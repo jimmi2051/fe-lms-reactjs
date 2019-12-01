@@ -83,3 +83,54 @@ export const removeModuleByCourse = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getListModule = (payload, next, nextErr) => {
+  const { id, keySearch, startItemPage, itemPerPage, courseId = "" } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `modules?users._id=${id}&${courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ""}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      beforeCallType: "GET_LIST_MODULE_REQUEST",
+      successType: "GET_LIST_MODULE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};
+
+export const deleteModule = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `modules/${id}`,
+      beforeCallType: "DELETE_MODULE_REQUEST",
+      successType: "DELETE_MODULE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "DELETE"
+      }
+    }
+  };
+};
+
+export const updateModule = (payload, next, nextErr) => {
+  const { id, name } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `modules/${id}`,
+      beforeCallType: "UPDATE_MODULE_REQUEST",
+      successType: "UPDATE_MODULE_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "PUT"
+      },
+      params: {
+        name
+      }
+    }
+  };
+};

@@ -14,6 +14,10 @@ export const initialState = {
   isCreateData: {
     data: {},
     loading: true
+  },
+  listContentPaging:{
+    data:{},
+    loading:true
   }
 };
 
@@ -58,6 +62,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isCreateData: { data: action.payload, loading: false }
+      };
+    case "GET_LIST_CONTENT_REQUEST":
+      return {
+        ...state,
+        listContentPaging: { ...initialState.listContentPaging }
+      };
+    case "GET_LIST_CONTENT_SUCCESS":
+      return {
+        ...state,
+        listContentPaging: { data: action.payload, loading: false }
       };
     default:
       return state;

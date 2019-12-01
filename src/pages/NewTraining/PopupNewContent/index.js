@@ -225,7 +225,7 @@ class PopupNewContent extends Component {
       slideItems.push({
         title: titleContent.value,
         content: contentSlide.value,
-        imgUrl: url
+        imgPath: url
       });
       // Process with last element in Array
       if (index === countTextTest.length - 1) {

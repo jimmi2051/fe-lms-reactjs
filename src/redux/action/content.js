@@ -97,3 +97,54 @@ export const createData = (payload, next, nextErr) => {
     }
   };
 };
+
+export const getListContent = (payload, next, nextErr) => {
+  const { id, keySearch, startItemPage, itemPerPage, moduleId = "" } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `contents?users._id=${id}&${moduleId !== "" ? `modules._id=${moduleId}&` : ""}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      beforeCallType: "GET_LIST_CONTENT_REQUEST",
+      successType: "GET_LIST_CONTENT_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr
+    }
+  };
+};
+
+export const deleteContent = (payload, next, nextErr) => {
+  const { id } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `contents/${id}`,
+      beforeCallType: "DELETE_CONTENT_REQUEST",
+      successType: "DELETE_CONTENT_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "DELETE"
+      }
+    }
+  };
+};
+
+export const updateContentVer2 = (payload, next, nextErr) => {
+  const { id, name } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `contents/${id}`,
+      beforeCallType: "UPDATE_NAME_CONTENT_REQUEST",
+      successType: "UPDATE_NAME_CONTENT_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "PUT"
+      },
+      params: {
+        name
+      }
+    }
+  };
+};

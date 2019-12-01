@@ -23,13 +23,13 @@ class Slider extends Component {
                 <div
                   key={index}
                   className=""
-                  // style={{
-                  //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
-                  //   /*`url(${props.backendDomain +
-                  //     slide['imgBackgroundPath']['url']})`*/
-                  // }}
+                // style={{
+                //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
+                //   /*`url(${props.backendDomain +
+                //     slide['imgBackgroundPath']['url']})`*/
+                // }}
                 >
-                  <img src={`${REACT_APP_URL_API}${item.imgUrl}`} alt="#" />
+                  <img src={`${REACT_APP_URL_API}${item.imgPath}`} alt="#" />
                   {/* <div className="slide-item-content col-xl-10">
                     <h5 className="pt-3">{item.title}</h5>
                     <p className="">{item.content}</p>

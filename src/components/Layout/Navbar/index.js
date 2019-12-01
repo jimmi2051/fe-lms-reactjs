@@ -253,16 +253,21 @@ class Navbar extends Component {
                         <div className="sub-menu">
                           <Link className={pathname === "/admin/course" ? "current-menu-item" : ""} to="/admin/course">
                             Manage Course
-                      </Link>
-                          <a href="#">Manage Module</a>
-                          <a href="#">Manage Content</a>
+                          </Link>
+                          <Link className={pathname === "/admin/module" ? "current-menu-item" : ""} to="/admin/module">
+                            Manage Module
+                          </Link>
+                          <Link className={pathname === "/admin/content" ? "current-menu-item" : ""} to="/admin/content">
+                            Manage Content
+                          </Link>
                         </div>
                       </div>
                     )}
                   {(AuthStorage.loggedIn &&
                     AuthStorage.userInfo.role.type === "user") || !AuthStorage.loggedIn && (<div class="header-bar-cart">
                       <a href="#" class="flex justify-content-center align-items-center">
-                        <span aria-hidden="true" class="icon_bag_alt"></span></a>
+                        <span aria-hidden="true" class="icon_bag_alt"></span>
+                      </a>
                     </div>)}
 
                 </nav>

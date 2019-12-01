@@ -54,9 +54,9 @@ class PopupDetailContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -79,7 +79,7 @@ class PopupDetailContent extends Component {
             <div className="modal-body">
               <div className="row">
                 <div className="col-xl-12">
-                  {!_.isEmpty(currentContent) && (
+                  {!_.isEmpty(currentContent) && currentContent.relationData && (
                     <div>
                       <p className="text-success">
                         {currentContent.relationData.data.title}

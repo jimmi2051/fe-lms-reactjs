@@ -18,7 +18,8 @@ import MyTrainingPage from "pages/MyTrainingStudent";
 import ViewTrainingDetail from "pages/ViewDetailTraining";
 import AdminTrainingDetail from "pages/AdminTrainingDetail";
 import PageNotFound from "pages/PageNotFound";
-
+import AdminModulePage from "pages/ModuleManage";
+import AdminContentPage from "pages/ContentManage";
 import StudentWarp from "layout/Student";
 
 export default function RootRoute() {
@@ -48,6 +49,8 @@ export default function RootRoute() {
               component={AdminTrainingDetail}
             />
             <Route exact path="/admin/course" component={AdminCoursePage} />
+            <Route exact path="/admin/module" component={AdminModulePage} />
+            <Route exact path="/admin/content" component={AdminContentPage} />
             <Route exact path="/admin/new-training" component={AdminNewTraining} />
             <Route exact path="/admin/training" component={AdminListTraining} />
             <Route component={PageNotFound} />

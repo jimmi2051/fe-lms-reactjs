@@ -3,14 +3,14 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
 import {
-  getListCourse,
-  deleteCourse,
-  updateCourse,
-  createCourse
-} from "redux/action/course";
+  getListModule,
+  deleteModule,
+  updateModule,
+  createModule
+} from "redux/action/module";
 import {
-  getTrainingByUser
-} from "redux/action/training";
+  getListCourse
+} from "redux/action/course";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
@@ -18,9 +18,9 @@ import { Link } from "react-router-dom";
 import Pagination from "react-js-pagination";
 import Loading from "components/Loading";
 import { ToastContainer } from "react-toastr";
-import PopupRemove from "pages/CourseManage/PopupRemove";
+import PopupRemove from "pages/ModuleManage/PopupRemove";
 import { UploadFile } from "utils/UploadImage.js";
-import PopupNewCourse from "pages/NewTraining/PopupNewCourse";
+import PopupNewModule from "pages/NewTraining/PopupNewModule";
 let toastr;
 
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
@@ -29,9 +29,9 @@ function mapStateToProps(state) {
   return {
     store: {
       listCoursePaging: state.listCoursePaging.listCoursePaging.data,
-      loading: state.listCoursePaging.listCoursePaging.loading,
-      listTraining: state.listTraining.listTraining.data,
-      loadingListTraining: state.listTraining.listTraining.loading,
+      loadingCourse: state.listCoursePaging.listCoursePaging.loading,
+      listModulePaging: state.listModulePaging.listModulePaging.data,
+      loading: state.listModulePaging.listModulePaging.loading,
     }
   };
 }
@@ -40,17 +40,17 @@ const mapDispatchToProps = dispatch => {
   return {
     action: bindActionCreators(
       {
-        getListCourse,
-        deleteCourse,
-        updateCourse,
-        createCourse,
-        getTrainingByUser
+        getListModule,
+        deleteModule,
+        updateModule,
+        createModule,
+        getListCourse
       },
       dispatch
     )
   };
 };
-class ListTraining extends Component {
+class ModuleManage extends Component {
   state = {
     totalPage: -1,
     keySearch: "",
@@ -63,37 +63,25 @@ class ListTraining extends Component {
     isUpdate: false,
     nameChange: "",
     levelChange: "",
-    trainingId: ""
+    trainingId: "",
+    moduleId: ""
   };
   componentDidMount() {
-    this.handleGetCourse(AuthStorage.userInfo._id);
+    this.handleGetModule(AuthStorage.userInfo._id);
     this.handleGetTotalPage(AuthStorage.userInfo._id);
-    this.handleGetTraining(AuthStorage.userInfo._id);
+    this.handleGetCourse(AuthStorage.userInfo._id);
   }
 
-  handleGetTraining = userId => {
-    // const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
-    const payload = {
-      id: userId,
-      keySearch: "",
-      startItemPage: 0,
-      itemPerPage: 999,
-      categoryId: ""
-    };
-    const { getTrainingByUser } = this.props.action;
-    getTrainingByUser(payload);
-  };
-
-  handleCreateCourse = (name, description, thumbnail, user) => {
-    const payload = { name, description, thumbnail, user };
-    const { createCourse } = this.props.action;
-    createCourse(payload, (isCreatedCourse) => {
-      if (!_.isUndefined(isCreatedCourse.id)) {
-        this.handleGetCourse(AuthStorage.userInfo._id);
+  handleCreateModule = (name, description, thumbnail, users) => {
+    const payload = { name, description, thumbnail, users };
+    const { createModule } = this.props.action;
+    createModule(payload, (isCreatedModule) => {
+      if (!_.isUndefined(isCreatedModule.id)) {
+        this.handleGetModule(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
         this.notifySuccess(
           "Nofitication",
-          `Course ${isCreatedCourse.name} has been created successfully.`
+          `Course ${isCreatedModule.name} has been created successfully.`
         );
       } else {
         this.notifyError(
@@ -101,16 +89,21 @@ class ListTraining extends Component {
           "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
         );
       }
+    }, (err) => {
+      this.notifyError(
+        "Nofitication",
+        "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
+      );
     });
   };
 
-  handleDeleteCourse = id => {
+  handleDeleteModule = id => {
     const payload = { id };
-    const { deleteCourse } = this.props.action;
-    deleteCourse(payload, response => {
+    const { deleteModule } = this.props.action;
+    deleteModule(payload, response => {
       // console.log("response>>>", response);
       if (response._id) {
-        this.handleGetCourse(AuthStorage.userInfo._id);
+        this.handleGetModule(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
         this.notifySuccess(
           "Notification",
@@ -125,17 +118,17 @@ class ListTraining extends Component {
     });
   };
 
-  handleUpdateCourse = () => {
-    const { courseId, nameChange } = this.state;
+  handleUpdateModule = () => {
+    const { moduleId, nameChange } = this.state;
     const payload = {
-      id: courseId,
+      id: moduleId,
       name: nameChange
     };
-    const { updateCourse } = this.props.action;
-    updateCourse(payload, response => {
+    const { updateModule } = this.props.action;
+    updateModule(payload, response => {
       if (response._id) {
         // Refresh page
-        this.handleGetCourse(AuthStorage.userInfo._id);
+        this.handleGetModule(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
         // Notify
         this.notifySuccess(
@@ -158,9 +151,9 @@ class ListTraining extends Component {
   };
 
   handleGetTotalPage = userId => {
-    const { keySearch, trainingId } = this.state;
+    const { keySearch, courseId } = this.state;
     fetch(
-      `https://be-lms.tk/courses?${trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``}${
+      `https://be-lms.tk/modules?${courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ``}${
       keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }users._id=${userId}`
     )
@@ -172,14 +165,26 @@ class ListTraining extends Component {
       });
   };
 
-  handleGetCourse = userId => {
-    const { keySearch, startItemPage, itemPerPage, trainingId } = this.state;
+  handleGetModule = userId => {
+    const { keySearch, startItemPage, itemPerPage, courseId } = this.state;
     const payload = {
       id: userId,
       keySearch,
       startItemPage,
       itemPerPage,
-      trainingId
+      courseId
+    };
+    const { getListModule } = this.props.action;
+    getListModule(payload);
+  };
+
+  handleGetCourse = userId => {
+    const payload = {
+      id: userId,
+      keySearch: "",
+      startItemPage: 0,
+      itemPerPage: 999,
+      trainingId: ""
     };
     const { getListCourse } = this.props.action;
     getListCourse(payload);
@@ -192,7 +197,7 @@ class ListTraining extends Component {
   beginSearch = e => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0, activePage: 1 }, () => {
-        this.handleGetCourse(AuthStorage.userInfo._id);
+        this.handleGetModule(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
       });
     }
@@ -202,16 +207,9 @@ class ListTraining extends Component {
     let { startItemPage, itemPerPage } = this.state;
     startItemPage = (pageNumber - 1) * itemPerPage;
     this.setState({ activePage: pageNumber, startItemPage }, () => {
-      this.handleGetCourse(AuthStorage.userInfo._id);
+      this.handleGetModule(AuthStorage.userInfo._id);
     });
   }
-
-  fitlerCategory = categoryId => {
-    this.setState({ categoryId, startItemPage: 0, activePage: 1 }, () => {
-      this.handleGetCourse(AuthStorage.userInfo._id);
-      this.handleGetTotalPage(AuthStorage.userInfo._id);
-    });
-  };
 
   handleOpenPopup = () => {
     this.setState({
@@ -219,14 +217,14 @@ class ListTraining extends Component {
     });
   };
 
-  handleSetCourseId = id => {
-    this.setState({ courseId: id });
+  handleSetModuleId = id => {
+    this.setState({ moduleId: id });
   };
 
   handleSubmitRemove = () => {
-    const { courseId } = this.state;
-    this.handleDeleteCourse(courseId)
-    this.setState({ courseId: "" });
+    const { moduleId } = this.state;
+    this.handleDeleteModule(moduleId)
+    this.setState({ moduleId: "" });
     this.setState({ isOpen: false });
   };
 
@@ -267,9 +265,9 @@ class ListTraining extends Component {
     this.setState({ isShow: !isShow });
   };
 
-  fitlerTrainingId = trainingId => {
-    this.setState({ trainingId, startItemPage: 0, activePage: 1 }, () => {
-      this.handleGetCourse(AuthStorage.userInfo._id);
+  filterByCourse = courseId => {
+    this.setState({ courseId, startItemPage: 0, activePage: 1 }, () => {
+      this.handleGetModule(AuthStorage.userInfo._id);
       this.handleGetTotalPage(AuthStorage.userInfo._id);
     });
   };
@@ -281,20 +279,20 @@ class ListTraining extends Component {
       nameChange,
       courseId,
       isShow,
-      trainingId
+      moduleId
     } = this.state;
     const {
       loading,
-      listCoursePaging,
-      loadingListTraining,
-      listTraining
+      listModulePaging,
+      loadingCourse,
+      listCoursePaging
     } = this.props.store;
     return (
       <div className="page-header">
-        <PopupNewCourse
+        <PopupNewModule
           isShow={isShow}
           UploadFile={UploadFile}
-          handleCreateCourse={this.handleCreateCourse}
+          handleCreateModule={this.handleCreateModule}
           handleShowPopup={this.handleShowPopup}
         />
         {isOpen && (
@@ -308,7 +306,7 @@ class ListTraining extends Component {
           ref={ref => (toastr = ref)}
           className="toast-top-right"
         />
-        <Header titleHeader="MANAGE COURSE" />
+        <Header titleHeader="MANAGE MODULE" />
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -319,7 +317,7 @@ class ListTraining extends Component {
                       <i className="fa fa-home"></i> Home
                     </Link>
                   </li>
-                  <li>Manage Course</li>
+                  <li>Manage Module</li>
                 </ul>
               </div>
             </div>
@@ -332,31 +330,31 @@ class ListTraining extends Component {
                 style={{ height: "100%", minHeight: "600px" }}
               >
                 <div className="cat-links">
-                  <h2>Filter by training</h2>
+                  <h2>Filter by course</h2>
                   <div className="form-group">
                     <input
                       value={this.state.keySearch}
                       onKeyDown={this.beginSearch}
                       className="form-control"
                       onChange={this.handleInputSearch}
-                      placeholder="Search by course name."
+                      placeholder="Search by module name."
                     />
                   </div>
                   <ul className="p-0 m-0">
-                    {!loadingListTraining &&
-                      listTraining.map((item, index) => {
+                    {!loadingCourse &&
+                      listCoursePaging.map((item, index) => {
                         return (
                           <li key={index}>
                             <Link
                               className={`${
-                                trainingId === item._id
+                                courseId === item._id
                                   ? "font-weight-bold"
                                   : ""
                                 }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
-                                this.fitlerTrainingId(item._id);
+                                this.filterByCourse(item._id);
                               }}
                             >
                               {item.name}
@@ -368,11 +366,11 @@ class ListTraining extends Component {
                       <Link
                         to="#"
                         className={`${
-                          trainingId === "" ? "font-weight-bold" : ""
+                          courseId === "" ? "font-weight-bold" : ""
                           }`}
                         onClick={e => {
                           e.preventDefault();
-                          this.fitlerTrainingId("");
+                          this.filterByCourse("");
                         }}
                       >
                         VIEW ALL
@@ -387,18 +385,18 @@ class ListTraining extends Component {
                 <div className="row no-gutters mb-3">
                   <div className="col-xl-12">
                     <button className="btn btn-success text-white new-item" onClick={this.handleShowPopup} type="button">
-                      NEW COURSE
+                      NEW MODULE
                   </button>
                   </div>
                 </div>
                 <div className="row mx-m-25">
                   {!loading ? (
-                    listCoursePaging.map((item, index) => {
+                    listModulePaging.map((item, index) => {
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">
                             <figure className="course-thumbnail">
-                              {isUpdate && courseId === item._id ? (
+                              {isUpdate && moduleId === item._id ? (
                                 <>
                                   <button
                                     type="button"
@@ -413,7 +411,7 @@ class ListTraining extends Component {
                                     type="button"
                                     className="btn btn-update alert-info"
                                     onClick={() => {
-                                      this.handleUpdateCourse();
+                                      this.handleUpdateModule();
                                     }}
                                   >
                                     <i className="fa fa-save"></i>
@@ -426,7 +424,7 @@ class ListTraining extends Component {
                                       className="btn btn-remove alert-danger"
                                       onClick={() => {
                                         this.handleOpenPopup();
-                                        this.handleSetCourseId(item._id);
+                                        this.handleSetModuleId(item._id);
                                       }}
                                     >
                                       <i className="fa fa-remove"></i>
@@ -436,7 +434,7 @@ class ListTraining extends Component {
                                       className="btn btn-update alert-info"
                                       onClick={() => {
                                         // this.handleRemoveCourseToPath_ver2(index);
-                                        this.handleSetCourseId(item._id);
+                                        this.handleSetModuleId(item._id);
                                         this.handleEnableUpdate(
                                           item.name
                                         );
@@ -462,7 +460,7 @@ class ListTraining extends Component {
                             <div className="course-content-wrap">
                               <header className="entry-header">
                                 <h2 className="entry-title">
-                                  {isUpdate && courseId === item._id ? (
+                                  {isUpdate && moduleId === item._id ? (
                                     <textarea
                                       value={nameChange}
                                       onChange={this.handleChangeName}
@@ -490,40 +488,6 @@ class ListTraining extends Component {
                                   </div>
                                 </div>
                               </header>
-
-                              {/* <footer className="entry-footer flex flex-wrap align-items-center">
-                                  <h4 className="t-level mb-0">Level: </h4>
-                                  {isUpdate ? (
-                                    <div
-                                      className="level pl-3"
-                                      style={{ width: "70%" }}
-                                    >
-                                      <select
-                                        className="form-control"
-                                        value={levelChange}
-                                        onChange={this.handleChangeLevel}
-                                      >
-                                        {maxLevel.map((item, index) => {
-                                          return (
-                                            <option value={item}>{item}</option>
-                                          );
-                                        })}
-                                      </select>
-                                    </div>
-                                  ) : (
-                                      <div className="level pl-3">
-                                        {item.level !== "" &&
-                                          starOfTraining.map((item, index) => {
-                                            return (
-                                              <span
-                                                key={index}
-                                                className="fa fa-star checked"
-                                              ></span>
-                                            );
-                                          })}
-                                      </div>
-                                    )}
-                                </footer> */}
                             </div>
                           </div>
                         </div>
@@ -555,4 +519,4 @@ class ListTraining extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListTraining);
+export default connect(mapStateToProps, mapDispatchToProps)(ModuleManage);

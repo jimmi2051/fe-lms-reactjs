@@ -48,3 +48,19 @@
     }
   }
 }
+button.new-item{
+  padding: 16px 48px;
+    border: 2px solid #34d986;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #383749;
+    text-decoration: none;
+    &:hover{
+      color: #fff;
+      background: #34d986;
+    }
+}
