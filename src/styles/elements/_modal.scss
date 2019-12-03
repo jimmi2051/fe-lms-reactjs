@@ -17,12 +17,11 @@
 /* Important part */
 .modal-dialog {
   overflow-y: initial !important;
-
 }
 .modal-body {
   height: 550px;
   // overflow-y: auto;
-  overflow-x:hidden;
+  overflow-x: hidden;
   overflow-y: auto;
 
   @media screen and (max-height: 800px) {
@@ -30,15 +29,15 @@
   }
 }
 .modal {
-  z-index: 9999;
+  z-index: 99999999;
 }
 .fade {
   background: rgba(62, 62, 62, 0.3);
 }
-.modal-dialog-alert{
+.modal-dialog-alert {
   margin: 200px auto;
 }
-.modal-body-alert{
+.modal-body-alert {
   height: 100px;
 }
 
