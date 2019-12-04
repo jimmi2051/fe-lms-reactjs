@@ -22,9 +22,11 @@ class Step1 extends Component {
     this.setState({ nameFile: e.target.files[0].name });
   };
   handleSubmit = () => {
-    const { title } = this.refs;
+    const { title, subTitle } = this.refs;
     this.setState({ isLoading: true });
-    this.props.handleStepOne(title.value);
+    this.props.handleStepOne(title.value, subTitle.value, () => {
+      this.setState({ isLoading: false });
+    });
   };
   render() {
     const {
@@ -45,6 +47,15 @@ class Step1 extends Component {
               className="form-control"
               placeholder="Enter training title here"
               ref="title"
+            />
+          </div>
+          <div className="form-group">
+            <label>Subtitle (*)</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter training subtitle here"
+              ref="subTitle"
             />
           </div>
           <div className="form-group">

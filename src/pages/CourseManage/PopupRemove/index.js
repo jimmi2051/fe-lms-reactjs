@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Link } from "react-router-dom";
-import Select from "react-select";
-import _ from "lodash";
 
 function mapStateToProps(state) {
   return {
@@ -19,7 +16,7 @@ const mapDispatchToProps = dispatch => {
 
 class PopupListContent extends Component {
   state = {};
-  componentDidMount() { }
+  componentDidMount() {}
 
   render() {
     const { isShow } = this.props;
@@ -34,9 +31,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -60,13 +57,6 @@ class PopupListContent extends Component {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            {/* <div className="modal-body">
-              <div className="row">
-                <div className="col-xl-12 text-center">
-                  Are you sure delete this training?
-                </div>
-              </div>
-            </div> */}
             <div className="modal-footer">
               <button
                 type="button"

@@ -10,7 +10,8 @@ export const createTraining = (payload, next, nextErr) => {
     description,
     thumbnail,
     users,
-    categorytrainings
+    categorytrainings,
+    subTitle
   } = payload;
   const isActive = true;
   return {
@@ -26,6 +27,7 @@ export const createTraining = (payload, next, nextErr) => {
       },
       params: {
         name,
+        subTitle,
         isActive,
         level,
         description,

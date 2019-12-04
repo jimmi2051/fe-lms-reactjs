@@ -36,10 +36,8 @@ const mapDispatchToProps = dispatch => {
 class Step2 extends Component {
   state = {
     isShow: false,
-    courseActived: {},
     isLoading: false,
     isShowListCourse: false,
-
     listCourseChoosen_ver2: [],
     messageErr: ""
   };
@@ -386,7 +384,4 @@ class Step2 extends Component {
     );
   }
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Step2);
+export default connect(mapStateToProps, mapDispatchToProps)(Step2);

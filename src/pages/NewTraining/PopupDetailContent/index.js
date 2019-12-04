@@ -54,9 +54,9 @@ class PopupDetailContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -81,12 +81,10 @@ class PopupDetailContent extends Component {
                 <div className="col-xl-12">
                   {!_.isEmpty(currentContent) && currentContent.relationData && (
                     <div>
-                      <p className="text-success">
-                        {currentContent.relationData.data.title}
-                      </p>
-                      <p className="text-success">
+                      <h5>{currentContent.relationData.data.title}</h5>
+                      <label>
                         {currentContent.relationData.data.description}
-                      </p>
+                      </label>
                       {currentContent.type === "Video" && (
                         <VideoNormal
                           src={
@@ -147,7 +145,4 @@ class PopupDetailContent extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopupDetailContent);
+export default connect(mapStateToProps, mapDispatchToProps)(PopupDetailContent);

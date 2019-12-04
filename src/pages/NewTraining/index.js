@@ -107,14 +107,17 @@ class NewTraining extends Component {
   //Must improve level without hardcode
   handleCreateTraining = (
     name,
+    subTitle,
     level,
     description,
     thumbnail,
     users,
-    categorytrainings
+    categorytrainings,
+    callBack
   ) => {
     const payload = {
       name,
+      subTitle,
       level,
       description,
       thumbnail,
@@ -136,6 +139,9 @@ class NewTraining extends Component {
           "Nofitication",
           "Error! Create training failed. Please wait a few minutes and try again. Thanks"
         );
+      }
+      if (typeof callBack === "function") {
+        callBack();
       }
     });
   };
@@ -192,13 +198,16 @@ class NewTraining extends Component {
   };
 
   //#region Helper
-  handleStepOne = async title => {
+  handleStepOne = async (title, subTitle, callBack) => {
     const { description, fileToUpload, level, idxCategory } = this.state;
     if (idxCategory === "-1" || title === "") {
       this.notifyError(
         "Nofitication",
         "Error! Please enter full field (*). It is required."
       );
+      if (typeof callBack === "function") {
+        callBack();
+      }
     } else {
       const { categoryAll } = this.props.store;
       const categoryCurrent = categoryAll[idxCategory];
@@ -216,11 +225,13 @@ class NewTraining extends Component {
       }
       this.handleCreateTraining(
         title,
+        subTitle,
         level,
         description,
         thumbnail,
         AuthStorage.userInfo,
-        categoryCurrent
+        categoryCurrent,
+        callBack
       );
     }
   };
@@ -360,7 +371,4 @@ class NewTraining extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NewTraining);
+export default connect(mapStateToProps, mapDispatchToProps)(NewTraining);

@@ -6,6 +6,7 @@ import Select from "react-select";
 import _ from "lodash";
 import CKEditor from "components/CKEditor";
 import AuthStorage from "utils/AuthStorage";
+import Loading from "components/Loading";
 import { UploadFile } from "utils/UploadImage.js";
 import { Player } from "video-react";
 const Papa = require("papaparse/papaparse.min.js");
@@ -25,7 +26,6 @@ const mapDispatchToProps = dispatch => {
     action: bindActionCreators({ createContent, createData }, dispatch)
   };
 };
-
 const typeContent = [
   {
     value: "Text",
@@ -74,34 +74,25 @@ class PopupNewContent extends Component {
           }
         ]
       }
-    ]
+    ],
+    contentToUpdate: {},
+    defaultType: {},
+    isLoading: false
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    const { content } = this.props;
+    const idx = _.findIndex(typeContent, item => item.value === content.type);
+    this.setState({ contentToUpdate: content, defaultType: typeContent[idx] });
+  }
 
   //#region Handle Action Redux
-  handleCreateContent = (name, type, user) => {
-    const payload = {
-      name,
-      type,
-      user
-    };
-    const { createContent } = this.props.action;
-    createContent(payload, () => {
-      const { isCreateContent } = this.props.store;
-      const { data } = this.state;
-      if (isCreateContent._id) {
-        this.handleCreateData(data, isCreateContent._id);
-      }
-    });
-  };
 
   handleCreateData = (data, content) => {
     const { handleGetContentByUserId, notifySuccess, notifyError } = this.props;
     const payload = { data, content };
     const { createData } = this.props.action;
-    createData(payload, () => {
-      const { isCreateData } = this.props.store;
+    createData(payload, isCreateData => {
       if (isCreateData._id) {
         handleGetContentByUserId(AuthStorage.userInfo._id);
         // this.setState({ createdContent: true });
@@ -110,7 +101,7 @@ class PopupNewContent extends Component {
         this.handleClosePopup();
         notifySuccess("Notification", "Data has been created successfully.");
       } else {
-        notifySuccess(
+        notifyError(
           "Notification",
           "Error! Something when wrong. Please wait a few minutes and try again."
         );
@@ -121,40 +112,39 @@ class PopupNewContent extends Component {
 
   //#region Handle submit button create new content
 
-  handleSubmitCreate = () => {
-    const { currentType } = this.state;
-    if (currentType === "Text") {
-      this.handleSubmitTextNormal();
+  handleSubmitUpdate = () => {
+    const { contentToUpdate } = this.state;
+    if (contentToUpdate.type === "Text") {
+      this.handleSubmitTextNormal(contentToUpdate);
     }
-    if (currentType === "TextTest") {
-      this.handleSubmitTextTest();
+    if (contentToUpdate.type === "TextTest") {
+      this.handleSubmitTextTest(contentToUpdate);
     }
-    if (currentType === "Video") {
-      this.handleSubmitVideoNormal();
+    if (contentToUpdate.type === "Video") {
+      this.handleSubmitVideoNormal(contentToUpdate);
     }
-    if (currentType === "Slide") {
-      this.handleSubmitSlide();
+    if (contentToUpdate.type === "Slide") {
+      this.handleSubmitSlide(contentToUpdate);
     }
-    if (currentType === "Question") {
-      this.handleSubmitQuestion();
+    if (contentToUpdate.type === "Question") {
+      this.handleSubmitQuestion(contentToUpdate);
     }
   };
 
-  handleSubmitTextNormal = () => {
-    const { currentType, content } = this.state;
-    const { name, title, description } = this.refs;
+  handleSubmitTextNormal = contentToUpdate => {
+    const { content } = this.state;
+    const { title, description } = this.refs;
     const data = {
       title: title.value,
       description: description.value,
       content
     };
-    this.setState({ data });
-    this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+    this.handleCreateData(data, contentToUpdate._id);
   };
 
-  handleSubmitTextTest = () => {
-    const { currentType, countTextTest } = this.state;
-    const { name, title, description } = this.refs;
+  handleSubmitTextTest = contentToUpdate => {
+    const { countTextTest } = this.state;
+    const { title, description } = this.refs;
     let contents = [];
     countTextTest.map((item, index) => {
       const titleContent = this.refs[`titleContent${item}`];
@@ -169,19 +159,20 @@ class PopupNewContent extends Component {
       description: description.value,
       contents
     };
-    this.setState({ data });
-    this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+    this.handleCreateData(data, contentToUpdate._id);
   };
 
-  handleSubmitVideoNormal = async () => {
-    const { currentType, fileToUpload } = this.state;
-    const { name, title, description } = this.refs;
+  handleSubmitVideoNormal = async contentToUpdate => {
+    this.setState({ isLoading: true });
+    const { fileToUpload } = this.state;
+    const { title, description } = this.refs;
     let url = "";
     if (fileToUpload.length > 0) {
       let data = new FormData();
       data.append("files", fileToUpload[0]);
       await UploadFile(data)
         .then(res => {
+          this.setState({ isLoading: false });
           return res.json();
         })
         .then(result => {
@@ -194,13 +185,12 @@ class PopupNewContent extends Component {
       description: description.value,
       url
     };
-    this.setState({ data });
-    this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+    this.handleCreateData(data, contentToUpdate._id);
   };
 
-  handleSubmitSlide = () => {
-    const { currentType, countTextTest, fileToUpload } = this.state;
-    const { name, title, description } = this.refs;
+  handleSubmitSlide = contentToUpdate => {
+    const { countTextTest, fileToUpload } = this.state;
+    const { title, description } = this.refs;
     let slideItems = [];
     countTextTest.map(async (item, index) => {
       const titleContent = this.refs[`titleSlide${item}`];
@@ -234,27 +224,20 @@ class PopupNewContent extends Component {
           description: description.value,
           slideItems
         };
-        this.setState({ data }, () => {
-          this.handleCreateContent(
-            name.value,
-            currentType,
-            AuthStorage.userInfo
-          );
-        });
+        this.handleCreateData(data, contentToUpdate._id);
       }
     });
   };
 
-  handleSubmitQuestion = () => {
-    const { currentType, questions } = this.state;
-    const { name, title, description } = this.refs;
+  handleSubmitQuestion = contentToUpdate => {
+    const { questions } = this.state;
+    const { title, description } = this.refs;
     const data = {
       title: title.value,
       description: description.value,
       questions
     };
-    this.setState({ data });
-    this.handleCreateContent(name.value, currentType, AuthStorage.userInfo);
+    this.handleCreateData(data, contentToUpdate._id);
   };
   //#endregion
 
@@ -263,13 +246,6 @@ class PopupNewContent extends Component {
   handleClosePopup = () => {
     // this.props.handleShowListContent(this.props.currentModule);
     this.props.handleCloseNewContent();
-  };
-
-  handleChange = option => {
-    if (!_.isNull(option)) {
-      this.setState({ currentType: option.value });
-    }
-    // this.setState({ messageErr: "", messageSuc: "" });
   };
 
   handleChangeDescription = content => {
@@ -472,13 +448,14 @@ class PopupNewContent extends Component {
   render() {
     const { isShow } = this.props;
     const {
-      currentType,
       countTextTest,
       videoSrc,
       listNameFile,
       slideBackground,
       errorQuestion,
-      createdContent
+      defaultType,
+      contentToUpdate,
+      isLoading
     } = this.state;
     const { questions } = this.state;
     return (
@@ -504,7 +481,7 @@ class PopupNewContent extends Component {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                Create new content
+                Update content
               </h5>
               <button
                 type="button"
@@ -518,14 +495,6 @@ class PopupNewContent extends Component {
             </div>
             <div className="modal-body">
               <div className="row">
-                {createdContent && (
-                  <div className="col-xl-12">
-                    <h5 className="text text-success">
-                      Created successfully content
-                    </h5>
-                  </div>
-                )}
-
                 <form className="col-xl-12" ref={form => (this.form = form)}>
                   <div className="form-group">
                     <label>Type of Content: </label>
@@ -533,11 +502,11 @@ class PopupNewContent extends Component {
                       // value={selectedOption}
                       className="basic-single"
                       classNamePrefix="select"
-                      isSearchable={true}
-                      onChange={this.handleChange}
                       options={typeContent}
-                      defaultValue={typeContent[0]}
+                      defaultValue={defaultType}
+                      value={defaultType}
                       isClearable={true}
+                      isDisabled={true}
                       noOptionsMessage={inputValue => "No content found"}
                       placeholder="-- Select content --"
                     />
@@ -549,10 +518,12 @@ class PopupNewContent extends Component {
                       className="form-control"
                       placeholder="Enter name of content "
                       ref="name"
+                      disabled={true}
+                      value={contentToUpdate.name}
                     />
                   </div>
 
-                  {currentType === "Video" && (
+                  {defaultType.value === "Video" && (
                     <div className="card">
                       <div className="card-header">Data of content</div>
                       <div className="card-body">
@@ -604,7 +575,7 @@ class PopupNewContent extends Component {
                     </div>
                   )}
 
-                  {currentType === "TextTest" && (
+                  {defaultType.value === "TextTest" && (
                     <div className="card">
                       <div className="card-header">Data of content</div>
                       <div className="card-body">
@@ -678,7 +649,7 @@ class PopupNewContent extends Component {
                     </div>
                   )}
 
-                  {currentType === "Slide" && (
+                  {defaultType.value === "Slide" && (
                     <div className="card">
                       <div className="card-header">Data of content</div>
                       <div className="card-body">
@@ -773,7 +744,7 @@ class PopupNewContent extends Component {
                     </div>
                   )}
 
-                  {currentType === "Text" && (
+                  {defaultType.value === "Text" && (
                     <div className="card">
                       <div className="card-header">Data of content</div>
                       <div className="card-body">
@@ -808,7 +779,7 @@ class PopupNewContent extends Component {
                     </div>
                   )}
 
-                  {currentType === "Question" && (
+                  {defaultType.value === "Question" && (
                     <div className="card">
                       <div className="card-header">Data of content</div>
                       <div className="card-body">
@@ -970,9 +941,13 @@ class PopupNewContent extends Component {
               <button
                 type="button"
                 className="btn bg-root-active"
-                onClick={this.handleSubmitCreate}
+                onClick={this.handleSubmitUpdate}
               >
-                Create
+                {isLoading ? (
+                  <Loading classOption="align-center-spinner" />
+                ) : (
+                  "Update"
+                )}
               </button>
               <button
                 type="button"

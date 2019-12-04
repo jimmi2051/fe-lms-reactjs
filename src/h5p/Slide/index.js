@@ -5,6 +5,13 @@ import React, { Component } from "react";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 class Slider extends Component {
+  processUrl = url => {
+    let regexUrl = /^http/;
+    if (regexUrl.test(url)) {
+      return url;
+    }
+    return `${REACT_APP_URL_API}${url}`;
+  };
   render() {
     const { slideItem } = this.props;
     return (
@@ -19,17 +26,18 @@ class Slider extends Component {
           {slideItem &&
             slideItem.length > 0 &&
             slideItem.map((item, index) => {
+              const url = this.processUrl(item.imgPath);
               return (
                 <div
                   key={index}
                   className=""
-                // style={{
-                //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
-                //   /*`url(${props.backendDomain +
-                //     slide['imgBackgroundPath']['url']})`*/
-                // }}
+                  // style={{
+                  //   backgroundImage: `url("${REACT_APP_URL_API}${item.imgUrl}")`
+                  //   /*`url(${props.backendDomain +
+                  //     slide['imgBackgroundPath']['url']})`*/
+                  // }}
                 >
-                  <img src={`${REACT_APP_URL_API}${item.imgPath}`} alt="#" />
+                  <img src={`${url}`} alt="#" />
                   {/* <div className="slide-item-content col-xl-10">
                     <h5 className="pt-3">{item.title}</h5>
                     <p className="">{item.content}</p>

@@ -9,7 +9,6 @@ import { getModuleByCourse, removeModuleByCourse } from "redux/action/module";
 import AuthStorage from "utils/AuthStorage";
 import Select from "react-select";
 import moment from "moment";
-import { Link } from "react-router-dom";
 import PopupListModule from "pages/NewTraining/PopupListModule";
 import Loading from "components/Loading";
 function mapStateToProps(state) {
@@ -480,9 +479,6 @@ class Step3 extends Component {
     );
   }
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Step3);
+export default connect(mapStateToProps, mapDispatchToProps)(Step3);
 
 // This is for module->>>

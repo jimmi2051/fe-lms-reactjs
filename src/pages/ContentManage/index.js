@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import {
-  getListModule,
-} from "redux/action/module";
+import { getListModule } from "redux/action/module";
 import {
   getListContent,
   deleteContent,
@@ -12,23 +10,18 @@ import {
   createContent,
   getContent
 } from "redux/action/content";
-import {
-  getListCourse
-} from "redux/action/course";
-import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
-import moment from "moment";
 import { Link } from "react-router-dom";
 import Pagination from "react-js-pagination";
 import Loading from "components/Loading";
 import { ToastContainer } from "react-toastr";
 import PopupRemove from "pages/ContentManage/PopupRemove";
-import { UploadFile } from "utils/UploadImage.js";
 import PopupNewContent from "pages/NewTraining/PopupNewContent";
 import PopupDetailContent from "pages/NewTraining/PopupDetailContent";
+import PopupUpdateContent from "pages/ContentManage/PopupUpdate";
+
 let toastr;
 
-const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
   return {
@@ -38,7 +31,7 @@ function mapStateToProps(state) {
       listContentPaging: state.listContentPaging.listContentPaging.data,
       loading: state.listContentPaging.listContentPaging.loading,
       listContent: state.listContent.listContent.data,
-      loadingListContent: state.listContent.listContent.loading,
+      loadingListContent: state.listContent.listContent.loading
     }
   };
 }
@@ -65,24 +58,23 @@ class ModuleManage extends Component {
     categoryId: "",
     activePage: 1,
     startItemPage: 0,
-    itemPerPage: 4,
+    itemPerPage: 10,
     isOpen: false,
     moduleId: "",
     isUpdate: false,
     nameChange: "",
-    levelChange: "",
-    trainingId: "",
-    moduleId: "",
     contentId: "",
     contentIdDelete: "",
     currentContent: {},
-    isShowDetailContent: false
+    isShowDetailContent: false,
+    isUpdateContent: false
   };
   componentDidMount() {
     this.handleGetContent(AuthStorage.userInfo._id);
     this.handleGetModule(AuthStorage.userInfo._id);
   }
 
+  //#region Handle Action Redux
   handleDeleteContent = id => {
     const payload = { id };
     const { deleteContent } = this.props.action;
@@ -124,7 +116,7 @@ class ModuleManage extends Component {
         // Reset state
         this.setState({
           contentId: "",
-          nameChange: "",
+          nameChange: ""
         });
       } else {
         this.notifyError(
@@ -133,21 +125,6 @@ class ModuleManage extends Component {
         );
       }
     });
-  };
-
-  handleGetTotalPage = userId => {
-    const { keySearch, moduleId } = this.state;
-    fetch(
-      `https://be-lms.tk/contents?${moduleId !== "" ? `modules._id=${moduleId}&` : ``}${
-      keySearch !== "" ? `name_contains=${keySearch}&` : ``
-      }users._id=${userId}`
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(result => {
-        this.setState({ totalPage: result.length });
-      });
   };
 
   handleGetContent = userId => {
@@ -176,6 +153,26 @@ class ModuleManage extends Component {
     getListModule(payload);
   };
 
+  handleGetTotalPage = userId => {
+    const { keySearch, moduleId } = this.state;
+    fetch(
+      `https://be-lms.tk/contents?${
+        moduleId !== "" ? `modules._id=${moduleId}&` : ``
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }users._id=${userId}`
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(result => {
+        this.setState({ totalPage: result.length });
+      });
+  };
+
+  //#endregion
+
+  //#region Handle DOM
   handleInputSearch = e => {
     this.setState({ keySearch: e.target.value });
   };
@@ -209,12 +206,12 @@ class ModuleManage extends Component {
 
   handleSubmitRemove = () => {
     const { contentIdDelete } = this.state;
-    this.handleDeleteContent(contentIdDelete)
+    this.handleDeleteContent(contentIdDelete);
     this.setState({ contentIdDelete: "" });
     this.setState({ isOpen: false });
   };
 
-  handleEnableUpdate = (name) => {
+  handleEnableUpdate = name => {
     this.setState({ isUpdate: true, nameChange: name });
   };
 
@@ -234,6 +231,47 @@ class ModuleManage extends Component {
     this.setState({ levelChange: e.target.value });
   };
 
+  handleShowPopup = () => {
+    const { isShow } = this.state;
+    this.setState({ isShow: !isShow });
+  };
+
+  filterByModule = moduleId => {
+    this.setState({ moduleId, startItemPage: 0, activePage: 1 }, () => {
+      this.handleGetContent(AuthStorage.userInfo._id);
+      // this.handleGetTotalPage(AuthStorage.userInfo._id);
+    });
+  };
+
+  handleSetContentIdDelete = id => {
+    this.setState({ contentIdDelete: id });
+  };
+
+  handleViewDetailContent = content => {
+    if (!content.relationData) {
+      this.notifyWarining(
+        "Notification",
+        "Warning! This content is updating. Please try another content."
+      );
+    }
+    this.setState({ currentContent: content, isShowDetailContent: true });
+  };
+
+  handleCloseDetailContent = () => {
+    this.setState({ isShowDetailContent: false });
+  };
+
+  handleShowPopupUpdate = () => {
+    const { isUpdateContent } = this.state;
+    this.setState({ isUpdateContent: !isUpdateContent });
+  };
+
+  handleSetCurrentContent = content => {
+    this.setState({ currentContent: content });
+  };
+
+  //#endregion
+
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
       closeButton: true
@@ -252,34 +290,6 @@ class ModuleManage extends Component {
     });
   };
 
-  handleShowPopup = () => {
-    const { isShow } = this.state;
-    this.setState({ isShow: !isShow });
-  };
-
-  filterByModule = moduleId => {
-    this.setState({ moduleId, startItemPage: 0, activePage: 1 }, () => {
-      this.handleGetContent(AuthStorage.userInfo._id);
-      // this.handleGetTotalPage(AuthStorage.userInfo._id);
-    });
-  };
-
-  handleSetContentIdDelete = (id) => {
-    this.setState({ contentIdDelete: id });
-  };
-
-  handleViewDetailContent = content => {
-    if (!content.relationData) {
-      this.notifyWarining("Notification", "Warning! This content is updating. Please try another content.")
-    }
-    this.setState({ currentContent: content, isShowDetailContent: true });
-  };
-
-  handleCloseDetailContent = () => {
-    this.setState({ isShowDetailContent: false });
-  };
-
-
   render() {
     const {
       isOpen,
@@ -288,16 +298,27 @@ class ModuleManage extends Component {
       isShow,
       contentId,
       currentContent,
-      isShowDetailContent
+      isShowDetailContent,
+      isUpdateContent
     } = this.state;
     const {
       loading,
       listContentPaging,
       loadingModule,
-      listModulePaging,
+      listModulePaging
     } = this.props.store;
     return (
       <div className="page-header">
+        {isUpdateContent && (
+          <PopupUpdateContent
+            isShow={isUpdateContent}
+            notifySuccess={this.notifySuccess}
+            notifyError={this.notifyError}
+            content={currentContent}
+            handleCloseNewContent={this.handleShowPopupUpdate}
+            handleGetContentByUserId={this.handleGetContent}
+          />
+        )}
         {!loading && (
           <PopupNewContent
             isShow={isShow}
@@ -364,10 +385,8 @@ class ModuleManage extends Component {
                           <li key={index}>
                             <Link
                               className={`${
-                                moduleId === item._id
-                                  ? "font-weight-bold"
-                                  : ""
-                                }`}
+                                moduleId === item._id ? "font-weight-bold" : ""
+                              }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -384,7 +403,7 @@ class ModuleManage extends Component {
                         to="#"
                         className={`${
                           moduleId === "" ? "font-weight-bold" : ""
-                          }`}
+                        }`}
                         onClick={e => {
                           e.preventDefault();
                           this.filterByModule("");
@@ -401,9 +420,13 @@ class ModuleManage extends Component {
               <div className="featured-courses courses-wrap">
                 <div className="row no-gutters mb-3">
                   <div className="col-xl-12">
-                    <button className="btn btn-success text-white new-item" onClick={this.handleShowPopup} type="button">
+                    <button
+                      className="btn btn-success text-white new-item"
+                      onClick={this.handleShowPopup}
+                      type="button"
+                    >
                       NEW CONTENT
-                  </button>
+                    </button>
                   </div>
                 </div>
                 <div className="row mx-m-25">
@@ -424,33 +447,71 @@ class ModuleManage extends Component {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>
-                                  {contentId !== "" && contentId === item._id ? (
+                                  {contentId !== "" &&
+                                  contentId === item._id ? (
                                     <div className="table-group-management-td">
-                                      <input style={{
-                                        width: "100%",
-                                        display: "inline-block"
-                                      }} value={nameChange} onChange={this.handleChangeName} className="form-control" type="text" />
-                                      <i className="fa fa-check pl-2" onClick={this.handleUpdateContent} />
-                                      <i className="fa fa-times pl-2" onClick={
-                                        () => { this.handleSetContentId("", "") }} />
+                                      <input
+                                        style={{
+                                          width: "100%",
+                                          display: "inline-block"
+                                        }}
+                                        value={nameChange}
+                                        onChange={this.handleChangeName}
+                                        className="form-control"
+                                        type="text"
+                                      />
+                                      <i
+                                        className="fa fa-check pl-2"
+                                        onClick={this.handleUpdateContent}
+                                      />
+                                      <i
+                                        className="fa fa-times pl-2"
+                                        onClick={() => {
+                                          this.handleSetContentId("", "");
+                                        }}
+                                      />
                                     </div>
-                                  ) : (<>
-                                    {item.name}
-                                    <i className="fa fa-pencil pl-2" onClick={() => { this.handleSetContentId(item._id, item.name) }} />
-                                  </>)}
-
+                                  ) : (
+                                    <>
+                                      {item.name}
+                                      <i
+                                        className="fa fa-pencil pl-2"
+                                        onClick={() => {
+                                          this.handleSetContentId(
+                                            item._id,
+                                            item.name
+                                          );
+                                        }}
+                                      />
+                                    </>
+                                  )}
                                 </td>
                                 <td>{item.type}</td>
                                 <td>
-                                  <button
-                                    className="btn bg-root"
-                                    type="button"
-                                    onClick={() => {
-                                      this.handleViewDetailContent(item);
-                                    }}
-                                  >
-                                    Detail
-                                  </button>
+                                  {item.relationData ? (
+                                    <button
+                                      className="btn bg-root"
+                                      type="button"
+                                      onClick={() => {
+                                        this.handleViewDetailContent(item);
+                                      }}
+                                    >
+                                      Detail
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn bg-root"
+                                      type="button"
+                                      onClick={() => {
+                                        console.log("1");
+                                        this.handleSetCurrentContent(item);
+                                        this.handleShowPopupUpdate();
+                                      }}
+                                    >
+                                      Update
+                                    </button>
+                                  )}
+
                                   <button
                                     className="btn btn-danger ml-2"
                                     type="button"
@@ -466,19 +527,17 @@ class ModuleManage extends Component {
                               </tr>
                             );
                           })
-                        )
-                          : (
-                            <tr>
-                              <td colSpan="4">
-                                <div className="col-xl-12 mt-3">
-                                  <Loading classOption="align-center-spinner" />
-                                </div>
-                              </td>
-                            </tr>
-                          )}
+                        ) : (
+                          <tr>
+                            <td colSpan="4">
+                              <div className="col-xl-12 mt-3">
+                                <Loading classOption="align-center-spinner" />
+                              </div>
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
-
                   </div>
                 </div>
                 <div className="row">

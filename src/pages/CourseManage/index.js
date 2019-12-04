@@ -8,9 +8,7 @@ import {
   updateCourse,
   createCourse
 } from "redux/action/course";
-import {
-  getTrainingByUser
-} from "redux/action/training";
+import { getTrainingByUser } from "redux/action/training";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
@@ -31,7 +29,7 @@ function mapStateToProps(state) {
       listCoursePaging: state.listCoursePaging.listCoursePaging.data,
       loading: state.listCoursePaging.listCoursePaging.loading,
       listTraining: state.listTraining.listTraining.data,
-      loadingListTraining: state.listTraining.listTraining.loading,
+      loadingListTraining: state.listTraining.listTraining.loading
     }
   };
 }
@@ -71,8 +69,8 @@ class ListTraining extends Component {
     this.handleGetTraining(AuthStorage.userInfo._id);
   }
 
+  //#region Handle Action Redux
   handleGetTraining = userId => {
-    // const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
     const payload = {
       id: userId,
       keySearch: "",
@@ -87,7 +85,7 @@ class ListTraining extends Component {
   handleCreateCourse = (name, description, thumbnail, user) => {
     const payload = { name, description, thumbnail, user };
     const { createCourse } = this.props.action;
-    createCourse(payload, (isCreatedCourse) => {
+    createCourse(payload, isCreatedCourse => {
       if (!_.isUndefined(isCreatedCourse.id)) {
         this.handleGetCourse(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -146,7 +144,7 @@ class ListTraining extends Component {
         this.setState({
           isUpdate: false,
           courseId: "",
-          nameChange: "",
+          nameChange: ""
         });
       } else {
         this.notifyError(
@@ -160,8 +158,10 @@ class ListTraining extends Component {
   handleGetTotalPage = userId => {
     const { keySearch, trainingId } = this.state;
     fetch(
-      `https://be-lms.tk/courses?${trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``}${
-      keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      `https://be-lms.tk/courses?${
+        trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }users._id=${userId}`
     )
       .then(response => {
@@ -184,7 +184,9 @@ class ListTraining extends Component {
     const { getListCourse } = this.props.action;
     getListCourse(payload);
   };
+  //#endregion
 
+  //#region Handle DOM
   handleInputSearch = e => {
     this.setState({ keySearch: e.target.value });
   };
@@ -225,12 +227,12 @@ class ListTraining extends Component {
 
   handleSubmitRemove = () => {
     const { courseId } = this.state;
-    this.handleDeleteCourse(courseId)
+    this.handleDeleteCourse(courseId);
     this.setState({ courseId: "" });
     this.setState({ isOpen: false });
   };
 
-  handleEnableUpdate = (name) => {
+  handleEnableUpdate = name => {
     this.setState({ isUpdate: true, nameChange: name });
   };
 
@@ -249,6 +251,18 @@ class ListTraining extends Component {
   handleChangeLevel = e => {
     this.setState({ levelChange: e.target.value });
   };
+  handleShowPopup = () => {
+    const { isShow } = this.state;
+    this.setState({ isShow: !isShow });
+  };
+
+  fitlerTrainingId = trainingId => {
+    this.setState({ trainingId, startItemPage: 0, activePage: 1 }, () => {
+      this.handleGetCourse(AuthStorage.userInfo._id);
+      this.handleGetTotalPage(AuthStorage.userInfo._id);
+    });
+  };
+  //#endregion
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
@@ -259,18 +273,6 @@ class ListTraining extends Component {
   notifyError = (title, content) => {
     toastr.error(content, title, {
       closeButton: true
-    });
-  };
-
-  handleShowPopup = () => {
-    const { isShow } = this.state;
-    this.setState({ isShow: !isShow });
-  };
-
-  fitlerTrainingId = trainingId => {
-    this.setState({ trainingId, startItemPage: 0, activePage: 1 }, () => {
-      this.handleGetCourse(AuthStorage.userInfo._id);
-      this.handleGetTotalPage(AuthStorage.userInfo._id);
     });
   };
 
@@ -352,7 +354,7 @@ class ListTraining extends Component {
                                 trainingId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                                }`}
+                              }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -369,7 +371,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           trainingId === "" ? "font-weight-bold" : ""
-                          }`}
+                        }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerTrainingId("");
@@ -386,9 +388,13 @@ class ListTraining extends Component {
               <div className="featured-courses courses-wrap">
                 <div className="row no-gutters mb-3">
                   <div className="col-xl-12">
-                    <button className="btn btn-success text-white new-item" onClick={this.handleShowPopup} type="button">
+                    <button
+                      className="btn btn-success text-white new-item"
+                      onClick={this.handleShowPopup}
+                      type="button"
+                    >
                       NEW COURSE
-                  </button>
+                    </button>
                   </div>
                 </div>
                 <div className="row mx-m-25">
@@ -420,32 +426,30 @@ class ListTraining extends Component {
                                   </button>
                                 </>
                               ) : (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="btn btn-remove alert-danger"
-                                      onClick={() => {
-                                        this.handleOpenPopup();
-                                        this.handleSetCourseId(item._id);
-                                      }}
-                                    >
-                                      <i className="fa fa-remove"></i>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-update alert-info"
-                                      onClick={() => {
-                                        // this.handleRemoveCourseToPath_ver2(index);
-                                        this.handleSetCourseId(item._id);
-                                        this.handleEnableUpdate(
-                                          item.name
-                                        );
-                                      }}
-                                    >
-                                      <i className="fa fa-pencil"></i>
-                                    </button>
-                                  </>
-                                )}
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-remove alert-danger"
+                                    onClick={() => {
+                                      this.handleOpenPopup();
+                                      this.handleSetCourseId(item._id);
+                                    }}
+                                  >
+                                    <i className="fa fa-remove"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-update alert-info"
+                                    onClick={() => {
+                                      // this.handleRemoveCourseToPath_ver2(index);
+                                      this.handleSetCourseId(item._id);
+                                      this.handleEnableUpdate(item.name);
+                                    }}
+                                  >
+                                    <i className="fa fa-pencil"></i>
+                                  </button>
+                                </>
+                              )}
 
                               <Link to={`#`}>
                                 <img
@@ -453,7 +457,7 @@ class ListTraining extends Component {
                                     item.thumbnail
                                       ? `${REACT_APP_URL_API}${item.thumbnail.url}`
                                       : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                    }`}
+                                  }`}
                                   alt=""
                                 />
                               </Link>
@@ -470,10 +474,8 @@ class ListTraining extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                      <Link to={`#`}>
-                                        {item.name}
-                                      </Link>
-                                    )}
+                                    <Link to={`#`}>{item.name}</Link>
+                                  )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
@@ -490,50 +492,16 @@ class ListTraining extends Component {
                                   </div>
                                 </div>
                               </header>
-
-                              {/* <footer className="entry-footer flex flex-wrap align-items-center">
-                                  <h4 className="t-level mb-0">Level: </h4>
-                                  {isUpdate ? (
-                                    <div
-                                      className="level pl-3"
-                                      style={{ width: "70%" }}
-                                    >
-                                      <select
-                                        className="form-control"
-                                        value={levelChange}
-                                        onChange={this.handleChangeLevel}
-                                      >
-                                        {maxLevel.map((item, index) => {
-                                          return (
-                                            <option value={item}>{item}</option>
-                                          );
-                                        })}
-                                      </select>
-                                    </div>
-                                  ) : (
-                                      <div className="level pl-3">
-                                        {item.level !== "" &&
-                                          starOfTraining.map((item, index) => {
-                                            return (
-                                              <span
-                                                key={index}
-                                                className="fa fa-star checked"
-                                              ></span>
-                                            );
-                                          })}
-                                      </div>
-                                    )}
-                                </footer> */}
                             </div>
                           </div>
                         </div>
                       );
                     })
                   ) : (
-                      <div className="col-xl-12 mt-3">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    <div className="col-xl-12 mt-3">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="row">

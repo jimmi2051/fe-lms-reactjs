@@ -21,8 +21,7 @@ function mapStateToProps(state) {
   return {
     store: {
       training: state.training.training.data,
-      loadingTraining: state.training.training.loading,
-      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data
+      loadingTraining: state.training.training.loading
     }
   };
 }
@@ -44,11 +43,7 @@ class TrainingDetail extends Component {
     currentContent: {},
     currentCourse: {},
     currentModule: {},
-    initiallyOpenProperties: [],
-    currentActivity: {},
-    isLastContent: -1,
-    keyCourse: "",
-    keyModule: ""
+    initiallyOpenProperties: []
   };
   componentDidMount() {
     const { id } = this.props.match.params;
@@ -69,33 +64,6 @@ class TrainingDetail extends Component {
     const payload = { id };
     const { getTrainingById } = this.props.action;
     getTrainingById(payload, () => {});
-  };
-
-  handleChangeContent = currentContentChoosen => {
-    let { currentContent } = this.state;
-    if (_.isEqual(currentContent, currentContentChoosen)) {
-      this.setState({ currentContent: {} });
-    } else {
-      this.setState({ currentContent: currentContentChoosen });
-    }
-  };
-
-  handleChangeCourse = currentCourseChoosen => {
-    let { currentCourse } = this.state;
-    if (_.isEqual(currentCourse, currentCourseChoosen)) {
-      this.setState({ currentCourse: {} });
-    } else {
-      this.setState({ currentCourse: currentCourseChoosen });
-    }
-  };
-
-  handleChangeModule = currentModuleChoosen => {
-    let { currentModule } = this.state;
-    if (_.isEqual(currentModule, currentModuleChoosen)) {
-      this.setState({ currentModule: {} });
-    } else {
-      this.setState({ currentModule: currentModuleChoosen });
-    }
   };
 
   processDataToListMenu = training => {
@@ -179,15 +147,9 @@ class TrainingDetail extends Component {
   };
 
   render() {
-    const {
-      currentContent,
-      currentCourse,
-      currentModule,
-      keyCourse,
-      keyModule
-    } = this.state;
+    const { currentContent, currentCourse, currentModule } = this.state;
 
-    const { training, loadingTraining, isUpdateActivity } = this.props.store;
+    const { training, loadingTraining } = this.props.store;
 
     if (loadingTraining) {
       return (

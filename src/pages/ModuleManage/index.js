@@ -8,9 +8,7 @@ import {
   updateModule,
   createModule
 } from "redux/action/module";
-import {
-  getListCourse
-} from "redux/action/course";
+import { getListCourse } from "redux/action/course";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
 import moment from "moment";
@@ -31,7 +29,7 @@ function mapStateToProps(state) {
       listCoursePaging: state.listCoursePaging.listCoursePaging.data,
       loadingCourse: state.listCoursePaging.listCoursePaging.loading,
       listModulePaging: state.listModulePaging.listModulePaging.data,
-      loading: state.listModulePaging.listModulePaging.loading,
+      loading: state.listModulePaging.listModulePaging.loading
     }
   };
 }
@@ -72,36 +70,41 @@ class ModuleManage extends Component {
     this.handleGetCourse(AuthStorage.userInfo._id);
   }
 
+  //#region Handle Action Redux
+
   handleCreateModule = (name, description, thumbnail, users) => {
     const payload = { name, description, thumbnail, users };
     const { createModule } = this.props.action;
-    createModule(payload, (isCreatedModule) => {
-      if (!_.isUndefined(isCreatedModule.id)) {
-        this.handleGetModule(AuthStorage.userInfo._id);
-        this.handleGetTotalPage(AuthStorage.userInfo._id);
-        this.notifySuccess(
-          "Nofitication",
-          `Course ${isCreatedModule.name} has been created successfully.`
-        );
-      } else {
+    createModule(
+      payload,
+      isCreatedModule => {
+        if (!_.isUndefined(isCreatedModule.id)) {
+          this.handleGetModule(AuthStorage.userInfo._id);
+          this.handleGetTotalPage(AuthStorage.userInfo._id);
+          this.notifySuccess(
+            "Nofitication",
+            `Course ${isCreatedModule.name} has been created successfully.`
+          );
+        } else {
+          this.notifyError(
+            "Nofitication",
+            "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
+          );
+        }
+      },
+      err => {
         this.notifyError(
           "Nofitication",
           "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
         );
       }
-    }, (err) => {
-      this.notifyError(
-        "Nofitication",
-        "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
-      );
-    });
+    );
   };
 
   handleDeleteModule = id => {
     const payload = { id };
     const { deleteModule } = this.props.action;
     deleteModule(payload, response => {
-      // console.log("response>>>", response);
       if (response._id) {
         this.handleGetModule(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -139,7 +142,7 @@ class ModuleManage extends Component {
         this.setState({
           isUpdate: false,
           courseId: "",
-          nameChange: "",
+          nameChange: ""
         });
       } else {
         this.notifyError(
@@ -148,21 +151,6 @@ class ModuleManage extends Component {
         );
       }
     });
-  };
-
-  handleGetTotalPage = userId => {
-    const { keySearch, courseId } = this.state;
-    fetch(
-      `https://be-lms.tk/modules?${courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ``}${
-      keySearch !== "" ? `name_contains=${keySearch}&` : ``
-      }users._id=${userId}`
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(result => {
-        this.setState({ totalPage: result.length });
-      });
   };
 
   handleGetModule = userId => {
@@ -190,6 +178,26 @@ class ModuleManage extends Component {
     getListCourse(payload);
   };
 
+  handleGetTotalPage = userId => {
+    const { keySearch, courseId } = this.state;
+    fetch(
+      `https://be-lms.tk/modules?${
+        courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ``
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }users._id=${userId}`
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(result => {
+        this.setState({ totalPage: result.length });
+      });
+  };
+
+  //#endregion
+
+  //#region Handle DOM
   handleInputSearch = e => {
     this.setState({ keySearch: e.target.value });
   };
@@ -201,6 +209,14 @@ class ModuleManage extends Component {
         this.handleGetTotalPage(AuthStorage.userInfo._id);
       });
     }
+  };
+
+  handleChangeName = e => {
+    this.setState({ nameChange: e.target.value });
+  };
+
+  handleChangeLevel = e => {
+    this.setState({ levelChange: e.target.value });
   };
 
   handlePageChange(pageNumber) {
@@ -223,12 +239,12 @@ class ModuleManage extends Component {
 
   handleSubmitRemove = () => {
     const { moduleId } = this.state;
-    this.handleDeleteModule(moduleId)
+    this.handleDeleteModule(moduleId);
     this.setState({ moduleId: "" });
     this.setState({ isOpen: false });
   };
 
-  handleEnableUpdate = (name) => {
+  handleEnableUpdate = name => {
     this.setState({ isUpdate: true, nameChange: name });
   };
 
@@ -240,13 +256,19 @@ class ModuleManage extends Component {
     this.setState({ isUpdate: false });
   };
 
-  handleChangeName = e => {
-    this.setState({ nameChange: e.target.value });
+  handleShowPopup = () => {
+    const { isShow } = this.state;
+    this.setState({ isShow: !isShow });
   };
 
-  handleChangeLevel = e => {
-    this.setState({ levelChange: e.target.value });
+  filterByCourse = courseId => {
+    this.setState({ courseId, startItemPage: 0, activePage: 1 }, () => {
+      this.handleGetModule(AuthStorage.userInfo._id);
+      this.handleGetTotalPage(AuthStorage.userInfo._id);
+    });
   };
+
+  //#endregion
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
@@ -257,18 +279,6 @@ class ModuleManage extends Component {
   notifyError = (title, content) => {
     toastr.error(content, title, {
       closeButton: true
-    });
-  };
-
-  handleShowPopup = () => {
-    const { isShow } = this.state;
-    this.setState({ isShow: !isShow });
-  };
-
-  filterByCourse = courseId => {
-    this.setState({ courseId, startItemPage: 0, activePage: 1 }, () => {
-      this.handleGetModule(AuthStorage.userInfo._id);
-      this.handleGetTotalPage(AuthStorage.userInfo._id);
     });
   };
 
@@ -347,10 +357,8 @@ class ModuleManage extends Component {
                           <li key={index}>
                             <Link
                               className={`${
-                                courseId === item._id
-                                  ? "font-weight-bold"
-                                  : ""
-                                }`}
+                                courseId === item._id ? "font-weight-bold" : ""
+                              }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -367,7 +375,7 @@ class ModuleManage extends Component {
                         to="#"
                         className={`${
                           courseId === "" ? "font-weight-bold" : ""
-                          }`}
+                        }`}
                         onClick={e => {
                           e.preventDefault();
                           this.filterByCourse("");
@@ -384,9 +392,13 @@ class ModuleManage extends Component {
               <div className="featured-courses courses-wrap">
                 <div className="row no-gutters mb-3">
                   <div className="col-xl-12">
-                    <button className="btn btn-success text-white new-item" onClick={this.handleShowPopup} type="button">
+                    <button
+                      className="btn btn-success text-white new-item"
+                      onClick={this.handleShowPopup}
+                      type="button"
+                    >
                       NEW MODULE
-                  </button>
+                    </button>
                   </div>
                 </div>
                 <div className="row mx-m-25">
@@ -418,32 +430,30 @@ class ModuleManage extends Component {
                                   </button>
                                 </>
                               ) : (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="btn btn-remove alert-danger"
-                                      onClick={() => {
-                                        this.handleOpenPopup();
-                                        this.handleSetModuleId(item._id);
-                                      }}
-                                    >
-                                      <i className="fa fa-remove"></i>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-update alert-info"
-                                      onClick={() => {
-                                        // this.handleRemoveCourseToPath_ver2(index);
-                                        this.handleSetModuleId(item._id);
-                                        this.handleEnableUpdate(
-                                          item.name
-                                        );
-                                      }}
-                                    >
-                                      <i className="fa fa-pencil"></i>
-                                    </button>
-                                  </>
-                                )}
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-remove alert-danger"
+                                    onClick={() => {
+                                      this.handleOpenPopup();
+                                      this.handleSetModuleId(item._id);
+                                    }}
+                                  >
+                                    <i className="fa fa-remove"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-update alert-info"
+                                    onClick={() => {
+                                      // this.handleRemoveCourseToPath_ver2(index);
+                                      this.handleSetModuleId(item._id);
+                                      this.handleEnableUpdate(item.name);
+                                    }}
+                                  >
+                                    <i className="fa fa-pencil"></i>
+                                  </button>
+                                </>
+                              )}
 
                               <Link to={`#`}>
                                 <img
@@ -451,7 +461,7 @@ class ModuleManage extends Component {
                                     item.thumbnail
                                       ? `${REACT_APP_URL_API}${item.thumbnail.url}`
                                       : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                    }`}
+                                  }`}
                                   alt=""
                                 />
                               </Link>
@@ -468,10 +478,8 @@ class ModuleManage extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                      <Link to={`#`}>
-                                        {item.name}
-                                      </Link>
-                                    )}
+                                    <Link to={`#`}>{item.name}</Link>
+                                  )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
@@ -494,10 +502,10 @@ class ModuleManage extends Component {
                       );
                     })
                   ) : (
-                      <div className="col-xl-12 mt-3">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    <div className="col-xl-12 mt-3">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="row">
