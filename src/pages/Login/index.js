@@ -103,7 +103,7 @@ class Login extends Component {
     return (
       <div className="page-header">
         <Header titleHeader="Login Page" />
-        <div className="container">
+        <div className="container login-page">
           <div className="row justify-content-center pt-5 pb-5">
             <div className="col-xl-6">
               <form onSubmit={this.handleLogin}>
@@ -156,13 +156,15 @@ class Login extends Component {
                     </label>
                   )}
                 </div>
-                <button
-                  type="submit"
-                  className="btn bg-root"
-                  style={{ cursor: "pointer" }}
-                >
-                  Login
-                </button>
+                <div className="form-group text-center">
+                  <button
+                    type="submit"
+                    className="btn bg-root"
+                    style={{ cursor: "pointer" }}
+                  >
+                    Login
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -172,7 +174,4 @@ class Login extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login));

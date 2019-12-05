@@ -79,17 +79,18 @@ class TrainingDetail extends Component {
       path.course.relationcoursemodules.map((itemCourse, indexCourse) => {
         let menuLv2 = {};
         menuLv2.key = `second-level-node-${indexCourse + 1}`;
-        menuLv2.label = itemCourse.module.name;
+        menuLv2.label = itemCourse.module ? itemCourse.module.name : "";
         menuLv2.value = itemCourse.module;
         menuLv2.nodes = [];
-        itemCourse.module.contents.map((itemContent, indexContent) => {
-          let menuLv3 = {};
-          menuLv3.key = `third-level-node-${indexContent + 1}`;
-          menuLv3.label = itemContent.name;
-          menuLv3.value = itemContent;
-          menuLv3.nodes = [];
-          menuLv2.nodes.push(menuLv3);
-        });
+        itemCourse.module &&
+          itemCourse.module.contents.map((itemContent, indexContent) => {
+            let menuLv3 = {};
+            menuLv3.key = `third-level-node-${indexContent + 1}`;
+            menuLv3.label = itemContent.name;
+            menuLv3.value = itemContent;
+            menuLv3.nodes = [];
+            menuLv2.nodes.push(menuLv3);
+          });
         menuLv1.nodes.push(menuLv2);
       });
       listMenu.push(menuLv1);

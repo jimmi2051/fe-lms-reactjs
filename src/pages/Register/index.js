@@ -173,7 +173,7 @@ class Register extends Component {
     return (
       <div className="page-header">
         <Header titleHeader="Register Page" />
-        <div className="container">
+        <div className="container login-page">
           <div className="row justify-content-center pt-5 pb-5">
             <div className="col-xl-6">
               {this.state.isSuccess ? (
@@ -361,13 +361,15 @@ class Register extends Component {
                       </label>
                     )}
                   </div>
-                  <button
-                    type="submit"
-                    className="btn bg-root"
-                    style={{ cursor: "pointer" }}
-                  >
-                    Register
-                  </button>
+                  <div className="form-group text-center">
+                    <button
+                      type="submit"
+                      className="btn bg-root"
+                      style={{ cursor: "pointer" }}
+                    >
+                      Register
+                    </button>
+                  </div>
                 </form>
               )}
             </div>

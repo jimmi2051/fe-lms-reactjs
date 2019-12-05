@@ -24,7 +24,7 @@ class Navbar extends Component {
   state = {
     keySearch: ""
   };
-  componentDidMount() { }
+  componentDidMount() {}
   logout = () => {
     this.props.action.logoutRequest();
   };
@@ -91,19 +91,19 @@ class Navbar extends Component {
                         </li>
                       </>
                     ) : (
-                        <>
-                          <li>
-                            <Link to="/profile">
-                              {AuthStorage.userInfo.username}
-                            </Link>
-                          </li>
-                          <li>
-                            <Link onClick={this.logout} to="/login">
-                              Log out
+                      <>
+                        <li>
+                          <Link to="/profile">
+                            {AuthStorage.userInfo.username}
                           </Link>
-                          </li>
-                        </>
-                      )}
+                        </li>
+                        <li>
+                          <Link onClick={this.logout} to="/login">
+                            Log out
+                          </Link>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -251,25 +251,54 @@ class Navbar extends Component {
                           <i className="fa fa-caret-down"></i>
                         </a>
                         <div className="sub-menu">
-                          <Link className={pathname === "/admin/course" ? "current-menu-item" : ""} to="/admin/course">
+                          <Link
+                            className={
+                              pathname === "/admin/course"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                            to="/admin/course"
+                          >
                             Manage Course
                           </Link>
-                          <Link className={pathname === "/admin/module" ? "current-menu-item" : ""} to="/admin/module">
+                          <Link
+                            className={
+                              pathname === "/admin/module"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                            to="/admin/module"
+                          >
                             Manage Module
                           </Link>
-                          <Link className={pathname === "/admin/content" ? "current-menu-item" : ""} to="/admin/content">
+                          <Link
+                            className={
+                              pathname === "/admin/content"
+                                ? "current-menu-item"
+                                : ""
+                            }
+                            to="/admin/content"
+                          >
                             Manage Content
                           </Link>
                         </div>
                       </div>
                     )}
                   {(AuthStorage.loggedIn &&
-                    AuthStorage.userInfo.role.type === "user") || !AuthStorage.loggedIn && (<div class="header-bar-cart">
-                      <a href="#" class="flex justify-content-center align-items-center">
-                        <span aria-hidden="true" class="icon_bag_alt"></span>
-                      </a>
-                    </div>)}
-
+                    AuthStorage.userInfo.role.type === "user") ||
+                    (!AuthStorage.loggedIn && (
+                      <div className="header-bar-cart">
+                        <a
+                          href="#"
+                          className="flex justify-content-center align-items-center"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="icon_bag_alt"
+                          ></span>
+                        </a>
+                      </div>
+                    ))}
                 </nav>
               </div>
             </div>
@@ -280,7 +309,4 @@ class Navbar extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(Navbar));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Navbar));
