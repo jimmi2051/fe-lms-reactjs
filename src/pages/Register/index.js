@@ -72,7 +72,8 @@ class Register extends Component {
         password.value,
         confirmPassword.value,
         tel.value,
-        date
+        date,
+        role.value
       )
     ) {
       const { registerUser } = this.props.action;
@@ -106,7 +107,14 @@ class Register extends Component {
       );
     }
   };
-  handleValidation = (username, password, confirmPassword, telephone, date) => {
+  handleValidation = (
+    username,
+    password,
+    confirmPassword,
+    telephone,
+    date,
+    role
+  ) => {
     let reg = /^\d+$/;
     let formIsValid = true;
     let errors = {};
@@ -159,6 +167,10 @@ class Register extends Component {
       formIsValid = false;
       errors["date"] = "Birthday is invalid";
     }
+    if (role === "-1") {
+      formIsValid = false;
+      errors["role"] = "Please choose role";
+    }
     this.setState({ errors: errors });
     return formIsValid;
   };
@@ -178,7 +190,9 @@ class Register extends Component {
             <div className="col-xl-6">
               {this.state.isSuccess ? (
                 <h4 className="text-success">
-                  Register success. Click <Link to="/login">here</Link> to Login
+                  Register successfully. Please check your email to confirm
+                  account. <br />
+                  Click <Link to="/login">here</Link> to Login
                 </h4>
               ) : (
                 <form onSubmit={this.handleRegister} className="form-sign-in">
