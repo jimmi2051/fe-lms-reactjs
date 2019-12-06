@@ -1860,7 +1860,7 @@ ul.black-doted {
 
 @media screen and (max-width: 992px){
     .post-share {
-        margin-top: 50px;
+        margin-top: 0px;
     }
 
     .post-share h3 {

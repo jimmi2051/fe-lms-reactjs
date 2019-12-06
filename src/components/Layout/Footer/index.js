@@ -23,14 +23,14 @@ class Footer extends Component {
       <footer className="site-footer">
         <div className="footer-bar">
           <div className="container">
-            <div className="row flex-wrap justify-content-center justify-content-lg-between align-items-center">
+            <div className="row flex-wrap justify-content-center justify-content-lg-between align-items-center align-mobile">
               <div className="col-12 col-lg-6">
                 <p className="footer-copyright">
                   &copy; Copyright LMS-System | All rights reserved
                 </p>
               </div>
 
-              <div className="col-12 col-lg-6 mt-4 mt-lg-0">
+              <div className="col-12 col-lg-6 mt-lg-0">
                 <div className="footer-bar-nav">
                   <ul className="flex flex-wrap justify-content-center justify-content-lg-end align-items-center">
                     <li>

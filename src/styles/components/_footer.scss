@@ -1,6 +1,11 @@
 .site-footer {
   background: #218838;
   margin-top: 50px;
+  .align-mobile {
+    @media screen and (max-width: 991px) {
+      text-align: center;
+    }
+  }
   .footer-bar {
     padding: 15px 0;
   }
