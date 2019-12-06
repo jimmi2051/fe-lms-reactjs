@@ -495,19 +495,26 @@ class ListTraining extends Component {
                         <Loading classOption="align-center-spinner" />
                       </div>
                     )}
+                    {!loadingListTraining && listTraining.length === 0 && (
+                      <div className="col-xl-12 mt-3" style={{paddingLeft:"25px"}}>
+                        <p>You don't have any training yet. </p>
+                      </div>
+                    )}
                 </div>
               </div>
-              <div className="row">
-                <div className="col-xl-12">
-                  <Pagination
+              {this.state.totalPage > 0 && (
+                <div className="row">
+                  <div className="col-xl-12">
+                    <Pagination
                     activePage={this.state.activePage}
                     itemsCountPerPage={this.state.itemPerPage}
                     totalItemsCount={this.state.totalPage}
                     pageRangeDisplayed={5}
                     onChange={this.handlePageChange.bind(this)}
-                  />
-                </div>
+                   />
+                  </div>
               </div>
+              )}
             </div>
           </div>
         </div>

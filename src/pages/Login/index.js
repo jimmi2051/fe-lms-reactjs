@@ -125,7 +125,7 @@ class Login extends Component {
                   <label htmlFor="emailLogin">Email address</label>
                   <input
                     type="text"
-                    className={`${this.state.errors["username"] ? "border border-danger" : ""} form-control`}
+                    className={`${this.state.errors["username"] || this.state.errors["token"]  ? "border border-danger" : ""} form-control`}
                     id="emailLogin"
                     placeholder="Enter email"
                     ref="email"
@@ -145,7 +145,7 @@ class Login extends Component {
                   <label htmlFor="passwordLogin">Password</label>
                   <input
                     type="password"
-                    className={`${this.state.errors["password"] ? "border border-danger" : ""} form-control`}
+                    className={`${this.state.errors["password"] || this.state.errors["token"] ? "border border-danger" : ""} form-control`}
                     id="passwordLogin"
                     placeholder="Password"
                     ref="password"

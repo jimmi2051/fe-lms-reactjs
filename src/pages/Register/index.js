@@ -189,11 +189,16 @@ class Register extends Component {
           <div className="row justify-content-center pt-5 pb-5">
             <div className="col-xl-6">
               {this.state.isSuccess ? (
-                <p className="text-success">
-                  Register successfully. Please check your email to confirm
-                  account. <br />
-                  Click <Link to="/login">here</Link> to Login
-                </p>
+                <div className="wrap-notify">
+                  <h5 className="text-success mb-3">Registration Successfully
+                    <i className="pl-3 fa fa-check" />
+                  </h5>
+                  <p>
+                    Please check your email to confirm account.</p>
+                  <p>
+                    Click <Link className="text-success" to="/login">here</Link> to Login!
+                  </p>
+                </div>
               ) : (
                   <form onSubmit={this.handleRegister} className="form-sign-in">
                     {this.state.errors["token"] && (

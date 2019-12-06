@@ -29,7 +29,11 @@ class ForgotPassword extends Component {
     errors: {},
     isRequestSuccess: false,
     isConfirmCode: false,
-    loading: false
+    loading: false,
+    code: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   };
   componentDidMount() {
     if (AuthStorage && AuthStorage.loggedIn) {
@@ -45,9 +49,9 @@ class ForgotPassword extends Component {
 
   handleSubmitRequest = () => {
     this.setState({ loading: true })
-    const { email, } = this.refs;
-    if (this.handleValidation(email.value)) {
-      this.handleRequestForgotPassword(email.value);
+    const { email } = this.state;
+    if (this.handleValidation(email)) {
+      this.handleRequestForgotPassword(email);
     }
     else {
       this.setState({ loading: false })
@@ -69,28 +73,28 @@ class ForgotPassword extends Component {
     })
   }
 
-  handleValidation = (username) => {
+  handleValidation = (email) => {
     let formIsValid = true;
     let errors = {};
-    //Validate username
-    if (!username) {
+    //Validate email
+    if (!email) {
       formIsValid = false;
-      errors["username"] = "This field is required";
+      errors["email"] = "This field is required";
     } else {
-      if (typeof username !== "undefined") {
-        let lastAtPos = username.lastIndexOf("@");
-        let lastDotPos = username.lastIndexOf(".");
+      if (typeof email !== "undefined") {
+        let lastAtPos = email.lastIndexOf("@");
+        let lastDotPos = email.lastIndexOf(".");
         if (
           !(
             lastAtPos < lastDotPos &&
             lastAtPos > 0 &&
-            username.indexOf("@@") === -1 &&
+            email.indexOf("@@") === -1 &&
             lastDotPos > 2 &&
-            username.length - lastDotPos > 2
+            email.length - lastDotPos > 2
           )
         ) {
           formIsValid = false;
-          errors["username"] = "Email is incorrect. ";
+          errors["email"] = "Email is incorrect. ";
         }
       }
     }
@@ -100,9 +104,9 @@ class ForgotPassword extends Component {
 
   handleSubmitReset = () => {
     this.setState({ loading: true })
-    const { code, password, confirmPassword } = this.refs;
-    if (this.handleValidationReset(code.value, password.value, confirmPassword.value)) {
-      this.handleResetPassword(code.value, password.value, confirmPassword.value);
+    const { code, password, confirmPassword } = this.state;
+    if (this.handleValidationReset(code, password, confirmPassword)) {
+      this.handleResetPassword(code, password, confirmPassword);
     }
     else {
       this.setState({ loading: false })
@@ -115,7 +119,7 @@ class ForgotPassword extends Component {
     resetPassword(payload, response => {
       if (response && response.jwt) {
         this.notifySuccess("Notification", "Reset password successfully.")
-        this.setState({ isRequestSuccess: false })
+        this.setState({ isRequestSuccess: false, code: "", email: "", password: "", confirmPassword: "" })
       }
       else {
         this.notifyError(response.error, response.message)
@@ -166,8 +170,17 @@ class ForgotPassword extends Component {
     });
   };
 
+  handleInputChange = event => {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value
+    });
+  };
+
   render() {
-    const { isRequestSuccess, loading } = this.state;
+    const { isRequestSuccess, loading, code, email, password, confirmPassword } = this.state;
     return (
       <div className="page-header">
         <ToastContainer
@@ -185,8 +198,9 @@ class ForgotPassword extends Component {
                   className={`${this.state.errors["code"] ? "border border-danger" : ""} form-control`}
                   id="codeVerify"
                   placeholder="Enter your code"
-                  ref="code"
-                  defaultValue=""
+                  name="code"
+                  onChange={this.handleInputChange}
+                  value={code}
                   onClick={this.handleRefeshError}
                 />
                 <small className="form-text text-muted">
@@ -207,7 +221,9 @@ class ForgotPassword extends Component {
                   type="password"
                   className={`${this.state.errors["password"] ? "border border-danger" : ""} form-control`}
                   placeholder="Enter password"
-                  ref="password"
+                  onChange={this.handleInputChange}
+                  name="password"
+                  value={password}
                   maxLength="50"
                   onClick={this.handleRefeshError}
                 />
@@ -226,7 +242,9 @@ class ForgotPassword extends Component {
                   type="password"
                   className={`${this.state.errors["confirmPassword"] ? "border border-danger" : ""} form-control`}
                   placeholder="Enter confirm password"
-                  ref="confirmPassword"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={this.handleInputChange}
                   maxLength="50"
                   onClick={this.handleRefeshError}
                 />
@@ -256,21 +274,22 @@ class ForgotPassword extends Component {
             (<div className="row justify-content-center pt-5 pb-5">
               <div className="col-xl-6">
                 <div className="form-group">
-                  <label htmlFor="emailLogin">Email address</label>
+                  <label>Email address</label>
                   <input
                     type="text"
-                    className={`${this.state.errors["username"] ? "border border-danger" : ""} form-control`}
-                    id="emailLogin"
+                    className={`${this.state.errors["email"] ? "border border-danger" : ""} form-control`}
                     placeholder="Enter your email"
-                    ref="email"
+                    name="email"
+                    onChange={this.handleInputChange}
+                    value={email}
                     onClick={this.handleRefeshError}
                   />
-                  {this.state.errors["username"] && (
+                  {this.state.errors["email"] && (
                     <label
                       className="error"
                       htmlFor="id_password"
                     >
-                      {this.state.errors["username"]}
+                      {this.state.errors["email"]}
                     </label>
                   )}
                 </div>
