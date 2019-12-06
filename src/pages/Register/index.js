@@ -51,7 +51,7 @@ class Register extends Component {
   handleGetRoles = () => {
     const payload = {};
     const { getRoles } = this.props.action;
-    getRoles(payload, () => {});
+    getRoles(payload, () => { });
   };
 
   handleRegister = e => {
@@ -142,11 +142,11 @@ class Register extends Component {
     }
 
     //Validate password
-    if (!password) {
+    if (!password || password === "") {
       formIsValid = false;
       errors["password"] = "This field is required";
     }
-    if (!telephone) {
+    if (!telephone || telephone === "") {
       formIsValid = false;
       errors["tel"] = "This field is required";
     }
@@ -154,7 +154,7 @@ class Register extends Component {
       formIsValid = false;
       errors["tel"] = "Phone is incorrect";
     }
-    if (!confirmPassword) {
+    if (!confirmPassword || confirmPassword === "") {
       formIsValid = false;
       errors["confirmPassword"] = "This field is required";
     }
@@ -189,203 +189,203 @@ class Register extends Component {
           <div className="row justify-content-center pt-5 pb-5">
             <div className="col-xl-6">
               {this.state.isSuccess ? (
-                <h4 className="text-success">
+                <p className="text-success">
                   Register successfully. Please check your email to confirm
                   account. <br />
                   Click <Link to="/login">here</Link> to Login
-                </h4>
+                </p>
               ) : (
-                <form onSubmit={this.handleRegister} className="form-sign-in">
-                  {this.state.errors["token"] && (
-                    <label
-                      id="id_password-error"
-                      className="error"
-                      htmlFor="id_password"
-                    >
-                      {this.state.errors["token"]}
+                  <form onSubmit={this.handleRegister} className="form-sign-in">
+                    {this.state.errors["token"] && (
+                      <label
+                        id="id_password-error"
+                        className="error"
+                        htmlFor="id_password"
+                      >
+                        {this.state.errors["token"]}
+                      </label>
+                    )}
+                    <div className="form-group">
+                      <label htmlFor="emailLogin">Email address</label>
+                      <input
+                        type="text"
+                        className={`${this.state.errors["username"] ? "border border-danger" : ""} form-control`}
+                        id="emailLogin"
+                        placeholder="Enter email"
+                        ref="email"
+                        maxLength="50"
+                        onClick={this.handleRefeshError}
+                      />
+                      {this.state.errors["username"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["username"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="passwordLogin">Password</label>
+                      <input
+                        type="password"
+                        className={`${this.state.errors["password"] ? "border border-danger" : ""} form-control`}
+                        id="passwordLogin"
+                        placeholder="Enter password"
+                        ref="password"
+                        maxLength="50"
+                        onClick={this.handleRefeshError}
+                      />
+                      {this.state.errors["password"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["password"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="confirmPasswordLogin">
+                        Confirm password
                     </label>
-                  )}
-                  <div className="form-group">
-                    <label htmlFor="emailLogin">Email address</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="emailLogin"
-                      placeholder="Enter email"
-                      ref="email"
-                      maxLength="50"
-                      onClick={this.handleRefeshError}
-                    />
-                    {this.state.errors["username"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["username"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="passwordLogin">Password</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      id="passwordLogin"
-                      placeholder="Enter password"
-                      ref="password"
-                      maxLength="50"
-                      onClick={this.handleRefeshError}
-                    />
-                    {this.state.errors["password"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["password"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="confirmPasswordLogin">
-                      Confirm password
-                    </label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      id="confirmPasswordLogin"
-                      placeholder="Enter confirm password"
-                      ref="confirmPassword"
-                      maxLength="50"
-                      onClick={this.handleRefeshError}
-                    />
-                    {this.state.errors["confirmPassword"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["confirmPassword"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="firstName">First Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="firstName"
-                      placeholder="Enter first name"
-                      ref="firstName"
-                      onClick={this.handleRefeshError}
-                    />
-                    {this.state.errors["firstName"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
+                      <input
+                        type="password"
+                        className={`${this.state.errors["confirmPassword"] ? "border border-danger" : ""} form-control`}
+                        id="confirmPasswordLogin"
+                        placeholder="Enter confirm password"
+                        ref="confirmPassword"
+                        maxLength="50"
+                        onClick={this.handleRefeshError}
+                      />
+                      {this.state.errors["confirmPassword"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["confirmPassword"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="firstName">First Name</label>
+                      <input
+                        type="text"
+                        className={`${this.state.errors["firstName"] ? "border border-danger" : ""} form-control`}
+                        id="firstName"
+                        placeholder="Enter first name"
+                        ref="firstName"
+                        onClick={this.handleRefeshError}
+                      />
+                      {this.state.errors["firstName"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                          maxLength="100"
+                        >
+                          {this.state.errors["firstName"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="lastName">Last Name</label>
+                      <input
+                        type="text"
+                        className={`${this.state.errors["lastName"] ? "border border-danger" : ""} form-control`}
+                        id="lastName"
+                        placeholder="Enter last name"
+                        ref="lastName"
+                        onClick={this.handleRefeshError}
                         maxLength="100"
+                      />
+                      {this.state.errors["lastName"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["lastName"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="tel">Telephone</label>
+                      <input
+                        type="text"
+                        className={`${this.state.errors["tel"] ? "border border-danger" : ""} form-control`}
+                        id="tel"
+                        placeholder="Enter your phone"
+                        ref="tel"
+                        onClick={this.handleRefeshError}
+                        maxLength="12"
+                      />
+                      {this.state.errors["tel"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["tel"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label>Birth date</label>
+                      <DatePicker
+                        onChange={date => this.onChangeDate(date)}
+                        selected={this.state.date}
+                        className={`${this.state.errors["date"] ? "border border-danger" : ""} form-control`}
+                        dateFormat="dd/MM/yyyy"
+                        maxDate={Date.now()}
+                      />
+                      {this.state.errors["date"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["date"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="role">Role</label>
+                      <select ref="role" className={`${this.state.errors["role"] ? "border border-danger" : ""} form-control`} id="role">
+                        <option value="-1">Select role</option>
+                        {!loadingRoles &&
+                          roles.roles.map((item, index) => {
+                            return (
+                              <option key={index} value={item._id}>
+                                {item.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                      {this.state.errors["role"] && (
+                        <label
+                          id="id_password-error"
+                          className="error"
+                          htmlFor="id_password"
+                        >
+                          {this.state.errors["role"]}
+                        </label>
+                      )}
+                    </div>
+                    <div className="form-group text-center">
+                      <button
+                        type="submit"
+                        className="btn bg-root"
+                        style={{ cursor: "pointer" }}
                       >
-                        {this.state.errors["firstName"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="lastName">Last Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="lastName"
-                      placeholder="Enter last name"
-                      ref="lastName"
-                      onClick={this.handleRefeshError}
-                      maxLength="100"
-                    />
-                    {this.state.errors["lastName"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["lastName"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="tel">Telephone</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="tel"
-                      placeholder="Enter your phone"
-                      ref="tel"
-                      onClick={this.handleRefeshError}
-                      maxLength="12"
-                    />
-                    {this.state.errors["tel"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["tel"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label>Birth date</label>
-                    <DatePicker
-                      onChange={date => this.onChangeDate(date)}
-                      selected={this.state.date}
-                      className="form-control"
-                      dateFormat="dd/MM/yyyy"
-                      maxDate={Date.now()}
-                    />
-                    {this.state.errors["date"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["date"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="role">Role</label>
-                    <select ref="role" className="form-control" id="role">
-                      <option value="-1">Select role</option>
-                      {!loadingRoles &&
-                        roles.roles.map((item, index) => {
-                          return (
-                            <option key={index} value={item._id}>
-                              {item.name}
-                            </option>
-                          );
-                        })}
-                    </select>
-                    {this.state.errors["role"] && (
-                      <label
-                        id="id_password-error"
-                        className="error"
-                        htmlFor="id_password"
-                      >
-                        {this.state.errors["role"]}
-                      </label>
-                    )}
-                  </div>
-                  <div className="form-group text-center">
-                    <button
-                      type="submit"
-                      className="btn bg-root"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Register
+                        Register
                     </button>
-                  </div>
-                </form>
-              )}
+                    </div>
+                  </form>
+                )}
             </div>
           </div>
         </div>

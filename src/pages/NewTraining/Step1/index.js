@@ -12,7 +12,7 @@ class Step1 extends Component {
     const file = e.target.files[0];
     const url = reader.readAsDataURL(file);
 
-    reader.onloadend = function(e) {
+    reader.onloadend = function (e) {
       this.setState({
         imgSrc: [reader.result]
       });
@@ -144,10 +144,10 @@ class Step1 extends Component {
             disabled={isLoading}
           >
             {isLoading ? (
-              <Loading classOption="align-center-spinner" />
+              <Loading color="#ffffff" classOption="align-center-spinner" />
             ) : (
-              "CONTINUE"
-            )}
+                "CONTINUE"
+              )}
           </button>
         </div>
       </div>

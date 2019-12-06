@@ -428,7 +428,7 @@ class Step4 extends Component {
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loading classOption="align-center-spinner" />
+                <Loading color="#ffffff" classOption="align-center-spinner" />
               ) : (
                   "UPDATE CONTENT FOR MODULE"
                 )}

@@ -354,9 +354,6 @@ class ListTraining extends Component {
                       for (let i = 0; i < parseInt(item.level); i++) {
                         starOfTraining.push(i);
                       }
-                      console.log("training Id>>>>", trainingId);
-                      console.log("item._id", item._id);
-                      console.log("isUpdate>>>", isUpdate)
                       return (
                         <div key={index} className="col-12 col-md-6 px-25">
                           <div className="course-content">

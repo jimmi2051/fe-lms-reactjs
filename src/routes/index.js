@@ -8,7 +8,6 @@ import { Route, Switch } from "react-router-dom";
 import HomePage from "pages/Home";
 import LoginPage from "pages/Login";
 import RegisterPage from "pages/Register";
-import CoursePage from "pages/Course";
 import AdminCoursePage from "pages/CourseManage";
 import AdminNewTraining from "pages/NewTraining";
 import AdminListTraining from "pages/ListTraining";
@@ -20,6 +19,8 @@ import AdminTrainingDetail from "pages/AdminTrainingDetail";
 import PageNotFound from "pages/PageNotFound";
 import AdminModulePage from "pages/ModuleManage";
 import AdminContentPage from "pages/ContentManage";
+import ForgotPasswordPage from "pages/ForgotPassword"
+
 import StudentWarp from "layout/Student";
 
 export default function RootRoute() {
@@ -35,6 +36,7 @@ export default function RootRoute() {
           path="/view-training/:id"
           component={ViewTrainingDetail}
         />
+        <Route exact path="/forgot-password" component={ForgotPasswordPage} />
         <StudentWarp>
           <Switch>
             <Route

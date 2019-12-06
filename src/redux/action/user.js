@@ -64,3 +64,43 @@ export const getRoles = (payload, next, nextErr) => {
     }
   };
 };
+
+export const requestForgotPassword = (payload, next, nextErr) => {
+  const { email } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `auth/forgot-password`,
+      beforeCallType: "FORGOT_PASSWORD_REQUEST",
+      successType: "FORGOT_PASSWORD_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "POST"
+      },
+      params: {
+        email
+      }
+    }
+  };
+}
+
+export const resetPassword = (payload, next, nextErr) => {
+  const { code, password, passwordConfirmation } = payload;
+  return {
+    type: SINGLE_API,
+    payload: {
+      uri: `auth/reset-password`,
+      beforeCallType: "GET_ROLES_REQUEST",
+      successType: "GET_ROLES_SUCCESS",
+      afterSuccess: next,
+      afterError: nextErr,
+      opt: {
+        method: "POST"
+      },
+      params: {
+        code, password, passwordConfirmation
+      }
+    }
+  };
+}

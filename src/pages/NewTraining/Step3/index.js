@@ -460,7 +460,7 @@ class Step3 extends Component {
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loading classOption="align-center-spinner" />
+                <Loading color="#ffffff" classOption="align-center-spinner" />
               ) : (
                 "SAVE"
               )}

@@ -157,9 +157,9 @@ class ModuleManage extends Component {
     const { keySearch, moduleId } = this.state;
     fetch(
       `https://be-lms.tk/contents?${
-        moduleId !== "" ? `modules._id=${moduleId}&` : ``
+      moduleId !== "" ? `modules._id=${moduleId}&` : ``
       }${
-        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }users._id=${userId}`
     )
       .then(response => {
@@ -386,7 +386,7 @@ class ModuleManage extends Component {
                             <Link
                               className={`${
                                 moduleId === item._id ? "font-weight-bold" : ""
-                              }`}
+                                }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -403,7 +403,7 @@ class ModuleManage extends Component {
                         to="#"
                         className={`${
                           moduleId === "" ? "font-weight-bold" : ""
-                        }`}
+                          }`}
                         onClick={e => {
                           e.preventDefault();
                           this.filterByModule("");
@@ -448,43 +448,43 @@ class ModuleManage extends Component {
                                 <td>{index + 1}</td>
                                 <td>
                                   {contentId !== "" &&
-                                  contentId === item._id ? (
-                                    <div className="table-group-management-td">
-                                      <input
-                                        style={{
-                                          width: "100%",
-                                          display: "inline-block"
-                                        }}
-                                        value={nameChange}
-                                        onChange={this.handleChangeName}
-                                        className="form-control"
-                                        type="text"
-                                      />
-                                      <i
-                                        className="fa fa-check pl-2"
-                                        onClick={this.handleUpdateContent}
-                                      />
-                                      <i
-                                        className="fa fa-times pl-2"
-                                        onClick={() => {
-                                          this.handleSetContentId("", "");
-                                        }}
-                                      />
-                                    </div>
-                                  ) : (
-                                    <>
-                                      {item.name}
-                                      <i
-                                        className="fa fa-pencil pl-2"
-                                        onClick={() => {
-                                          this.handleSetContentId(
-                                            item._id,
-                                            item.name
-                                          );
-                                        }}
-                                      />
-                                    </>
-                                  )}
+                                    contentId === item._id ? (
+                                      <div className="table-group-management-td">
+                                        <input
+                                          style={{
+                                            width: "100%",
+                                            display: "inline-block"
+                                          }}
+                                          value={nameChange}
+                                          onChange={this.handleChangeName}
+                                          className="form-control"
+                                          type="text"
+                                        />
+                                        <i
+                                          className="fa fa-check pl-2"
+                                          onClick={this.handleUpdateContent}
+                                        />
+                                        <i
+                                          className="fa fa-times pl-2"
+                                          onClick={() => {
+                                            this.handleSetContentId("", "");
+                                          }}
+                                        />
+                                      </div>
+                                    ) : (
+                                      <>
+                                        {item.name}
+                                        <i
+                                          className="fa fa-pencil pl-2"
+                                          onClick={() => {
+                                            this.handleSetContentId(
+                                              item._id,
+                                              item.name
+                                            );
+                                          }}
+                                        />
+                                      </>
+                                    )}
                                 </td>
                                 <td>{item.type}</td>
                                 <td>
@@ -499,18 +499,17 @@ class ModuleManage extends Component {
                                       Detail
                                     </button>
                                   ) : (
-                                    <button
-                                      className="btn bg-root"
-                                      type="button"
-                                      onClick={() => {
-                                        console.log("1");
-                                        this.handleSetCurrentContent(item);
-                                        this.handleShowPopupUpdate();
-                                      }}
-                                    >
-                                      Update
+                                      <button
+                                        className="btn bg-root"
+                                        type="button"
+                                        onClick={() => {
+                                          this.handleSetCurrentContent(item);
+                                          this.handleShowPopupUpdate();
+                                        }}
+                                      >
+                                        Update
                                     </button>
-                                  )}
+                                    )}
 
                                   <button
                                     className="btn btn-danger ml-2"
@@ -528,14 +527,14 @@ class ModuleManage extends Component {
                             );
                           })
                         ) : (
-                          <tr>
-                            <td colSpan="4">
-                              <div className="col-xl-12 mt-3">
-                                <Loading classOption="align-center-spinner" />
-                              </div>
-                            </td>
-                          </tr>
-                        )}
+                            <tr>
+                              <td colSpan="4">
+                                <div className="col-xl-12 mt-3">
+                                  <Loading classOption="align-center-spinner" />
+                                </div>
+                              </td>
+                            </tr>
+                          )}
                       </tbody>
                     </table>
                   </div>
