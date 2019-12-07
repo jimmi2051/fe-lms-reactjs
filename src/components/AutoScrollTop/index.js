@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 const DynamicScrollToTop = (props) => {
 
   useEffect(() => {
-    console.log(props);
     // Keep default behavior of restoring scroll position when user:
     // - clicked back button
     // - clicked on a link that programmatically calls `history.goBack()`
@@ -18,7 +17,7 @@ const DynamicScrollToTop = (props) => {
     if (hash) {
       let element = document.querySelector(hash);
       if (element) {
-        element.scrollIntoView({block: 'start', behavior: 'smooth'});
+        element.scrollIntoView({ block: 'start', behavior: 'smooth' });
       }
     } else {
       window.scrollTo(0, 0);
@@ -26,7 +25,7 @@ const DynamicScrollToTop = (props) => {
   });
 
   return (
-    <div/>
+    <div />
   );
 };
 

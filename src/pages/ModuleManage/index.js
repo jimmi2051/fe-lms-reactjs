@@ -182,9 +182,9 @@ class ModuleManage extends Component {
     const { keySearch, courseId } = this.state;
     fetch(
       `https://be-lms.tk/modules?${
-        courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ``
+      courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ``
       }${
-        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }users._id=${userId}`
     )
       .then(response => {
@@ -358,7 +358,7 @@ class ModuleManage extends Component {
                             <Link
                               className={`${
                                 courseId === item._id ? "font-weight-bold" : ""
-                              }`}
+                                }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -375,7 +375,7 @@ class ModuleManage extends Component {
                         to="#"
                         className={`${
                           courseId === "" ? "font-weight-bold" : ""
-                        }`}
+                          }`}
                         onClick={e => {
                           e.preventDefault();
                           this.filterByCourse("");
@@ -430,30 +430,30 @@ class ModuleManage extends Component {
                                   </button>
                                 </>
                               ) : (
-                                <>
-                                  <button
-                                    type="button"
-                                    className="btn btn-remove alert-danger"
-                                    onClick={() => {
-                                      this.handleOpenPopup();
-                                      this.handleSetModuleId(item._id);
-                                    }}
-                                  >
-                                    <i className="fa fa-remove"></i>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-update alert-info"
-                                    onClick={() => {
-                                      // this.handleRemoveCourseToPath_ver2(index);
-                                      this.handleSetModuleId(item._id);
-                                      this.handleEnableUpdate(item.name);
-                                    }}
-                                  >
-                                    <i className="fa fa-pencil"></i>
-                                  </button>
-                                </>
-                              )}
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="btn btn-remove alert-danger"
+                                      onClick={() => {
+                                        this.handleOpenPopup();
+                                        this.handleSetModuleId(item._id);
+                                      }}
+                                    >
+                                      <i className="fa fa-remove"></i>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-update alert-info"
+                                      onClick={() => {
+                                        // this.handleRemoveCourseToPath_ver2(index);
+                                        this.handleSetModuleId(item._id);
+                                        this.handleEnableUpdate(item.name);
+                                      }}
+                                    >
+                                      <i className="fa fa-pencil"></i>
+                                    </button>
+                                  </>
+                                )}
 
                               <Link to={`#`}>
                                 <img
@@ -461,7 +461,7 @@ class ModuleManage extends Component {
                                     item.thumbnail
                                       ? `${REACT_APP_URL_API}${item.thumbnail.url}`
                                       : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                  }`}
+                                    }`}
                                   alt=""
                                 />
                               </Link>
@@ -478,8 +478,8 @@ class ModuleManage extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                    <Link to={`#`}>{item.name}</Link>
-                                  )}
+                                      <Link to={`#`}>{item.name}</Link>
+                                    )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
@@ -502,23 +502,30 @@ class ModuleManage extends Component {
                       );
                     })
                   ) : (
-                    <div className="col-xl-12 mt-3">
-                      <Loading classOption="align-center-spinner" />
+                      <div className="col-xl-12 mt-3">
+                        <Loading classOption="align-center-spinner" />
+                      </div>
+                    )}
+                  {!loading && listModulePaging.length === 0 && (
+                    <div className="col-xl-12 mt-3" style={{ paddingLeft: "25px" }}>
+                      <p>You don't have any module yet. </p>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="row">
-                <div className="col-xl-12">
-                  <Pagination
-                    activePage={this.state.activePage}
-                    itemsCountPerPage={this.state.itemPerPage}
-                    totalItemsCount={this.state.totalPage}
-                    pageRangeDisplayed={5}
-                    onChange={this.handlePageChange.bind(this)}
-                  />
+              {this.state.totalPage > 0 && (
+                <div className="row">
+                  <div className="col-xl-12">
+                    <Pagination
+                      activePage={this.state.activePage}
+                      itemsCountPerPage={this.state.itemPerPage}
+                      totalItemsCount={this.state.totalPage}
+                      pageRangeDisplayed={5}
+                      onChange={this.handlePageChange.bind(this)}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

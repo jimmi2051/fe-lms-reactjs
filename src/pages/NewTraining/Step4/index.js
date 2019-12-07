@@ -184,9 +184,16 @@ class Step4 extends Component {
   };
 
   handleUpdateContentForModule = () => {
-    this.setState({ isLoading: true });
-    const { listContentChoosen } = this.state;
     const { notifySuccess, notifyError } = this.props;
+    const { listContentChoosen } = this.state;
+    if (listContentChoosen.length === 0) {
+      notifyError(
+        "Nofitication",
+        "Error! You must add least one content to module."
+      );
+      return;
+    }
+    this.setState({ isLoading: true });
     listContentChoosen.map(async (item, index) => {
       if (index === listContentChoosen.length - 1) {
         this.handleUpdateContent(item, true);

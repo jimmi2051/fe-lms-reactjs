@@ -8,7 +8,9 @@ import CKEditor from "components/CKEditor";
 import AuthStorage from "utils/AuthStorage";
 import { UploadFile } from "utils/UploadImage.js";
 import { Player } from "video-react";
+import Loading from "components/Loading";
 const Papa = require("papaparse/papaparse.min.js");
+
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 
 function mapStateToProps(state) {
@@ -74,10 +76,11 @@ class PopupNewContent extends Component {
           }
         ]
       }
-    ]
+    ],
+    isLoading: false,
   };
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   //#region Handle Action Redux
   handleCreateContent = (name, type, user) => {
@@ -100,8 +103,7 @@ class PopupNewContent extends Component {
     const { handleGetContentByUserId, notifySuccess, notifyError } = this.props;
     const payload = { data, content };
     const { createData } = this.props.action;
-    createData(payload, () => {
-      const { isCreateData } = this.props.store;
+    createData(payload, (isCreateData) => {
       if (isCreateData._id) {
         handleGetContentByUserId(AuthStorage.userInfo._id);
         // this.setState({ createdContent: true });
@@ -110,11 +112,12 @@ class PopupNewContent extends Component {
         this.handleClosePopup();
         notifySuccess("Notification", "Data has been created successfully.");
       } else {
-        notifySuccess(
+        notifyError(
           "Notification",
           "Error! Something when wrong. Please wait a few minutes and try again."
         );
       }
+      this.setState({ isLoading: false });
     });
   };
   //#endregion
@@ -122,6 +125,7 @@ class PopupNewContent extends Component {
   //#region Handle submit button create new content
 
   handleSubmitCreate = () => {
+    this.setState({ isLoading: true })
     const { currentType } = this.state;
     if (currentType === "Text") {
       this.handleSubmitTextNormal();
@@ -186,7 +190,7 @@ class PopupNewContent extends Component {
         })
         .then(result => {
           let sliceResponse = result[0].url.split("/");
-          url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
+          url = `/${sliceResponse[3]}/${sliceResponse[4]}`;
         });
     }
     const data = {
@@ -216,7 +220,7 @@ class PopupNewContent extends Component {
           })
           .then(result => {
             let sliceResponse = result[0].url.split("/");
-            url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
+            url = `/${sliceResponse[3]}/${sliceResponse[4]}`;
           });
       } catch {
         url = "uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png";
@@ -273,7 +277,7 @@ class PopupNewContent extends Component {
   };
 
   handleChangeDescription = content => {
-    this.setState({ content }, () => {});
+    this.setState({ content }, () => { });
   };
 
   handleResetForm = () => {
@@ -331,7 +335,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
 
-      reader.onloadend = function(e) {
+      reader.onloadend = function (e) {
         this.setState({
           videoSrc: [reader.result]
         });
@@ -339,7 +343,7 @@ class PopupNewContent extends Component {
 
       fileToUpload.push(files[0]);
       this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
-    } catch {}
+    } catch { }
   };
 
   slideSelectHander = e => {
@@ -355,7 +359,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
       const index = countTextTest.length - 1;
-      reader.onloadend = function(e) {
+      reader.onloadend = function (e) {
         slideBackground[index] = [reader.result];
         this.setState({
           slideBackground
@@ -364,7 +368,7 @@ class PopupNewContent extends Component {
       fileToUpload.push(files[0]);
       listNameFile[index] = files[0].name;
       this.setState({ fileToUpload: fileToUpload, listNameFile });
-    } catch {}
+    } catch { }
   };
   //#endregion
 
@@ -478,14 +482,15 @@ class PopupNewContent extends Component {
       listNameFile,
       slideBackground,
       errorQuestion,
-      createdContent
+      createdContent,
+      isLoading
     } = this.state;
     const { questions } = this.state;
     return (
       <div
         className={`modal new-content bd-example-modal-lg fade ${
           isShow ? "show" : ""
-        }`}
+          }`}
         id="exampleModal"
         tabIndex="-1"
         role="dialog"
@@ -494,9 +499,9 @@ class PopupNewContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -920,10 +925,10 @@ class PopupNewContent extends Component {
                                               <label
                                                 className={`${
                                                   errorQuestion !== "" &&
-                                                  errorQuestion === index
+                                                    errorQuestion === index
                                                     ? "text-danger"
                                                     : ""
-                                                } form-check-label`}
+                                                  } form-check-label`}
                                               >
                                                 Correct Answer
                                               </label>
@@ -971,8 +976,9 @@ class PopupNewContent extends Component {
                 type="button"
                 className="btn bg-root-active"
                 onClick={this.handleSubmitCreate}
+                disabled={isLoading}
               >
-                Create
+                {isLoading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Create"}
               </button>
               <button
                 type="button"

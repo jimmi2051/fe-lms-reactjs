@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CKEditor from "components/CKEditor";
 import AuthStorage from "utils/AuthStorage";
+import Loading from "components/Loading";
 function mapStateToProps(state) {
   return {
     store: {
@@ -23,9 +24,10 @@ class PopupNewModule extends Component {
     description: "",
     fileToUpload: [],
     nameFile: "",
-    imgSrc: ""
+    imgSrc: "",
+    isLoading: false,
   };
-  componentDidMount() {}
+  componentDidMount() { }
 
   fileSelectHandler = e => {
     let files = e.target.files;
@@ -33,7 +35,7 @@ class PopupNewModule extends Component {
     const reader = new FileReader();
     const file = files[0];
     const url = reader.readAsDataURL(file);
-    reader.onloadend = function(e) {
+    reader.onloadend = function (e) {
       this.setState({
         imgSrc: reader.result
       });
@@ -44,6 +46,7 @@ class PopupNewModule extends Component {
   };
 
   handleNewModule = async () => {
+    this.setState({ isLoading: true })
     const { title } = this.refs;
     const { description, fileToUpload } = this.state;
     let thumbnail = {};
@@ -63,7 +66,11 @@ class PopupNewModule extends Component {
       title.value,
       description,
       thumbnail,
-      AuthStorage.userInfo
+      AuthStorage.userInfo,
+      () => {
+        this.setState({ isLoading: false });
+        this.props.handleShowPopup();
+      }
     );
     this.form.reset();
     this.setState({
@@ -72,7 +79,6 @@ class PopupNewModule extends Component {
       nameFile: "",
       imgSrc: ""
     });
-    this.props.handleShowPopup();
   };
 
   handleChangeDescription = data => {
@@ -81,7 +87,7 @@ class PopupNewModule extends Component {
 
   render() {
     const { isShow } = this.props;
-
+    const {isLoading} = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -93,9 +99,9 @@ class PopupNewModule extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -125,13 +131,16 @@ class PopupNewModule extends Component {
                     ref="title"
                   />
                 </div>
-                <div className="form-group">
-                  <label>Description (*)</label>
-                  <CKEditor
-                    handleChangeDescription={this.handleChangeDescription}
-                    defaultData="Enter data in here..."
-                  />
-                </div>
+                {isShow && (
+                  <div className="form-group">
+                    <label>Description (*)</label>
+                    <CKEditor
+                      handleChangeDescription={this.handleChangeDescription}
+                      defaultData="Enter data in here..."
+                    />
+                  </div>
+                )}
+
                 <div className="form-group">
                   <label>Thumbnail</label>
                   <div className="custom-file">
@@ -162,12 +171,13 @@ class PopupNewModule extends Component {
                 type="button"
                 className="btn bg-root-active"
                 onClick={this.handleNewModule}
+                disabled={isLoading}
               >
-                Add
+                {isLoading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Create"}
               </button>
               <button
                 type="button"
-                className="btn bg-secondary"
+                className="btn bg-secondary text-white"
                 data-dismiss="modal"
                 onClick={this.props.handleShowPopup}
               >

@@ -166,6 +166,7 @@ class Login extends Component {
                     type="submit"
                     className="btn bg-root"
                     style={{ cursor: "pointer" }}
+                    disabled={loading}
                   >
                     {loading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Login"}
                   </button>

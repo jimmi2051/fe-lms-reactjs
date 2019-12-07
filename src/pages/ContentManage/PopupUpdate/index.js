@@ -177,7 +177,7 @@ class PopupNewContent extends Component {
         })
         .then(result => {
           let sliceResponse = result[0].url.split("/");
-          url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
+          url = `/${sliceResponse[3]}/${sliceResponse[4]}`;
         });
     }
     const data = {
@@ -206,7 +206,7 @@ class PopupNewContent extends Component {
           })
           .then(result => {
             let sliceResponse = result[0].url.split("/");
-            url = `${REACT_APP_URL_API}${sliceResponse[3]}/${sliceResponse[4]}`;
+            url = `/${sliceResponse[3]}/${sliceResponse[4]}`;
           });
       } catch {
         url = "uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png";
@@ -249,7 +249,7 @@ class PopupNewContent extends Component {
   };
 
   handleChangeDescription = content => {
-    this.setState({ content }, () => {});
+    this.setState({ content }, () => { });
   };
 
   handleResetForm = () => {
@@ -307,7 +307,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
 
-      reader.onloadend = function(e) {
+      reader.onloadend = function (e) {
         this.setState({
           videoSrc: [reader.result]
         });
@@ -315,7 +315,7 @@ class PopupNewContent extends Component {
 
       fileToUpload.push(files[0]);
       this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
-    } catch {}
+    } catch { }
   };
 
   slideSelectHander = e => {
@@ -331,7 +331,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
       const index = countTextTest.length - 1;
-      reader.onloadend = function(e) {
+      reader.onloadend = function (e) {
         slideBackground[index] = [reader.result];
         this.setState({
           slideBackground
@@ -340,7 +340,7 @@ class PopupNewContent extends Component {
       fileToUpload.push(files[0]);
       listNameFile[index] = files[0].name;
       this.setState({ fileToUpload: fileToUpload, listNameFile });
-    } catch {}
+    } catch { }
   };
   //#endregion
 
@@ -462,7 +462,7 @@ class PopupNewContent extends Component {
       <div
         className={`modal new-content bd-example-modal-lg fade ${
           isShow ? "show" : ""
-        }`}
+          }`}
         id="exampleModal"
         tabIndex="-1"
         role="dialog"
@@ -471,9 +471,9 @@ class PopupNewContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -891,10 +891,10 @@ class PopupNewContent extends Component {
                                               <label
                                                 className={`${
                                                   errorQuestion !== "" &&
-                                                  errorQuestion === index
+                                                    errorQuestion === index
                                                     ? "text-danger"
                                                     : ""
-                                                } form-check-label`}
+                                                  } form-check-label`}
                                               >
                                                 Correct Answer
                                               </label>
@@ -946,8 +946,8 @@ class PopupNewContent extends Component {
                 {isLoading ? (
                   <Loading classOption="align-center-spinner" />
                 ) : (
-                  "Update"
-                )}
+                    "Update"
+                  )}
               </button>
               <button
                 type="button"

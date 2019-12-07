@@ -535,21 +535,30 @@ class ModuleManage extends Component {
                               </td>
                             </tr>
                           )}
+                        {!loading && listContentPaging.length === 0 && (
+                          <tr>
+                            <td colSpan="4">
+                              You don't have any content yet.
+                              </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-xl-12">
-                    <Pagination
-                      activePage={this.state.activePage}
-                      itemsCountPerPage={this.state.itemPerPage}
-                      totalItemsCount={this.state.totalPage}
-                      pageRangeDisplayed={5}
-                      onChange={this.handlePageChange.bind(this)}
-                    />
+                {this.state.totalPage > 0 && (
+                  <div className="row">
+                    <div className="col-xl-12">
+                      <Pagination
+                        activePage={this.state.activePage}
+                        itemsCountPerPage={this.state.itemPerPage}
+                        totalItemsCount={this.state.totalPage}
+                        pageRangeDisplayed={5}
+                        onChange={this.handlePageChange.bind(this)}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

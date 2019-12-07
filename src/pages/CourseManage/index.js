@@ -159,9 +159,9 @@ class ListTraining extends Component {
     const { keySearch, trainingId } = this.state;
     fetch(
       `https://be-lms.tk/courses?${
-        trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``
+      trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``
       }${
-        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }users._id=${userId}`
     )
       .then(response => {
@@ -354,7 +354,7 @@ class ListTraining extends Component {
                                 trainingId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                              }`}
+                                }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -371,7 +371,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           trainingId === "" ? "font-weight-bold" : ""
-                        }`}
+                          }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerTrainingId("");
@@ -426,30 +426,30 @@ class ListTraining extends Component {
                                   </button>
                                 </>
                               ) : (
-                                <>
-                                  <button
-                                    type="button"
-                                    className="btn btn-remove alert-danger"
-                                    onClick={() => {
-                                      this.handleOpenPopup();
-                                      this.handleSetCourseId(item._id);
-                                    }}
-                                  >
-                                    <i className="fa fa-remove"></i>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-update alert-info"
-                                    onClick={() => {
-                                      // this.handleRemoveCourseToPath_ver2(index);
-                                      this.handleSetCourseId(item._id);
-                                      this.handleEnableUpdate(item.name);
-                                    }}
-                                  >
-                                    <i className="fa fa-pencil"></i>
-                                  </button>
-                                </>
-                              )}
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="btn btn-remove alert-danger"
+                                      onClick={() => {
+                                        this.handleOpenPopup();
+                                        this.handleSetCourseId(item._id);
+                                      }}
+                                    >
+                                      <i className="fa fa-remove"></i>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-update alert-info"
+                                      onClick={() => {
+                                        // this.handleRemoveCourseToPath_ver2(index);
+                                        this.handleSetCourseId(item._id);
+                                        this.handleEnableUpdate(item.name);
+                                      }}
+                                    >
+                                      <i className="fa fa-pencil"></i>
+                                    </button>
+                                  </>
+                                )}
 
                               <Link to={`#`}>
                                 <img
@@ -457,7 +457,7 @@ class ListTraining extends Component {
                                     item.thumbnail
                                       ? `${REACT_APP_URL_API}${item.thumbnail.url}`
                                       : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                  }`}
+                                    }`}
                                   alt=""
                                 />
                               </Link>
@@ -474,8 +474,8 @@ class ListTraining extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                    <Link to={`#`}>{item.name}</Link>
-                                  )}
+                                      <Link to={`#`}>{item.name}</Link>
+                                    )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
@@ -498,23 +498,30 @@ class ListTraining extends Component {
                       );
                     })
                   ) : (
-                    <div className="col-xl-12 mt-3">
-                      <Loading classOption="align-center-spinner" />
+                      <div className="col-xl-12 mt-3">
+                        <Loading classOption="align-center-spinner" />
+                      </div>
+                    )}
+                  {!loading && listCoursePaging.length === 0 && (
+                    <div className="col-xl-12 mt-3" style={{ paddingLeft: "25px" }}>
+                      <p>You don't have any course yet. </p>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="row">
-                <div className="col-xl-12">
-                  <Pagination
-                    activePage={this.state.activePage}
-                    itemsCountPerPage={this.state.itemPerPage}
-                    totalItemsCount={this.state.totalPage}
-                    pageRangeDisplayed={5}
-                    onChange={this.handlePageChange.bind(this)}
-                  />
+              {this.state.totalPage > 0 && (
+                <div className="row">
+                  <div className="col-xl-12">
+                    <Pagination
+                      activePage={this.state.activePage}
+                      itemsCountPerPage={this.state.itemPerPage}
+                      totalItemsCount={this.state.totalPage}
+                      pageRangeDisplayed={5}
+                      onChange={this.handlePageChange.bind(this)}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

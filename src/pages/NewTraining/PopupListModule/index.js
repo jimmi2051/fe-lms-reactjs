@@ -59,13 +59,13 @@ class PopupListContent extends Component {
   handleSubmit = () => {
     const { handleAddModuleToCourse_ver2 } = this.props;
     handleAddModuleToCourse_ver2(this.state.moduleSelected);
-    this.setState({ moduleSelected: {} });
+    this.setState({ moduleSelected: {}, selectedOption: null });
     this.props.handleShowPopup();
   };
 
   render() {
     const { isShow } = this.props;
-    const { moduleSelected } = this.state;
+    const { moduleSelected, selectedOption } = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -77,9 +77,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -104,7 +104,7 @@ class PopupListContent extends Component {
                 <div className="col-xl-12">
                   {options.length > 0 && (
                     <Select
-                      // value={selectedOption}
+                      value={selectedOption}
                       className="basic-single"
                       classNamePrefix="select"
                       isSearchable={true}

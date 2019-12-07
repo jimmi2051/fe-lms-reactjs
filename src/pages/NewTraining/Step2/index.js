@@ -50,11 +50,21 @@ class Step2 extends Component {
     course,
     position,
     markForCourse,
-    isRequired
+    isRequired,
+    lastCourse
   ) => {
+    const { notifySuccess, notifyError, trainingCreated } = this.props;
     const { addLearningPath } = this.props.action;
     const payload = { training, course, position, markForCourse, isRequired };
-    addLearningPath(payload, response => {});
+    addLearningPath(payload, response => {
+      if (lastCourse) {
+        this.props.handleStepTwo();
+        notifySuccess(
+          "Nofitication",
+          `Learning path of training "${trainingCreated.name}" has been updated successfully.`
+        );
+      }
+    });
   };
   // Version 2
   handleAddCourseToPath_ver2 = coursePicked => {
@@ -90,13 +100,8 @@ class Step2 extends Component {
     this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 });
   };
 
-  handleSubmit = () => {
-    const { title } = this.refs;
-    this.props.handleStepOne(title.value);
-  };
   handleShowPopup = () => {
-    const { isShow } = this.state;
-    this.setState({ isShow: !isShow });
+    this.setState({ isShow: !this.state.isShow });
   };
 
   handleShowPopupListCourse = () => {
@@ -132,19 +137,25 @@ class Step2 extends Component {
         const markForCourse = item.mark;
         const isRequired = item.required;
         const course = item.course._id;
-        await this.handleAddLearningPath(
-          training,
-          course,
-          position,
-          markForCourse,
-          isRequired
-        );
         if (index === listCourseChoosen_ver2.length - 1) {
-          notifySuccess(
-            "Nofitication",
-            `Learning path of training "${trainingCreated.name}" has been updated successfully.`
+          this.handleAddLearningPath(
+            training,
+            course,
+            position,
+            markForCourse,
+            isRequired,
+            true
           );
-          this.props.handleStepTwo();
+        }
+        else {
+          this.handleAddLearningPath(
+            training,
+            course,
+            position,
+            markForCourse,
+            isRequired,
+            false
+          );
         }
       });
     } else {
@@ -165,7 +176,7 @@ class Step2 extends Component {
   handleInputMark = (index, mark) => {
     let { listCourseChoosen_ver2 } = this.state;
     listCourseChoosen_ver2[index].mark = mark;
-    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => {});
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => { });
   };
 
   handleCheckRequired = (index, checked) => {
@@ -236,7 +247,7 @@ class Step2 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -299,7 +310,7 @@ class Step2 extends Component {
                                   <label
                                     className={`${
                                       messageErr !== "" ? "text-danger" : ""
-                                    } form-check-label`}
+                                      } form-check-label`}
                                     htmlFor="gridCheck"
                                   >
                                     Mandatory
@@ -376,8 +387,8 @@ class Step2 extends Component {
             {isLoading ? (
               <Loading color="#ffffff" classOption="align-center-spinner" />
             ) : (
-              "SAVE & CONTINUE"
-            )}
+                "SAVE & CONTINUE"
+              )}
           </button>
         </div>
       </div>

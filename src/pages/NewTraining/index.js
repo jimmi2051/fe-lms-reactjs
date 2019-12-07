@@ -83,25 +83,25 @@ class NewTraining extends Component {
   handleGetListModule = () => {
     const payload = {};
     const { getModule } = this.props.action;
-    getModule(payload, () => {});
+    getModule(payload, () => { });
   };
   //Handle get list Course
   handleGetListCourse = () => {
     const payload = {};
     const { getCourse } = this.props.action;
-    getCourse(payload, () => {});
+    getCourse(payload, () => { });
   };
 
   handleGetListCourseByUser = userId => {
     const payload = { id: userId };
     const { getCourseByUser } = this.props.action;
-    getCourseByUser(payload, () => {});
+    getCourseByUser(payload, () => { });
   };
 
   handleGetListModuleByUser = userId => {
     const payload = { id: userId };
     const { getModuleByUser } = this.props.action;
-    getModuleByUser(payload, () => {});
+    getModuleByUser(payload, () => { });
   };
 
   //Must improve level without hardcode
@@ -146,7 +146,7 @@ class NewTraining extends Component {
     });
   };
   //Handle create new module
-  handleCreateModule = (name, description, thumbnail, users) => {
+  handleCreateModule = (name, description, thumbnail, users, callBack) => {
     const payload = { name, description, thumbnail, users };
     const { createModule } = this.props.action;
     createModule(payload, () => {
@@ -163,11 +163,14 @@ class NewTraining extends Component {
           "Error! Create module failed. Please wait a few minutes and try again. Thanks"
         );
       }
+      if (typeof callBack === "function") {
+        callBack();
+      }
     });
   };
 
   //Handle create new module
-  handleCreateCourse = (name, description, thumbnail, user) => {
+  handleCreateCourse = (name, description, thumbnail, user, callBack) => {
     const payload = { name, description, thumbnail, user };
     const { createCourse } = this.props.action;
     createCourse(payload, () => {
@@ -183,6 +186,9 @@ class NewTraining extends Component {
           "Nofitication",
           "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
         );
+      }
+      if (typeof callBack === "function") {
+        callBack();
       }
     });
   };

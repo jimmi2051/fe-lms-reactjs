@@ -301,6 +301,7 @@ class ForgotPassword extends Component {
                     onClick={() => {
                       this.handleSubmitRequest();
                     }}
+                    disabled={loading}
                   >
                     {loading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Send email"}
                   </button>

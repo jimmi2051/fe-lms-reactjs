@@ -30,7 +30,8 @@ class PopupListContent extends Component {
   state = {
     description: "",
     selectedOption: null,
-    courseSelected: {}
+    courseSelected: {},
+    currentSelect: {}
   };
 
   componentDidMount() {
@@ -43,7 +44,7 @@ class PopupListContent extends Component {
     listCourseByUser.map((item, index) => {
       options.push({ value: item, label: item.name });
     });
-    // this.setState({ courseSelected: options[0].value });
+    // this.setState({ currentSelect: options[0] });
   };
 
   handleClosePopup = () => {
@@ -59,13 +60,13 @@ class PopupListContent extends Component {
   handleSubmit = () => {
     const { handleAddCourseToPath_ver2 } = this.props;
     handleAddCourseToPath_ver2(this.state.courseSelected);
-    this.setState({ courseSelected: {} });
+    this.setState({ courseSelected: {}, selectedOption: null });
     this.props.handleShowPopup();
   };
 
   render() {
     const { isShow } = this.props;
-    const { courseSelected } = this.state;
+    const { courseSelected, selectedOption } = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -77,9 +78,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-                display: "block",
-                paddingRight: "15px"
-              }
+              display: "block",
+              paddingRight: "15px"
+            }
             : {}
         }
       >
@@ -104,16 +105,16 @@ class PopupListContent extends Component {
                 <div className="col-xl-12">
                   {options.length > 0 && (
                     <Select
-                      // value={selectedOption}
                       className="basic-single"
                       classNamePrefix="select"
                       isSearchable={true}
                       onChange={this.handleChange}
                       options={options}
-                      // defaultValue={options[0]}
+                      defaultValue={options[0]}
                       isClearable={true}
                       noOptionsMessage={inputValue => "No course found"}
                       placeholder="-- Search by course name --"
+                      value={selectedOption}
                     />
                   )}
                 </div>

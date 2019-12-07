@@ -66,8 +66,8 @@ class MyUploadAdapter {
       // at least the "default" URL, pointing to the image on the server.
       // This URL will be used to display the image in the content. Learn more in the
       // UploadAdapter#upload documentation.
-      let sliceResponse = response[0].url.split("/");
-      const url = `${API_URL}${sliceResponse[3]}/${sliceResponse[4]}`;
+      const url = response[0].url;
+      
       resolve({
         default: url
       });

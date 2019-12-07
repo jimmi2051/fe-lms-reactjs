@@ -64,9 +64,8 @@ class Step3 extends Component {
     const { trainingCreated } = this.props;
     this.setState({ currentTraining: trainingCreated });
     if (_.isUndefined(trainingCreated._id)) {
-      this.handleFilterListCourse("5dc8310cec10d97f29757bdc");
+      this.handleFilterListCourse("5deb6cbed609e02c63dfa8fc");
     } else {
-      //this is hardcode must to fix
       this.handleFilterListCourse(trainingCreated._id);
     }
   }
@@ -117,10 +116,22 @@ class Step3 extends Component {
     });
   };
 
-  handleCreateCourseModule = (course, position, module) => {
+  handleCreateCourseModule = (course, position, module, lastModule) => {
     const { addCourseModule } = this.props.action;
+    const { currentCourse } = this.state;
     const payload = { course, position, module };
-    addCourseModule(payload, () => {});
+    addCourseModule(payload, (response) => {
+      const { notifySuccess, notifyError } = this.props;
+      if (lastModule) {
+        notifySuccess(
+          "Nofitication",
+          `List modules of training "${currentCourse.name}" has been updated successfully.`
+        );
+
+        this.setState({ isLoading: false });
+      }
+
+    });
   };
 
   handleSubmit = () => {
@@ -147,24 +158,32 @@ class Step3 extends Component {
   handleStepThree = () => {
     const { notifySuccess, notifyError } = this.props;
     const { listModuleChoosen_ver2, currentCourse } = this.state;
+    if (listModuleChoosen_ver2.length === 0) {
+      notifyError(
+        "Nofitication",
+        "Error! You must add least one content to module."
+      );
+      return;
+    }
+    this.setState({ isLoading: true });
     const course = currentCourse._id;
     listModuleChoosen_ver2.map((item, index) => {
       const position = index + 1;
       const module = item._id;
+      this.setState({ listModuleChoosen_ver2: [] });
       if (index === listModuleChoosen_ver2.length - 1) {
-        notifySuccess(
-          "Nofitication",
-          `List modules of training "${currentCourse.name}" has been updated successfully.`
-        );
-        this.setState({ listModuleChoosen_ver2: [] });
+        this.handleCreateCourseModule(course, position, module, true);
       }
-      this.handleCreateCourseModule(course, position, module, true);
+      else {
+        this.handleCreateCourseModule(course, position, module, false);
+      }
     });
   };
 
   handleChange = options => {
     if (!_.isNull(options)) {
       this.handleChangeCourse(options.value);
+      this.setState({ listModuleChoosen_ver2: [] });
     }
   };
 
@@ -276,7 +295,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -368,7 +387,7 @@ class Step3 extends Component {
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                        } course-content course-content-active`}
+                          } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           {/* <Link to={`#`}> */}
@@ -416,16 +435,16 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-          <div className="col-xl-12 new-training mb-4">
-            <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
-                <div className="col-12 col-md-12 px-25">
-                  <Loading classOption="align-center-spinner" />
+            <div className="col-xl-12 new-training mb-4">
+              <div className="featured-courses courses-wrap">
+                <div className="row mx-m-25">
+                  <div className="col-12 col-md-12 px-25">
+                    <Loading classOption="align-center-spinner" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         {!loadingModuleByCourse && filterModuleByCourse.length === 0 && (
           <div className="col-xl-12 new-training mb-4">
             <div className="featured-courses courses-wrap">
@@ -435,18 +454,18 @@ class Step3 extends Component {
                     <Loading classOption="align-center-spinner" />
                   </div>
                 ) : (
-                  <div className="col-12 col-md-6 px-25">
-                    <div
-                      className="course-content"
-                      onClick={this.handleShowPopupListModule}
-                    >
-                      <div className="course-content-wrap">
-                        <i className="fa fa-plus"></i>
-                        <h3>Add new item</h3>
+                    <div className="col-12 col-md-6 px-25">
+                      <div
+                        className="course-content"
+                        onClick={this.handleShowPopupListModule}
+                      >
+                        <div className="course-content-wrap">
+                          <i className="fa fa-plus"></i>
+                          <h3>Add new item</h3>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
           </div>
@@ -462,8 +481,8 @@ class Step3 extends Component {
               {isLoading ? (
                 <Loading color="#ffffff" classOption="align-center-spinner" />
               ) : (
-                "SAVE"
-              )}
+                  "SAVE"
+                )}
             </button>
           )}
 
