@@ -451,16 +451,15 @@ class ListTraining extends Component {
                                   </>
                                 )}
 
-                              <Link to={`#`}>
-                                <img
-                                  src={`${
-                                    item.thumbnail
-                                      ? `${REACT_APP_URL_API}${item.thumbnail.url}`
-                                      : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                    }`}
-                                  alt=""
-                                />
-                              </Link>
+
+                              <img
+                                src={`${
+                                  item.thumbnail
+                                    ? `${REACT_APP_URL_API}${item.thumbnail.url}`
+                                    : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
+                                  }`}
+                                alt=""
+                              />
                             </figure>
 
                             <div className="course-content-wrap">
@@ -474,13 +473,13 @@ class ListTraining extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                      <Link to={`#`}>{item.name}</Link>
+                                      <label>{item.name}</label>
                                     )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
                                   <div className="course-author">
-                                    <a href="#">
+                                    <a href="#" onClick={e => e.preventDefault()}>
                                       {item.users[0].firstName}{" "}
                                       {item.users[0].lastName}{" "}
                                     </a>

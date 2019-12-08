@@ -23,7 +23,7 @@ class TextToTest extends Component {
       listWord.map((word, indexWord) => {
         if (word[0] === "*" && word[word.length - 1] === "*") {
           word = word.slice(1, word.length - 1);
-          result[indexContent].push(word);
+          result[indexContent].push(indexWord);
           contentProcessed[indexContent].push(word);
         } else {
           contentProcessed[indexContent].push(word);
@@ -32,11 +32,11 @@ class TextToTest extends Component {
     });
     this.setState({ result, content: contentProcessed });
   };
-  onChooseWord = (indexQuestion, word) => {
+  onChooseWord = (indexQuestion, idxWord) => {
     let { choosen } = this.state;
     const indexWord = _.findIndex(
       choosen[indexQuestion],
-      item => item === word
+      item => item === idxWord
     );
     if (indexWord > -1) {
       choosen[indexQuestion].splice(indexWord, 1);
@@ -44,7 +44,7 @@ class TextToTest extends Component {
       if (!_.isArray(choosen[indexQuestion])) {
         choosen[indexQuestion] = [];
       }
-      choosen[indexQuestion].push(word);
+      choosen[indexQuestion].push(idxWord);
     }
     this.setState({ choosen, isSubmit: false, wrong: [] });
   };
@@ -97,7 +97,8 @@ class TextToTest extends Component {
       mark,
       choosen,
       wrong,
-      currentContent
+      currentContent,
+      result
     } = this.state;
     const { contents } = this.props;
     if (isSubmit) {
@@ -106,30 +107,41 @@ class TextToTest extends Component {
           <h5 className="content-text-test__title">Result: </h5>
           {content &&
             content.map((item, index) => {
+              const totalMissing = mark[index] ? result[index].length - mark[index] : result[index].length;
+              const totalCorrect = mark[index] ? mark[index] : "0";
+              const totalWrong = mark[index] && choosen[index] ? choosen[index].length - mark[index] : "0";
               return (
                 <div className="content-text-test__result">
                   <p>
-                    {contents[index].title} | Total correct answers:{" "}
-                    {mark[index]}/{choosen[index] ? choosen[index].length : "0"}{" "}
+                    {contents[index].title}
+                  </p>
+                  <p> Correct: {totalCorrect} <div className="color-answer color-answer-correct"></div>{" "}
+                    | Missing: {totalMissing} <div className="color-answer color-answer-missing"></div>{" "}
+                    | Wrong: {totalWrong} <div className="color-answer color-answer-wrong"></div>
                   </p>
                   <div className="content-text-test__warp-context mb-4">
                     {item.map((itemWord, indexWord) => {
                       const findIndex = _.findIndex(
                         choosen[index],
-                        word => word === itemWord
+                        idxWord => idxWord === indexWord
                       );
                       const findIndexWrong = _.findIndex(
                         wrong[index],
-                        word => word === itemWord
+                        idxWord => idxWord === indexWord
                       );
+                      const findIndexCorrect = _.findIndex(
+                        result[index],
+                        idxWord => idxWord === indexWord
+                      )
                       return (
                         <span key={indexWord}>
                           {" "}
                           <span
-                            className={`tag-word ${
-                              findIndex > -1 ? "tag-word-active" : ""
-                            } 
-                            ${findIndexWrong > -1 ? "tag-word-wrong" : ""}`}
+                            className={`tag-word 
+                            ${findIndex > -1 ? "tag-word-active" : ""} 
+                            ${findIndexWrong > -1 ? "tag-word-wrong" : ""}
+                            ${findIndexCorrect > -1 && findIndex === -1 && findIndexWrong === -1 ? "tag-word-missing" : ""}
+                            `}
                             style={{ cursor: "pointer" }}
                           >
                             {itemWord}
@@ -138,6 +150,9 @@ class TextToTest extends Component {
                             )}
                             {findIndex > -1 && findIndexWrong === -1 && (
                               <i className="fa fa-check-circle-o" />
+                            )}
+                            {findIndexCorrect > -1 && findIndex === -1 && findIndexWrong === -1 && (
+                              <i className="fa fa-exclamation-triangle" />
                             )}
                           </span>{" "}
                         </span>
@@ -172,23 +187,19 @@ class TextToTest extends Component {
               {content[currentContent].map((itemWord, indexWord) => {
                 const findIndex = _.findIndex(
                   choosen[currentContent],
-                  word => word === itemWord
-                );
-                const findIndexWrong = _.findIndex(
-                  wrong[currentContent],
-                  word => word === itemWord
+                  idxWord => idxWord === indexWord
                 );
                 return (
                   <span key={indexWord}>
                     {" "}
                     <span
                       onClick={() => {
-                        this.onChooseWord(currentContent, itemWord);
+                        this.onChooseWord(currentContent, indexWord);
                       }}
                       style={{ cursor: "pointer" }}
                       className={`tag-word ${
                         findIndex > -1 ? "tag-word-active" : ""
-                      } ${findIndexWrong > -1 ? "tag-word-wrong" : ""}`}
+                        }`}
                     >
                       {itemWord}
                     </span>{" "}
@@ -206,15 +217,15 @@ class TextToTest extends Component {
                   Next >{" "}
                 </button>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => this.onSubmit()}
-                  className="btn bg-root"
-                  disabled={this.props.isView}
-                >
-                  Submit
+                  <button
+                    type="button"
+                    onClick={this.onSubmit}
+                    className="btn bg-root"
+                    disabled={this.props.isView}
+                  >
+                    Submit
                 </button>
-              )}
+                )}
             </div>
           </div>
         )}

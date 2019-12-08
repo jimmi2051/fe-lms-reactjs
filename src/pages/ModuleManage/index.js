@@ -455,16 +455,14 @@ class ModuleManage extends Component {
                                   </>
                                 )}
 
-                              <Link to={`#`}>
-                                <img
-                                  src={`${
-                                    item.thumbnail
-                                      ? `${REACT_APP_URL_API}${item.thumbnail.url}`
-                                      : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                    }`}
-                                  alt=""
-                                />
-                              </Link>
+                              <img
+                                src={`${
+                                  item.thumbnail
+                                    ? `${REACT_APP_URL_API}${item.thumbnail.url}`
+                                    : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
+                                  }`}
+                                alt=""
+                              />
                             </figure>
 
                             <div className="course-content-wrap">
@@ -478,34 +476,34 @@ class ModuleManage extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                      <Link to={`#`}>{item.name}</Link>
+                                      <label>{item.name}</label>
                                     )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
                                   <div className="course-author">
-                                    <a href="#">
+                                    <a href="#" onClick={e => e.preventDefault()}>
                                       {item.users[0].firstName}{" "}
-                                      {item.users[0].lastName}{" "}
+                                    {item.users[0].lastName}{" "}
                                     </a>
-                                  </div>
-                                  <div className="course-date">
-                                    {moment(item.createdAt).format(
-                                      "MMM. D, YYYY"
-                                    )}
-                                  </div>
+                                </div>
+                                <div className="course-date">
+                                  {moment(item.createdAt).format(
+                                    "MMM. D, YYYY"
+                                  )}
+                                </div>
                                 </div>
                               </header>
-                            </div>
                           </div>
                         </div>
-                      );
-                    })
-                  ) : (
+                        </div>
+                );
+              })
+            ) : (
                       <div className="col-xl-12 mt-3">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    <Loading classOption="align-center-spinner" />
+                  </div>
+                  )}
                   {!loading && listModulePaging.length === 0 && (
                     <div className="col-xl-12 mt-3" style={{ paddingLeft: "25px" }}>
                       <p>You don't have any module yet. </p>

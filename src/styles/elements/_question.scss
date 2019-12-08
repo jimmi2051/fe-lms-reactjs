@@ -14,6 +14,10 @@
         .warp-answer{
           padding:15px;
           background-color: #f1f1f1;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           &-active{
             background-color: #19c880;
             color:white;
@@ -61,6 +65,11 @@
           background: red;
           color: white;
         }
+        &-missing{
+          border: 2px solid #856404;
+          background: #856404;
+          color:white;
+        }
         i{
           padding-left: 5px;
         }
@@ -69,4 +78,19 @@
 }
 .ck-editor__editable_inline {
   min-height: 150px;
+}
+.color-answer
+{
+  padding: 12.5px 25px;
+  display: inline-block;
+  vertical-align: middle;
+  &-correct{
+    background:#19c880;
+  }
+  &-wrong{
+    background: red;
+  }
+  &-missing{
+    background: #856404;
+  }
 }
