@@ -1,69 +1,159 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# LMS System - Demo 
 
-## Available Scripts
+One Paragraph of project description goes here
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Requirement Install
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+```
+NodeJS version >= v10.16.3
+Npm version >= 6.9.0
+Yarn version >=1.19.0
+```
 
-### `npm test`
+### Installing
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+A step by step series of examples that tell you how to get a development env running
 
-### `npm run build`
+Say what the step will be
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+Give the example
+```
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+And repeat
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+until finished
+```
 
-### `npm run eject`
+End with an example of getting some data out of the system or using it for a little demo
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Running the tests
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Explain how to run the automated tests for this system
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Break down into end to end tests
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Explain what these tests test and why
 
-## Learn More
+```
+Give an example
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+Give an example
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Deployment
 
-### Code Splitting
+Deploy this on a live system with VPS Linux
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+\*\* Setup config Nginx
+Add new config for nginx, create file `fe-lms.conf`
 
-### Analyzing the Bundle Size
+```
+sudo nano /etc/nginx/conf.d/fe-lms.conf
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+And add config flow
 
-### Making a Progressive Web App
+```
+server {
+    listen 80;
+    server_name fe-lms.tk www.fe-lms.tk;
+    return 301 https://$server_name$request_uri;
+}
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    #include snippets/self-signed.conf;
+    #include snippets/ssl-params.conf;
+    ssl_certificate /etc/letsencrypt/live/fe-lms.tk/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/fe-lms.tk/privkey.pem; # managed by Certbot
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+    server_name fe-lms.tk www.fe-lms.tk;
+    root /home/deftnt/fe-lms/build;
+    index index.html index.htm;
+    location / {
+        try_files $uri /index.html;
+    }
+    location ~ /.well-known {
+        allow all;
+    }
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+}
+```
 
-### Advanced Configuration
+Run scripts test config file nginx
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+```
+sudo nginx -t
+```
 
-### Deployment
+Run scripts restart nginx with new config
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+```
+sudo nginx -s reload
+```
 
-### `npm run build` fails to minify
+\*\*\* Build project front end
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
-# fe-lms
+Install react-scripts globally
+
+```
+sudo npm install react-scripts -g
+```
+
+Change API config, config file `.env.production` 
+
+```
+REACT_APP_URL_API = https://be-lms.tk/
+```
+
+Change the IP and port to the destination DNS of LMS BE.
+
+Upload file build production in folder VPS, run scripts:
+
+```
+npm install
+```
+
+Instal package plugin done, run scripts build porject
+
+```
+npm run build
+```
+
+## Built With
+
+- [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
+- [Maven](https://maven.apache.org/) - Dependency Management
+- [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+
+## Authors
+
+- **Billie Thompson** - _Initial work_ - [PurpleBooth](https://github.com/PurpleBooth)
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+- Hat tip to anyone whose code was used
+- Inspiration
+- etc
