@@ -53,27 +53,19 @@ function* callGraphQL(action) {
     if (afterCallType) {
       yield put({ type: afterCallType });
     }
-    if (response && !response.error && response.detail !== "Invalid token.") {
+    if (response) {
       if (successType) {
         yield put({ type: successType, payload: response });
       }
-      yield put(hideLoading());
       if (typeof afterSuccess === "function") {
         afterSuccess(response);
       }
     } else {
-      yield put(hideLoading());
-
-      if (response.detail === "Invalid token.") {
-        yield put({ type: "LOGOUT_REQUEST" });
-      } else {
-        if (errorType) {
-          yield put({ type: errorType, payload: response.error });
-        }
-
-        if (typeof afterError === "function") {
-          afterError(response.error);
-        }
+      if (errorType) {
+        yield put({ type: errorType, payload: response });
+      }
+      if (typeof afterError === "function") {
+        afterError(response);
       }
     }
   }
