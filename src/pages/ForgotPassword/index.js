@@ -6,7 +6,7 @@ import { resetPassword, requestForgotPassword } from "redux/action/user";
 import AuthStorage from "utils/AuthStorage";
 import { withRouter } from "react-router";
 import { ToastContainer } from "react-toastr";
-import _ from "lodash"
+import _ from "lodash";
 import Loading from "components/Loading";
 let toastr;
 
@@ -20,7 +20,10 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ requestForgotPassword, resetPassword }, dispatch)
+    action: bindActionCreators(
+      { requestForgotPassword, resetPassword },
+      dispatch
+    )
   };
 };
 
@@ -33,7 +36,7 @@ class ForgotPassword extends Component {
     code: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   };
   componentDidMount() {
     if (AuthStorage && AuthStorage.loggedIn) {
@@ -48,32 +51,33 @@ class ForgotPassword extends Component {
   }
 
   handleSubmitRequest = () => {
-    this.setState({ loading: true })
+    this.setState({ loading: true });
     const { email } = this.state;
     if (this.handleValidation(email)) {
       this.handleRequestForgotPassword(email);
-    }
-    else {
-      this.setState({ loading: false })
+    } else {
+      this.setState({ loading: false });
     }
   };
 
-  handleRequestForgotPassword = (email) => {
+  handleRequestForgotPassword = email => {
     const { requestForgotPassword } = this.props.action;
-    const payload = { email }
-    requestForgotPassword(payload, (response) => {
+    const payload = { email };
+    requestForgotPassword(payload, response => {
       if (response && response.ok) {
-        this.setState({ isRequestSuccess: true })
-        this.notifySuccess("Notification", "Request successfully, please check your email. Thanks")
+        this.setState({ isRequestSuccess: true });
+        this.notifySuccess(
+          "Notification",
+          "Request successfully, please check your email. Thanks"
+        );
+      } else {
+        this.notifyError(response.error, response.message);
       }
-      else {
-        this.notifyError(response.error, response.message)
-      }
-      this.setState({ loading: false })
-    })
-  }
+      this.setState({ loading: false });
+    });
+  };
 
-  handleValidation = (email) => {
+  handleValidation = email => {
     let formIsValid = true;
     let errors = {};
     //Validate email
@@ -103,30 +107,34 @@ class ForgotPassword extends Component {
   };
 
   handleSubmitReset = () => {
-    this.setState({ loading: true })
+    this.setState({ loading: true });
     const { code, password, confirmPassword } = this.state;
     if (this.handleValidationReset(code, password, confirmPassword)) {
       this.handleResetPassword(code, password, confirmPassword);
+    } else {
+      this.setState({ loading: false });
     }
-    else {
-      this.setState({ loading: false })
-    }
-  }
+  };
 
   handleResetPassword = (code, password, passwordConfirmation) => {
-    const payload = { code, password, passwordConfirmation }
+    const payload = { code, password, passwordConfirmation };
     const { resetPassword } = this.props.action;
     resetPassword(payload, response => {
       if (response && response.jwt) {
-        this.notifySuccess("Notification", "Reset password successfully.")
-        this.setState({ isRequestSuccess: false, code: "", email: "", password: "", confirmPassword: "" })
+        this.notifySuccess("Notification", "Reset password successfully.");
+        this.setState({
+          isRequestSuccess: false,
+          code: "",
+          email: "",
+          password: "",
+          confirmPassword: ""
+        });
+      } else {
+        this.notifyError(response.error, response.message);
       }
-      else {
-        this.notifyError(response.error, response.message)
-      }
-      this.setState({ loading: false })
-    })
-  }
+      this.setState({ loading: false });
+    });
+  };
 
   handleValidationReset = (code, password, confirmPassword) => {
     let formIsValid = true;
@@ -152,7 +160,7 @@ class ForgotPassword extends Component {
     }
     this.setState({ errors: errors });
     return formIsValid;
-  }
+  };
 
   handleRefeshError = () => {
     this.setState({ errors: {} });
@@ -180,7 +188,14 @@ class ForgotPassword extends Component {
   };
 
   render() {
-    const { isRequestSuccess, loading, code, email, password, confirmPassword } = this.state;
+    const {
+      isRequestSuccess,
+      loading,
+      code,
+      email,
+      password,
+      confirmPassword
+    } = this.state;
     return (
       <div className="page-header">
         <ToastContainer
@@ -189,95 +204,107 @@ class ForgotPassword extends Component {
         />
         <Header titleHeader="Forgot Password Page" />
         <div className="container login-page">
-          {isRequestSuccess ? (<div className="row justify-content-center pt-5 pb-5">
-            <div className="col-xl-6">
-              <div className="form-group">
-                <label htmlFor="codeVerify">Code</label>
-                <input
-                  type="text"
-                  className={`${this.state.errors["code"] ? "border border-danger" : ""} form-control`}
-                  id="codeVerify"
-                  placeholder="Enter your code"
-                  name="code"
-                  onChange={this.handleInputChange}
-                  value={code}
-                  onClick={this.handleRefeshError}
-                />
-                <small className="form-text text-muted">
-                  (*) Please check your email to get code and enter it here.
-                </small>
-                {this.state.errors["code"] && (
-                  <label
-                    className="error"
-                    htmlFor="id_password"
+          {isRequestSuccess ? (
+            <div className="row justify-content-center pt-5 pb-5">
+              <div className="col-xl-6">
+                <div className="form-group">
+                  <label htmlFor="codeVerify">Code</label>
+                  <input
+                    type="text"
+                    className={`${
+                      this.state.errors["code"] ? "border border-danger" : ""
+                    } form-control`}
+                    id="codeVerify"
+                    placeholder="Enter your code"
+                    name="code"
+                    onChange={this.handleInputChange}
+                    value={code}
+                    onClick={this.handleRefeshError}
+                  />
+                  <small className="form-text text-muted">
+                    (*) Please check your email to get code and enter it here.
+                  </small>
+                  {this.state.errors["code"] && (
+                    <label className="error" htmlFor="id_password">
+                      {this.state.errors["code"]}
+                    </label>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    className={`${
+                      this.state.errors["password"]
+                        ? "border border-danger"
+                        : ""
+                    } form-control`}
+                    placeholder="Enter password"
+                    onChange={this.handleInputChange}
+                    name="password"
+                    value={password}
+                    maxLength="50"
+                    onClick={this.handleRefeshError}
+                  />
+                  {this.state.errors["password"] && (
+                    <label className="error" htmlFor="id_password">
+                      {this.state.errors["password"]}
+                    </label>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Confirm password</label>
+                  <input
+                    type="password"
+                    className={`${
+                      this.state.errors["confirmPassword"]
+                        ? "border border-danger"
+                        : ""
+                    } form-control`}
+                    placeholder="Enter confirm password"
+                    name="confirmPassword"
+                    value={confirmPassword}
+                    onChange={this.handleInputChange}
+                    maxLength="50"
+                    onClick={this.handleRefeshError}
+                  />
+                  {this.state.errors["confirmPassword"] && (
+                    <label className="error" htmlFor="id_password">
+                      {this.state.errors["confirmPassword"]}
+                    </label>
+                  )}
+                </div>
+                <div className="form-group text-center">
+                  <button
+                    type="submit"
+                    className="btn bg-root"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      this.handleSubmitReset();
+                    }}
                   >
-                    {this.state.errors["code"]}
-                  </label>
-                )}
-              </div>
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  className={`${this.state.errors["password"] ? "border border-danger" : ""} form-control`}
-                  placeholder="Enter password"
-                  onChange={this.handleInputChange}
-                  name="password"
-                  value={password}
-                  maxLength="50"
-                  onClick={this.handleRefeshError}
-                />
-                {this.state.errors["password"] && (
-                  <label
-                    className="error"
-                    htmlFor="id_password"
-                  >
-                    {this.state.errors["password"]}
-                  </label>
-                )}
-              </div>
-              <div className="form-group">
-                <label>Confirm password</label>
-                <input
-                  type="password"
-                  className={`${this.state.errors["confirmPassword"] ? "border border-danger" : ""} form-control`}
-                  placeholder="Enter confirm password"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={this.handleInputChange}
-                  maxLength="50"
-                  onClick={this.handleRefeshError}
-                />
-                {this.state.errors["confirmPassword"] && (
-                  <label
-                    className="error"
-                    htmlFor="id_password"
-                  >
-                    {this.state.errors["confirmPassword"]}
-                  </label>
-                )}
-              </div>
-              <div className="form-group text-center">
-                <button
-                  type="submit"
-                  className="btn bg-root"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    this.handleSubmitReset();
-                  }}
-                >
-                  {loading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Reset password"}
-                </button>
+                    {loading ? (
+                      <Loading
+                        color="#ffffff"
+                        classOption="align-center-spinner"
+                      />
+                    ) : (
+                      "Reset password"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>) :
-            (<div className="row justify-content-center pt-5 pb-5">
+          ) : (
+            <div className="row justify-content-center pt-5 pb-5">
               <div className="col-xl-6">
                 <div className="form-group">
                   <label>Email address</label>
                   <input
                     type="text"
-                    className={`${this.state.errors["email"] ? "border border-danger" : ""} form-control`}
+                    className={`${
+                      this.state.errors["email"] ? "border border-danger" : ""
+                    } form-control`}
                     placeholder="Enter your email"
                     name="email"
                     onChange={this.handleInputChange}
@@ -285,10 +312,7 @@ class ForgotPassword extends Component {
                     onClick={this.handleRefeshError}
                   />
                   {this.state.errors["email"] && (
-                    <label
-                      className="error"
-                      htmlFor="id_password"
-                    >
+                    <label className="error" htmlFor="id_password">
                       {this.state.errors["email"]}
                     </label>
                   )}
@@ -303,16 +327,26 @@ class ForgotPassword extends Component {
                     }}
                     disabled={loading}
                   >
-                    {loading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Send email"}
+                    {loading ? (
+                      <Loading
+                        color="#ffffff"
+                        classOption="align-center-spinner"
+                      />
+                    ) : (
+                      "Send email"
+                    )}
                   </button>
                 </div>
               </div>
-            </div>)
-          }
+            </div>
+          )}
         </div>
       </div>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ForgotPassword));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ForgotPassword));

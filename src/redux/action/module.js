@@ -89,7 +89,11 @@ export const getListModule = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `modules?users._id=${id}&${courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ""}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      uri: `modules?users._id=${id}&${
+        courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ""
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }_start=${startItemPage}&_limit=${itemPerPage}`,
       beforeCallType: "GET_LIST_MODULE_REQUEST",
       successType: "GET_LIST_MODULE_SUCCESS",
       afterSuccess: next,

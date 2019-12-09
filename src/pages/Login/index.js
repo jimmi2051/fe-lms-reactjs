@@ -39,7 +39,7 @@ class Login extends Component {
   }
 
   handleLogin = e => {
-    this.setState({ loading: true })
+    this.setState({ loading: true });
     e.preventDefault();
     const { email, password } = this.refs;
     if (this.handleValidation(email.value, password.value)) {
@@ -49,7 +49,9 @@ class Login extends Component {
         password: password.value
       };
       loginRequest(
-        payload, () => { }, err => {
+        payload,
+        () => {},
+        err => {
           let errors = {};
           if (err.message) {
             errors["token"] = err.message;
@@ -57,12 +59,11 @@ class Login extends Component {
               errors
             });
           }
-          this.setState({ loading: false })
+          this.setState({ loading: false });
         }
       );
-    }
-    else {
-      this.setState({ loading: false })
+    } else {
+      this.setState({ loading: false });
     }
   };
   handleValidation = (username, password) => {
@@ -125,7 +126,12 @@ class Login extends Component {
                   <label htmlFor="emailLogin">Email address</label>
                   <input
                     type="text"
-                    className={`${this.state.errors["username"] || this.state.errors["token"]  ? "border border-danger" : ""} form-control`}
+                    className={`${
+                      this.state.errors["username"] ||
+                      this.state.errors["token"]
+                        ? "border border-danger"
+                        : ""
+                    } form-control`}
                     id="emailLogin"
                     placeholder="Enter email"
                     ref="email"
@@ -145,7 +151,12 @@ class Login extends Component {
                   <label htmlFor="passwordLogin">Password</label>
                   <input
                     type="password"
-                    className={`${this.state.errors["password"] || this.state.errors["token"] ? "border border-danger" : ""} form-control`}
+                    className={`${
+                      this.state.errors["password"] ||
+                      this.state.errors["token"]
+                        ? "border border-danger"
+                        : ""
+                    } form-control`}
                     id="passwordLogin"
                     placeholder="Password"
                     ref="password"
@@ -168,14 +179,22 @@ class Login extends Component {
                     style={{ cursor: "pointer" }}
                     disabled={loading}
                   >
-                    {loading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Login"}
+                    {loading ? (
+                      <Loading
+                        color="#ffffff"
+                        classOption="align-center-spinner"
+                      />
+                    ) : (
+                      "Login"
+                    )}
                   </button>
                 </div>
                 <div className="form-group text-center">
                   <Link to="/forgot-password">Forgot password. </Link>
                 </div>
                 <div className="form-group text-center">
-                  Don't have an account? <Link to="/register">Register</Link> here.
+                  Don't have an account? <Link to="/register">Register</Link>{" "}
+                  here.
                 </div>
               </form>
             </div>

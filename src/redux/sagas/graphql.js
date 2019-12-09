@@ -10,18 +10,19 @@ import gql from "graphql-tag";
 import AuthStorage from "utils/AuthStorage";
 const API_URL = process.env.REACT_APP_URL_API;
 
-
 function* callGraphQL(action) {
   const client = new ApolloClient({
     uri: `${API_URL}graphql`,
-    request: (operation) => {
+    request: operation => {
       operation.setContext({
         headers: {
-          authorization: AuthStorage.loggedIn ? `Bearer ${AuthStorage.token}` : ""
+          authorization: AuthStorage.loggedIn
+            ? `Bearer ${AuthStorage.token}`
+            : ""
         }
-      })
+      });
     }
-  });  
+  });
   if (action.type === GRAPHQL) {
     const {
       successType,
@@ -37,19 +38,18 @@ function* callGraphQL(action) {
     }
 
     yield put(showLoading());
-    let response; 
-    try{
-    response = yield call(client.query, {
-      query: gql`
-        ${query}
-      `
-    });
-  }
-  catch{
-    response = {
-      status: false
+    let response;
+    try {
+      response = yield call(client.query, {
+        query: gql`
+          ${query}
+        `
+      });
+    } catch {
+      response = {
+        status: false
+      };
     }
-  }
     if (afterCallType) {
       yield put({ type: afterCallType });
     }
@@ -79,6 +79,6 @@ function* callGraphQL(action) {
   }
 }
 
-export default function* () {
+export default function*() {
   yield takeEvery("*", callGraphQL);
 }

@@ -29,15 +29,15 @@ export const initialState = {
   },
   isAddTraining: {
     data: {},
-    loading: false,
+    loading: false
   },
   listTrainingLearn: {
     data: {},
-    loading: false,
+    loading: false
   },
   isUpdateActivity: {
     data: {},
-    loading: false,
+    loading: false
   }
 };
 
@@ -69,9 +69,13 @@ export default (state = initialState, action) => {
         listTraining: { ...initialState.listTraining }
       };
     case "GET_TRAINING_BY_SUCCESS":
+      let result = action.payload;
+      if (result.error) {
+        result = [];
+      }
       return {
         ...state,
-        listTraining: { data: action.payload, loading: false }
+        listTraining: { data: result, loading: false }
       };
     case "GET_TRAINING_BY_ID_REQUEST":
       return {
@@ -98,11 +102,16 @@ export default (state = initialState, action) => {
         ...state,
         trainingAll: { ...initialState.trainingAll }
       };
-    case "GET_ALL_TRAINING_SUCCESS":
+    case "GET_ALL_TRAINING_SUCCESS": {
+      let result = action.payload;
+      if (result.error) {
+        result = [];
+      }
       return {
         ...state,
-        trainingAll: { data: action.payload, loading: false }
+        trainingAll: { data: result, loading: false }
       };
+    }
     case "GET_ALL_CATEGORY_REQUEST":
       return {
         ...state,
@@ -129,9 +138,13 @@ export default (state = initialState, action) => {
         listTrainingLearn: { ...initialState.listTrainingLearn }
       };
     case "GET_TRAINING_LEARN_SUCCESS": {
+      let result = action.payload;
+      if (result.error) {
+        result = [];
+      }
       return {
         ...state,
-        listTrainingLearn: { data: action.payload, loading: false }
+        listTrainingLearn: { data: result, loading: false }
       };
     }
     case "UPDATE_ACTIVITY_REQUEST":

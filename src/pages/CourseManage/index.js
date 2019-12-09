@@ -159,10 +159,18 @@ class ListTraining extends Component {
     const { keySearch, trainingId } = this.state;
     fetch(
       `https://be-lms.tk/courses?${
-      trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``
+        trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``
       }${
-      keySearch !== "" ? `name_contains=${keySearch}&` : ``
-      }users._id=${userId}`
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }users._id=${userId}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AuthStorage.token}`
+        }
+      }
     )
       .then(response => {
         return response.json();
@@ -354,7 +362,7 @@ class ListTraining extends Component {
                                 trainingId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                                }`}
+                              }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -371,7 +379,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           trainingId === "" ? "font-weight-bold" : ""
-                          }`}
+                        }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerTrainingId("");
@@ -397,11 +405,11 @@ class ListTraining extends Component {
                     </button>
                   </div>
                 </div>
-                <div className="row mx-m-25">
+                <div className="row  ">
                   {!loading ? (
                     listCoursePaging.map((item, index) => {
                       return (
-                        <div key={index} className="col-12 col-md-6 px-25">
+                        <div key={index} className="col-12 col-md-6  ">
                           <div className="course-content">
                             <figure className="course-thumbnail">
                               {isUpdate && courseId === item._id ? (
@@ -426,38 +434,37 @@ class ListTraining extends Component {
                                   </button>
                                 </>
                               ) : (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="btn btn-remove alert-danger"
-                                      onClick={() => {
-                                        this.handleOpenPopup();
-                                        this.handleSetCourseId(item._id);
-                                      }}
-                                    >
-                                      <i className="fa fa-remove"></i>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-update alert-info"
-                                      onClick={() => {
-                                        // this.handleRemoveCourseToPath_ver2(index);
-                                        this.handleSetCourseId(item._id);
-                                        this.handleEnableUpdate(item.name);
-                                      }}
-                                    >
-                                      <i className="fa fa-pencil"></i>
-                                    </button>
-                                  </>
-                                )}
-
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-remove alert-danger"
+                                    onClick={() => {
+                                      this.handleOpenPopup();
+                                      this.handleSetCourseId(item._id);
+                                    }}
+                                  >
+                                    <i className="fa fa-remove"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-update alert-info"
+                                    onClick={() => {
+                                      // this.handleRemoveCourseToPath_ver2(index);
+                                      this.handleSetCourseId(item._id);
+                                      this.handleEnableUpdate(item.name);
+                                    }}
+                                  >
+                                    <i className="fa fa-pencil"></i>
+                                  </button>
+                                </>
+                              )}
 
                               <img
                                 src={`${
                                   item.thumbnail
                                     ? `${REACT_APP_URL_API}${item.thumbnail.url}`
                                     : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
-                                  }`}
+                                }`}
                                 alt=""
                               />
                             </figure>
@@ -473,13 +480,16 @@ class ListTraining extends Component {
                                       rows="2"
                                     />
                                   ) : (
-                                      <label>{item.name}</label>
-                                    )}
+                                    <label>{item.name}</label>
+                                  )}
                                 </h2>
 
                                 <div className="entry-meta flex flex-wrap align-items-center">
                                   <div className="course-author">
-                                    <a href="#" onClick={e => e.preventDefault()}>
+                                    <a
+                                      href="#"
+                                      onClick={e => e.preventDefault()}
+                                    >
                                       {item.users[0].firstName}{" "}
                                       {item.users[0].lastName}{" "}
                                     </a>
@@ -497,12 +507,15 @@ class ListTraining extends Component {
                       );
                     })
                   ) : (
-                      <div className="col-xl-12 mt-3">
-                        <Loading classOption="align-center-spinner" />
-                      </div>
-                    )}
+                    <div className="col-xl-12 mt-3">
+                      <Loading classOption="align-center-spinner" />
+                    </div>
+                  )}
                   {!loading && listCoursePaging.length === 0 && (
-                    <div className="col-xl-12 mt-3" style={{ paddingLeft: "25px" }}>
+                    <div
+                      className="col-xl-12 mt-3"
+                      style={{ paddingLeft: "25px" }}
+                    >
                       <p>You don't have any course yet. </p>
                     </div>
                   )}

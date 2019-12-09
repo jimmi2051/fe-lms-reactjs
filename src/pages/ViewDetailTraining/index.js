@@ -327,11 +327,6 @@ class TrainingDetail extends Component {
                       <i className="fa fa-instagram"></i>
                     </a>
                   </li>
-                  <li>
-                    <a href="#">
-                      <i className="fa fa-thumb-tack"></i>
-                    </a>
-                  </li>
                 </ul>
               </div>
             </div>

@@ -23,9 +23,9 @@ const mapDispatchToProps = dispatch => {
 class Navbar extends Component {
   state = {
     keySearch: "",
-    isShowMobile: false,
+    isShowMobile: false
   };
-  componentDidMount() { }
+  componentDidMount() {}
   logout = () => {
     this.props.action.logoutRequest();
   };
@@ -34,7 +34,7 @@ class Navbar extends Component {
   };
   handleShowMobile = () => {
     this.setState({ isShowMobile: !this.state.isShowMobile });
-  }
+  };
   render() {
     const { pathname } = this.props.location;
     const { keySearch, isShowMobile } = this.state;
@@ -95,19 +95,19 @@ class Navbar extends Component {
                         </li>
                       </>
                     ) : (
-                        <>
-                          <li>
-                            <Link to="/profile">
-                              {AuthStorage.userInfo.username}
-                            </Link>
-                          </li>
-                          <li>
-                            <Link onClick={this.logout} to="/login">
-                              Log out
+                      <>
+                        <li>
+                          <Link to="/profile">
+                            {AuthStorage.userInfo.username}
                           </Link>
-                          </li>
-                        </>
-                      )}
+                        </li>
+                        <li>
+                          <Link onClick={this.logout} to="/login">
+                            Log out
+                          </Link>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -131,7 +131,9 @@ class Navbar extends Component {
 
               <div className="col-3 col-lg-9 flex justify-content-end align-content-center">
                 <nav
-                  className={`site-navigation flex justify-content-end align-items-center ${isShowMobile ? "show" : ""}`}
+                  className={`site-navigation flex justify-content-end align-items-center ${
+                    isShowMobile ? "show" : ""
+                  }`}
                   style={{ width: "100%" }}
                 >
                   <ul className="flex flex-column flex-lg-row justify-content-lg-end align-content-center">
@@ -172,26 +174,32 @@ class Navbar extends Component {
                           >
                             <Link to="/admin/new-training">New Training</Link>
                           </li>
-                          <li className={`${pathname === "/admin/course" ? "current-menu-item" : ""} d-lg-none`}>
-                            <Link
-                              to="/admin/course"
-                            >
-                              Manage Course
-                            </Link>
+                          <li
+                            className={`${
+                              pathname === "/admin/course"
+                                ? "current-menu-item"
+                                : ""
+                            } d-lg-none`}
+                          >
+                            <Link to="/admin/course">Manage Course</Link>
                           </li>
-                          <li className={`${pathname === "/admin/module" ? "current-menu-item" : ""} d-lg-none`}>
-                            <Link
-                              to="/admin/module"
-                            >
-                              Manage Module
-                          </Link>
+                          <li
+                            className={`${
+                              pathname === "/admin/module"
+                                ? "current-menu-item"
+                                : ""
+                            } d-lg-none`}
+                          >
+                            <Link to="/admin/module">Manage Module</Link>
                           </li>
-                          <li className={`${pathname === "/admin/content" ? "current-menu-item" : ""} d-lg-none`}>
-                            <Link
-                              to="/admin/content"
-                            >
-                              Manage Content
-                          </Link>
+                          <li
+                            className={`${
+                              pathname === "/admin/content"
+                                ? "current-menu-item"
+                                : ""
+                            } d-lg-none`}
+                          >
+                            <Link to="/admin/content">Manage Content</Link>
                           </li>
                         </>
                       )}
@@ -260,7 +268,14 @@ class Navbar extends Component {
                     )}
                   </ul>
 
-                  <div onClick={() => { this.handleShowMobile(); }} className={`hamburger-menu d-lg-none ${isShowMobile ? "open" : ""}`}>
+                  <div
+                    onClick={() => {
+                      this.handleShowMobile();
+                    }}
+                    className={`hamburger-menu d-lg-none ${
+                      isShowMobile ? "open" : ""
+                    }`}
+                  >
                     <span></span>
                     <span></span>
                     <span></span>

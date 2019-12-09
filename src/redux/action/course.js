@@ -92,11 +92,21 @@ export const addCourseModule = (payload, next, nextErr) => {
 };
 
 export const getListCourse = (payload, next, nextErr) => {
-  const { id, keySearch, startItemPage, itemPerPage, trainingId = "" } = payload;
+  const {
+    id,
+    keySearch,
+    startItemPage,
+    itemPerPage,
+    trainingId = ""
+  } = payload;
   return {
     type: SINGLE_API,
     payload: {
-      uri: `courses?users._id=${id}&${trainingId !== "" ? `learningpaths.training=${trainingId}&` : ""}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      uri: `courses?users._id=${id}&${
+        trainingId !== "" ? `learningpaths.training=${trainingId}&` : ""
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }_start=${startItemPage}&_limit=${itemPerPage}`,
       beforeCallType: "GET_LIST_COURSES_REQUEST",
       successType: "GET_LIST_COURSES_SUCCESS",
       afterSuccess: next,

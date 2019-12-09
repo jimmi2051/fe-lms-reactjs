@@ -5,30 +5,35 @@
     }
   }
 }
-.tree-item-group
-{
-  border-top: 1px solid #ccc!important;
-  .tree-item{
-    .toggle-icon{
-      display:inline-block;
+.tree-item-group {
+  border-top: 1px solid #ccc !important;
+  .tree-item {
+    .toggle-icon {
+      display: inline-block;
     }
-    &--active{
+    &--active {
       background: #19c880;
     }
   }
 }
 .cat-links ul li::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 8px;
   left: 0;
   width: 8px;
   height: 100%;
   font-size: 14px;
-  font-family: 'FontAwesome';
-  color: #c0c1cd;;
+  font-family: "FontAwesome";
+  color: #c0c1cd;
 }
 
 a.current-menu-item {
   color: #19c880;
+}
+
+.site-navigation ul li a {
+  @media screen and (max-width: 330px) {
+    font-size: 13px;
+  }
 }

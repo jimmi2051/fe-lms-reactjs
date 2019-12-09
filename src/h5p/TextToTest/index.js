@@ -107,18 +107,26 @@ class TextToTest extends Component {
           <h5 className="content-text-test__title">Result: </h5>
           {content &&
             content.map((item, index) => {
-              const totalMissing = mark[index] ? result[index].length - mark[index] : result[index].length;
+              const totalMissing = mark[index]
+                ? result[index].length - mark[index]
+                : result[index].length;
               const totalCorrect = mark[index] ? mark[index] : "0";
-              const totalWrong = mark[index] && choosen[index] ? choosen[index].length - mark[index] : "0";
+              const totalWrong =
+                mark[index] && choosen[index]
+                  ? choosen[index].length - mark[index]
+                  : "0";
               return (
-                <div className="content-text-test__result">
-                  <p>
-                    {contents[index].title}
-                  </p>
-                  <p> Correct: {totalCorrect} <div className="color-answer color-answer-correct"></div>{" "}
-                    | Missing: {totalMissing} <div className="color-answer color-answer-missing"></div>{" "}
-                    | Wrong: {totalWrong} <div className="color-answer color-answer-wrong"></div>
-                  </p>
+                <div className="content-text-test__result" key={index}>
+                  <p>{contents[index].title}</p>
+                  <div>
+                    {" "}
+                    Correct: {totalCorrect}{" "}
+                    <div className="color-answer color-answer-correct"></div> |
+                    Missing: {totalMissing}{" "}
+                    <div className="color-answer color-answer-missing"></div> |
+                    Wrong: {totalWrong}{" "}
+                    <div className="color-answer color-answer-wrong"></div>
+                  </div>
                   <div className="content-text-test__warp-context mb-4">
                     {item.map((itemWord, indexWord) => {
                       const findIndex = _.findIndex(
@@ -132,7 +140,7 @@ class TextToTest extends Component {
                       const findIndexCorrect = _.findIndex(
                         result[index],
                         idxWord => idxWord === indexWord
-                      )
+                      );
                       return (
                         <span key={indexWord}>
                           {" "}
@@ -140,7 +148,13 @@ class TextToTest extends Component {
                             className={`tag-word 
                             ${findIndex > -1 ? "tag-word-active" : ""} 
                             ${findIndexWrong > -1 ? "tag-word-wrong" : ""}
-                            ${findIndexCorrect > -1 && findIndex === -1 && findIndexWrong === -1 ? "tag-word-missing" : ""}
+                            ${
+                              findIndexCorrect > -1 &&
+                              findIndex === -1 &&
+                              findIndexWrong === -1
+                                ? "tag-word-missing"
+                                : ""
+                            }
                             `}
                             style={{ cursor: "pointer" }}
                           >
@@ -151,9 +165,11 @@ class TextToTest extends Component {
                             {findIndex > -1 && findIndexWrong === -1 && (
                               <i className="fa fa-check-circle-o" />
                             )}
-                            {findIndexCorrect > -1 && findIndex === -1 && findIndexWrong === -1 && (
-                              <i className="fa fa-exclamation-triangle" />
-                            )}
+                            {findIndexCorrect > -1 &&
+                              findIndex === -1 &&
+                              findIndexWrong === -1 && (
+                                <i className="fa fa-exclamation-triangle" />
+                              )}
                           </span>{" "}
                         </span>
                       );
@@ -199,7 +215,7 @@ class TextToTest extends Component {
                       style={{ cursor: "pointer" }}
                       className={`tag-word ${
                         findIndex > -1 ? "tag-word-active" : ""
-                        }`}
+                      }`}
                     >
                       {itemWord}
                     </span>{" "}
@@ -217,15 +233,15 @@ class TextToTest extends Component {
                   Next >{" "}
                 </button>
               ) : (
-                  <button
-                    type="button"
-                    onClick={this.onSubmit}
-                    className="btn bg-root"
-                    disabled={this.props.isView}
-                  >
-                    Submit
+                <button
+                  type="button"
+                  onClick={this.onSubmit}
+                  className="btn bg-root"
+                  disabled={this.props.isView}
+                >
+                  Submit
                 </button>
-                )}
+              )}
             </div>
           </div>
         )}

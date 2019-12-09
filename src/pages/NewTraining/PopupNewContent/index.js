@@ -77,10 +77,10 @@ class PopupNewContent extends Component {
         ]
       }
     ],
-    isLoading: false,
+    isLoading: false
   };
 
-  componentDidMount() { }
+  componentDidMount() {}
 
   //#region Handle Action Redux
   handleCreateContent = (name, type, user) => {
@@ -103,7 +103,7 @@ class PopupNewContent extends Component {
     const { handleGetContentByUserId, notifySuccess, notifyError } = this.props;
     const payload = { data, content };
     const { createData } = this.props.action;
-    createData(payload, (isCreateData) => {
+    createData(payload, isCreateData => {
       if (isCreateData._id) {
         handleGetContentByUserId(AuthStorage.userInfo._id);
         // this.setState({ createdContent: true });
@@ -125,7 +125,7 @@ class PopupNewContent extends Component {
   //#region Handle submit button create new content
 
   handleSubmitCreate = () => {
-    this.setState({ isLoading: true })
+    this.setState({ isLoading: true });
     const { currentType } = this.state;
     if (currentType === "Text") {
       this.handleSubmitTextNormal();
@@ -277,7 +277,7 @@ class PopupNewContent extends Component {
   };
 
   handleChangeDescription = content => {
-    this.setState({ content }, () => { });
+    this.setState({ content }, () => {});
   };
 
   handleResetForm = () => {
@@ -335,7 +335,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
 
-      reader.onloadend = function (e) {
+      reader.onloadend = function(e) {
         this.setState({
           videoSrc: [reader.result]
         });
@@ -343,7 +343,7 @@ class PopupNewContent extends Component {
 
       fileToUpload.push(files[0]);
       this.setState({ fileToUpload: fileToUpload, nameFile: files[0].name });
-    } catch { }
+    } catch {}
   };
 
   slideSelectHander = e => {
@@ -359,7 +359,7 @@ class PopupNewContent extends Component {
       const file = files[0];
       const url = reader.readAsDataURL(file);
       const index = countTextTest.length - 1;
-      reader.onloadend = function (e) {
+      reader.onloadend = function(e) {
         slideBackground[index] = [reader.result];
         this.setState({
           slideBackground
@@ -368,7 +368,7 @@ class PopupNewContent extends Component {
       fileToUpload.push(files[0]);
       listNameFile[index] = files[0].name;
       this.setState({ fileToUpload: fileToUpload, listNameFile });
-    } catch { }
+    } catch {}
   };
   //#endregion
 
@@ -490,7 +490,7 @@ class PopupNewContent extends Component {
       <div
         className={`modal new-content bd-example-modal-lg fade ${
           isShow ? "show" : ""
-          }`}
+        }`}
         id="exampleModal"
         tabIndex="-1"
         role="dialog"
@@ -499,9 +499,9 @@ class PopupNewContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -925,10 +925,10 @@ class PopupNewContent extends Component {
                                               <label
                                                 className={`${
                                                   errorQuestion !== "" &&
-                                                    errorQuestion === index
+                                                  errorQuestion === index
                                                     ? "text-danger"
                                                     : ""
-                                                  } form-check-label`}
+                                                } form-check-label`}
                                               >
                                                 Correct Answer
                                               </label>
@@ -978,7 +978,11 @@ class PopupNewContent extends Component {
                 onClick={this.handleSubmitCreate}
                 disabled={isLoading}
               >
-                {isLoading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Create"}
+                {isLoading ? (
+                  <Loading color="#ffffff" classOption="align-center-spinner" />
+                ) : (
+                  "Create"
+                )}
               </button>
               <button
                 type="button"

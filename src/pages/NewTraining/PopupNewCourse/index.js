@@ -25,9 +25,9 @@ class PopupNewCourse extends Component {
     fileToUpload: [],
     nameFile: "",
     imgSrc: "",
-    isLoading: false,
+    isLoading: false
   };
-  componentDidMount() { }
+  componentDidMount() {}
 
   fileSelectHandler = e => {
     let files = e.target.files;
@@ -36,7 +36,7 @@ class PopupNewCourse extends Component {
     const file = files[0];
     const url = reader.readAsDataURL(file);
 
-    reader.onloadend = function (e) {
+    reader.onloadend = function(e) {
       this.setState({
         imgSrc: [reader.result]
       });
@@ -47,7 +47,7 @@ class PopupNewCourse extends Component {
   };
 
   handleNewCourse = async () => {
-    this.setState({ isLoading: true })
+    this.setState({ isLoading: true });
     const { title } = this.refs;
     const { description, fileToUpload } = this.state;
     let thumbnail = {};
@@ -78,7 +78,7 @@ class PopupNewCourse extends Component {
       fileToUpload: [],
       nameFile: "",
       imgSrc: "",
-      description: "",
+      description: ""
     });
   };
 
@@ -100,9 +100,9 @@ class PopupNewCourse extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -173,7 +173,11 @@ class PopupNewCourse extends Component {
                 onClick={this.handleNewCourse}
                 disabled={isLoading}
               >
-                {isLoading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Create"}
+                {isLoading ? (
+                  <Loading color="#ffffff" classOption="align-center-spinner" />
+                ) : (
+                  "Create"
+                )}
               </button>
               <button
                 type="button"
@@ -191,7 +195,4 @@ class PopupNewCourse extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopupNewCourse);
+export default connect(mapStateToProps, mapDispatchToProps)(PopupNewCourse);

@@ -1,15 +1,20 @@
 .header-bar-menu {
   ul {
     padding: 0 16px !important;
-    a {
-      &::after {
-        content: "/";
-        position: absolute;
-        top: 50%;
-        right: -3px;
-        width: 6px;
-        margin-top: -14px;
-        padding-left: 5px;
+    li {
+      a {
+        &::after {
+          content: "/";
+          position: absolute;
+          top: 50%;
+          right: -3px;
+          width: 6px;
+          margin-top: -14px;
+          padding-left: 5px;
+        }
+        @media screen and (max-width: 350px) {
+          font-size: 14px;
+        }
       }
     }
   }

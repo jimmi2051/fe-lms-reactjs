@@ -166,10 +166,6 @@ class TrainingDetail extends Component {
         currentCourse.nodes,
         module => module.key === keyModule
       );
-      const idxContent = _.findIndex(
-        currentModule.nodes,
-        content => content.value === item.value
-      );
       //Process to save activity
       this.handleProcessActivity(
         currentCourse.value._id,
@@ -352,7 +348,7 @@ class TrainingDetail extends Component {
   };
 
   handleNextCourse = listMenu => {
-    const { keyCourse, keyModule } = this.state;
+    const { keyCourse } = this.state;
     const idxCourse = _.findIndex(listMenu, course => course.key === keyCourse);
     const currentCourse = listMenu[idxCourse];
     if (currentCourse.nodes.length > 0) {

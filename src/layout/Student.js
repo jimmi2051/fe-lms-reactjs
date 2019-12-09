@@ -68,8 +68,5 @@ class StudentWrap extends PureComponent {
 // export default withRouter(AuthWrap);
 
 export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(StudentWrap)
+  connect(mapStateToProps, mapDispatchToProps)(StudentWrap)
 );

@@ -42,7 +42,7 @@ export default function*({
   const options = merge(defaultOption, opt);
   //set Token
   if (AuthStorage.loggedIn) {
-    options.headers.Authorization = ` Bearer ${AuthStorage.token}`;
+    options.headers.Authorization = `Bearer ${AuthStorage.token}`;
   }
 
   let url = uri;

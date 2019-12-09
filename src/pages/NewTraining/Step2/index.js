@@ -146,8 +146,7 @@ class Step2 extends Component {
             isRequired,
             true
           );
-        }
-        else {
+        } else {
           this.handleAddLearningPath(
             training,
             course,
@@ -176,7 +175,7 @@ class Step2 extends Component {
   handleInputMark = (index, mark) => {
     let { listCourseChoosen_ver2 } = this.state;
     listCourseChoosen_ver2[index].mark = mark;
-    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => { });
+    this.setState({ listCourseChoosen_ver2: listCourseChoosen_ver2 }, () => {});
   };
 
   handleCheckRequired = (index, checked) => {
@@ -223,9 +222,8 @@ class Step2 extends Component {
           <div className="form-group">
             <button
               type="button"
-              className="form-control btn bg-root"
+              className="form-control btn bg-root btn-add-new"
               onClick={this.handleShowPopup}
-              style={{ width: "30%" }}
             >
               Add new course
             </button>
@@ -240,14 +238,14 @@ class Step2 extends Component {
         {listCourseChoosen_ver2.length > 0 && (
           <div className="col-xl-12 new-training">
             <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
+              <div className="row  ">
                 {listCourseChoosen_ver2.map((item, index) => {
                   return (
-                    <div className="col-12 col-md-6 px-25 mb-4" key={index}>
+                    <div className="col-12 col-md-6   mb-4" key={index}>
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -310,7 +308,7 @@ class Step2 extends Component {
                                   <label
                                     className={`${
                                       messageErr !== "" ? "text-danger" : ""
-                                      } form-check-label`}
+                                    } form-check-label`}
                                     htmlFor="gridCheck"
                                   >
                                     Mandatory
@@ -362,8 +360,8 @@ class Step2 extends Component {
         )}
         <div className="col-xl-12 new-training mb-4">
           <div className="featured-courses courses-wrap">
-            <div className="row mx-m-25">
-              <div className="col-12 col-md-6 px-25">
+            <div className="row  ">
+              <div className="col-12 col-md-6  ">
                 <div
                   className="course-content"
                   onClick={this.handleShowPopupListCourse}
@@ -387,8 +385,8 @@ class Step2 extends Component {
             {isLoading ? (
               <Loading color="#ffffff" classOption="align-center-spinner" />
             ) : (
-                "SAVE & CONTINUE"
-              )}
+              "SAVE & CONTINUE"
+            )}
           </button>
         </div>
       </div>

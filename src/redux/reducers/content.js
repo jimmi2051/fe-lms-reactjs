@@ -15,9 +15,9 @@ export const initialState = {
     data: {},
     loading: true
   },
-  listContentPaging:{
-    data:{},
-    loading:true
+  listContentPaging: {
+    data: {},
+    loading: true
   }
 };
 

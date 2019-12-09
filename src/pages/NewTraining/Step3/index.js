@@ -64,7 +64,7 @@ class Step3 extends Component {
     const { trainingCreated } = this.props;
     this.setState({ currentTraining: trainingCreated });
     if (_.isUndefined(trainingCreated._id)) {
-      this.handleFilterListCourse("5deb6cbed609e02c63dfa8fc");
+      // this.handleFilterListCourse("5deb6cbed609e02c63dfa8fc");
     } else {
       this.handleFilterListCourse(trainingCreated._id);
     }
@@ -120,8 +120,8 @@ class Step3 extends Component {
     const { addCourseModule } = this.props.action;
     const { currentCourse } = this.state;
     const payload = { course, position, module };
-    addCourseModule(payload, (response) => {
-      const { notifySuccess, notifyError } = this.props;
+    addCourseModule(payload, response => {
+      const { notifySuccess } = this.props;
       if (lastModule) {
         notifySuccess(
           "Nofitication",
@@ -130,7 +130,6 @@ class Step3 extends Component {
 
         this.setState({ isLoading: false });
       }
-
     });
   };
 
@@ -156,7 +155,7 @@ class Step3 extends Component {
   };
 
   handleStepThree = () => {
-    const { notifySuccess, notifyError } = this.props;
+    const { notifyError } = this.props;
     const { listModuleChoosen_ver2, currentCourse } = this.state;
     if (listModuleChoosen_ver2.length === 0) {
       notifyError(
@@ -173,8 +172,7 @@ class Step3 extends Component {
       this.setState({ listModuleChoosen_ver2: [] });
       if (index === listModuleChoosen_ver2.length - 1) {
         this.handleCreateCourseModule(course, position, module, true);
-      }
-      else {
+      } else {
         this.handleCreateCourseModule(course, position, module, false);
       }
     });
@@ -255,9 +253,8 @@ class Step3 extends Component {
           <div className="form-group">
             <button
               type="button"
-              className="form-control btn bg-root"
+              className="form-control btn bg-root btn-add-new"
               onClick={this.handleShowPopup}
-              style={{ width: "30%" }}
             >
               Add new module
             </button>
@@ -288,14 +285,14 @@ class Step3 extends Component {
         {listModuleChoosen_ver2.length > 0 && (
           <div className="col-xl-12 new-training">
             <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
+              <div className="row  ">
                 {listModuleChoosen_ver2.map((item, index) => {
                   return (
-                    <div className="col-12 col-md-6 px-25 mb-4" key={index}>
+                    <div className="col-12 col-md-6   mb-4" key={index}>
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           <button
@@ -380,14 +377,14 @@ class Step3 extends Component {
         {!loadingModuleByCourse ? (
           <div className="col-xl-12 new-training">
             <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
+              <div className="row  ">
                 {filterModuleByCourse.map((item, index) => {
                   return (
-                    <div className="col-12 col-md-6 px-25 mb-4" key={index}>
+                    <div className="col-12 col-md-6   mb-4" key={index}>
                       <div
                         className={`${
                           messageErr !== "" ? "border border-danger" : ""
-                          } course-content course-content-active`}
+                        } course-content course-content-active`}
                       >
                         <figure className="course-thumbnail">
                           {/* <Link to={`#`}> */}
@@ -435,37 +432,37 @@ class Step3 extends Component {
             </div>
           </div>
         ) : (
-            <div className="col-xl-12 new-training mb-4">
-              <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
-                  <div className="col-12 col-md-12 px-25">
-                    <Loading classOption="align-center-spinner" />
-                  </div>
+          <div className="col-xl-12 new-training mb-4">
+            <div className="featured-courses courses-wrap">
+              <div className="row  ">
+                <div className="col-12 col-md-12  ">
+                  <Loading classOption="align-center-spinner" />
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
         {!loadingModuleByCourse && filterModuleByCourse.length === 0 && (
           <div className="col-xl-12 new-training mb-4">
             <div className="featured-courses courses-wrap">
-              <div className="row mx-m-25">
+              <div className="row  ">
                 {isLoading ? (
-                  <div className="col-12 col-md-12 px-25">
+                  <div className="col-12 col-md-12  ">
                     <Loading classOption="align-center-spinner" />
                   </div>
                 ) : (
-                    <div className="col-12 col-md-6 px-25">
-                      <div
-                        className="course-content"
-                        onClick={this.handleShowPopupListModule}
-                      >
-                        <div className="course-content-wrap">
-                          <i className="fa fa-plus"></i>
-                          <h3>Add new item</h3>
-                        </div>
+                  <div className="col-12 col-md-6  ">
+                    <div
+                      className="course-content"
+                      onClick={this.handleShowPopupListModule}
+                    >
+                      <div className="course-content-wrap">
+                        <i className="fa fa-plus"></i>
+                        <h3>Add new item</h3>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -481,8 +478,8 @@ class Step3 extends Component {
               {isLoading ? (
                 <Loading color="#ffffff" classOption="align-center-spinner" />
               ) : (
-                  "SAVE"
-                )}
+                "SAVE"
+              )}
             </button>
           )}
 

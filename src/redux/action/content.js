@@ -103,7 +103,11 @@ export const getListContent = (payload, next, nextErr) => {
   return {
     type: SINGLE_API,
     payload: {
-      uri: `contents?users._id=${id}&${moduleId !== "" ? `modules._id=${moduleId}&` : ""}${keySearch !== "" ? `name_contains=${keySearch}&` : ``}_start=${startItemPage}&_limit=${itemPerPage}`,
+      uri: `contents?users._id=${id}&${
+        moduleId !== "" ? `modules._id=${moduleId}&` : ""
+      }${
+        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      }_start=${startItemPage}&_limit=${itemPerPage}`,
       beforeCallType: "GET_LIST_CONTENT_REQUEST",
       successType: "GET_LIST_CONTENT_SUCCESS",
       afterSuccess: next,

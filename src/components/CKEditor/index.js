@@ -67,7 +67,7 @@ class MyUploadAdapter {
       // This URL will be used to display the image in the content. Learn more in the
       // UploadAdapter#upload documentation.
       const url = response[0].url;
-      
+
       resolve({
         default: url
       });

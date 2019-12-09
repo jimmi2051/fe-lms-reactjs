@@ -105,6 +105,7 @@ a:hover, a:active {
     line-height: 1;
     background: #f3f3f3;
     color: #383749;
+
 }
 
 .header-bar-search input[type="search"]::placeholder {
@@ -139,6 +140,7 @@ a:hover, a:active {
 
     .header-bar-search input[type="search"] {
         width: calc(100% - 50px);
+        font-size: 14px;
     }
 }
 
@@ -520,15 +522,6 @@ a:hover, a:active {
     border-color: #19c880;
 }
 
-.mx-m-25 {
-    margin-right: -25px !important;
-    margin-left: -25px !important;
-}
-
-.px-25 {
-    padding-right: 25px !important;
-    padding-left: 25px !important;
-}
 
 .course-content {
     margin-top: 50px;
@@ -1272,12 +1265,6 @@ a.btn:hover {
     margin-top: 50px;
     margin-left: 25px;
     border: 1px solid #ebebeb;
-}
-
-@media screen and (max-width: 992px){
-    .sidebar {
-        margin-left: 0;
-    }
 }
 
 /*

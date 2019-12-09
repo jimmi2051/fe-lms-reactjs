@@ -1,24 +1,33 @@
 .courses-wrap {
   &-custom {
+    .col-xl-4 {
+      @media screen and (max-width: 992px) {
+        margin-bottom: 15px;
+      }
+    }
     .course-content {
       margin-top: 0px;
       margin-bottom: 30px;
     }
     .sidebar {
       margin-top: 0px;
+      margin-left: 15px;
+      @media screen and (max-width: 992px) {
+        margin-left: 0px;
+      }
       .cat-links {
         margin-top: 0px;
       }
     }
   }
-  button{
-    &:hover{
+  button {
+    &:hover {
       cursor: pointer;
     }
   }
 }
-.new-content{
-  .card{
+.new-content {
+  .card {
     margin-bottom: 1rem;
   }
 }

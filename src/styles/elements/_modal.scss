@@ -23,9 +23,11 @@
   // overflow-y: auto;
   overflow-x: hidden;
   overflow-y: auto;
-
   @media screen and (max-height: 800px) {
     height: 500px;
+  }
+  @media screen and (max-height: 600px) {
+    height: 400px;
   }
 }
 .modal {

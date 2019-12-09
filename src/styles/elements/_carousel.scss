@@ -1,67 +1,66 @@
-.slide{
-    padding: 0px;
+.slide {
+  padding: 0px;
 }
-.slide-item{
-    position: relative;
+.slide-item {
+  position: relative;
+  top: 0;
+  width: 100%;
+  object-position: 50% 50%;
+  background-size: contain;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  height: 100%;
+  padding: 100px 0;
+  margin-left: 0;
+  font-family: brandon-grot-w01-light, sans-serif;
+  &:after {
+    content: "";
+    position: absolute;
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0.5;
+    background: #000;
+  }
+  &-content {
     width: 100%;
-    object-position: 50% 50%;
-    background-size: contain;
-    background-position: 50%;
-    background-repeat: no-repeat;
+    position: relative;
+    z-index: 2;
     height: 100%;
-    padding: 100px 0;
-    margin-left: 0;
-    font-family: brandon-grot-w01-light,sans-serif;
-    &:after{
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 0;
-        opacity: .5;
-        background: #000;
+    color: white;
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(25, 200, 128, 0.49);
+      border: 0 solid #324158;
+      border-radius: 30px;
+      z-index: -1;
     }
-    &-content{
-        width: 100%;
-        position: relative;
-        z-index: 2;
-        height: 100%;
-        color:white;
-       
-        &:after{
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(25, 200, 128,.49);
-            border: 0 solid #324158;
-            border-radius: 30px;
-            z-index: -1;
-        }
-    }
+  }
 }
 
-.ck-content
-{
-  ul{
+.ck-content {
+  ul {
     padding-left: 20px;
     margin-bottom: 0px;
-    li{
+    li {
       display: list-item;
       list-style-type: disc;
       padding-left: 0px;
     }
   }
-  ol{
-    padding-left:20px;
+  ol {
+    padding-left: 20px;
     margin-bottom: 0px;
   }
-  p{
+  p {
     margin: 0px;
   }
 }

@@ -71,7 +71,15 @@ class ListTraining extends Component {
     fetch(
       `https://be-lms.tk/trainings?${
         keySearch !== "" ? `name_contains=${keySearch}&` : ``
-      }${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}`
+      }${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AuthStorage.token}`
+        }
+      }
     )
       .then(response => {
         return response.json();
@@ -308,7 +316,7 @@ class ListTraining extends Component {
             </div>
             <div className="col-xl-8">
               <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
+                <div className="row  ">
                   {!loadingTrainingAll ? (
                     trainingAll.map((item, index) => {
                       let starOfTraining = [];
@@ -316,7 +324,7 @@ class ListTraining extends Component {
                         starOfTraining.push(i);
                       }
                       return (
-                        <div key={index} className="col-12 col-md-6 px-25">
+                        <div key={index} className="col-12 col-md-6  ">
                           <div className="course-content">
                             <figure className="course-thumbnail">
                               <Link

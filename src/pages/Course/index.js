@@ -43,8 +43,8 @@ class CoursePage extends Component {
           <div className="row">
             <div className="col-12 col-lg-8">
               <div className="featured-courses courses-wrap">
-                <div className="row mx-m-25">
-                  <div className="col-12 col-md-6 px-25">
+                <div className="row  ">
+                  <div className="col-12 col-md-6  ">
                     <div className="course-content">
                       <figure className="course-thumbnail">
                         <a href="#">
@@ -90,7 +90,7 @@ class CoursePage extends Component {
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6 px-25">
+                  <div className="col-12 col-md-6  ">
                     <div className="course-content">
                       <figure className="course-thumbnail">
                         <a href="#">
@@ -136,7 +136,7 @@ class CoursePage extends Component {
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6 px-25">
+                  <div className="col-12 col-md-6  ">
                     <div className="course-content">
                       <figure className="course-thumbnail">
                         <a href="#">
@@ -182,7 +182,7 @@ class CoursePage extends Component {
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6 px-25">
+                  <div className="col-12 col-md-6  ">
                     <div className="course-content">
                       <figure className="course-thumbnail">
                         <a href="#">
@@ -226,7 +226,7 @@ class CoursePage extends Component {
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6 px-25">
+                  <div className="col-12 col-md-6  ">
                     <div className="course-content">
                       <figure className="course-thumbnail">
                         <a href="#">
@@ -272,7 +272,7 @@ class CoursePage extends Component {
                     </div>
                   </div>
 
-                  <div className="col-12 col-md-6 px-25">
+                  <div className="col-12 col-md-6  ">
                     <div className="course-content">
                       <figure className="course-thumbnail">
                         <a href="#">
@@ -516,7 +516,4 @@ class CoursePage extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CoursePage);
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePage);

@@ -220,7 +220,4 @@ class PopupListContent extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopupListContent);
+export default connect(mapStateToProps, mapDispatchToProps)(PopupListContent);

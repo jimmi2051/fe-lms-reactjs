@@ -77,9 +77,9 @@ class PopupListContent extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -119,9 +119,9 @@ class PopupListContent extends Component {
                 </div>
                 <div className="col-xl-12 popup-course mt-4">
                   <div className="featured-courses courses-wrap">
-                    <div className="row mx-m-25">
+                    <div className="row  ">
                       {!_.isEmpty(moduleSelected) && (
-                        <div className="col-12 col-md-12 px-25">
+                        <div className="col-12 col-md-12  ">
                           <div className="course-content">
                             <figure className="course-thumbnail">
                               {/* <Link
@@ -195,7 +195,4 @@ class PopupListContent extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopupListContent);
+export default connect(mapStateToProps, mapDispatchToProps)(PopupListContent);

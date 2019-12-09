@@ -91,8 +91,8 @@ class Step4 extends Component {
         });
       this.handleGetContentByModule(
         filterModuleByCourse &&
-        filterModuleByCourse.length > 0 &&
-        filterModuleByCourse[0].module._id
+          filterModuleByCourse.length > 0 &&
+          filterModuleByCourse[0].module._id
       );
       this.setState({
         listModule: listModule,
@@ -105,13 +105,13 @@ class Step4 extends Component {
   handleGetContentByUserId = id => {
     const { getContent } = this.props.action;
     const payload = { id };
-    getContent(payload, () => { });
+    getContent(payload, () => {});
   };
 
   handleGetContentByModule = module_id => {
     const { getContentByModule } = this.props.action;
     const payload = { id: module_id };
-    getContentByModule(payload, () => { });
+    getContentByModule(payload, () => {});
   };
 
   handleChangeCourse = course => {
@@ -297,9 +297,8 @@ class Step4 extends Component {
           <div className="form-group">
             <button
               type="button"
-              className="form-control btn bg-root"
+              className="form-control btn bg-root btn-add-new"
               onClick={this.handleCloseNewContent}
-              style={{ width: "30%" }}
             >
               Add new content
             </button>
@@ -400,25 +399,25 @@ class Step4 extends Component {
                   );
                 })
               ) : (
-                  <tr>
-                    <td colSpan="4">
-                      <Loading classOption="align-center-spinner" />
-                    </td>
-                  </tr>
-                )}
+                <tr>
+                  <td colSpan="4">
+                    <Loading classOption="align-center-spinner" />
+                  </td>
+                </tr>
+              )}
               {!loadingListContentByModule && listContentByModule.length === 0 && (
                 <tr>
                   <td colSpan="4">
                     {isLoading ? (
                       <Loading classOption="align-center-spinner" />
                     ) : (
-                        <button
-                          onClick={() => this.handleShowListContent_ver2()}
-                          className="btn bg-root"
-                        >
-                          Add content
+                      <button
+                        onClick={() => this.handleShowListContent_ver2()}
+                        className="btn bg-root"
+                      >
+                        Add content
                       </button>
-                      )}
+                    )}
                   </td>
                 </tr>
               )}
@@ -437,8 +436,8 @@ class Step4 extends Component {
               {isLoading ? (
                 <Loading color="#ffffff" classOption="align-center-spinner" />
               ) : (
-                  "UPDATE CONTENT FOR MODULE"
-                )}
+                "UPDATE CONTENT FOR MODULE"
+              )}
             </button>
           </div>
         )}
@@ -453,7 +452,4 @@ class Step4 extends Component {
     );
   }
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Step4);
+export default connect(mapStateToProps, mapDispatchToProps)(Step4);

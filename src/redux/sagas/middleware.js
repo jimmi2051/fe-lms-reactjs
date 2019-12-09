@@ -6,7 +6,6 @@ import { takeEvery, call, put } from "redux-saga/effects";
 // import AuthStorage from "utils/AuthStorage";
 import fetchApi from "utils/FetchApi";
 import { SINGLE_API } from "redux/action/type.js";
-import { showLoading, hideLoading } from "react-redux-loading-bar";
 
 function* callApi(action) {
   if (action.type === SINGLE_API) {
@@ -46,6 +45,6 @@ function* callApi(action) {
   }
 }
 
-export default function* () {
+export default function*() {
   yield takeEvery("*", callApi);
 }

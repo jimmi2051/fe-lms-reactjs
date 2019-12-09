@@ -83,7 +83,7 @@ export const requestForgotPassword = (payload, next, nextErr) => {
       }
     }
   };
-}
+};
 
 export const resetPassword = (payload, next, nextErr) => {
   const { code, password, passwordConfirmation } = payload;
@@ -99,8 +99,10 @@ export const resetPassword = (payload, next, nextErr) => {
         method: "POST"
       },
       params: {
-        code, password, passwordConfirmation
+        code,
+        password,
+        passwordConfirmation
       }
     }
   };
-}
+};

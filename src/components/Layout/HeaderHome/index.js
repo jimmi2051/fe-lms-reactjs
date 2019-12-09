@@ -59,7 +59,4 @@ class HeaderHome extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HeaderHome);
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderHome);

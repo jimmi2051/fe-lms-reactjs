@@ -25,9 +25,9 @@ class PopupNewModule extends Component {
     fileToUpload: [],
     nameFile: "",
     imgSrc: "",
-    isLoading: false,
+    isLoading: false
   };
-  componentDidMount() { }
+  componentDidMount() {}
 
   fileSelectHandler = e => {
     let files = e.target.files;
@@ -35,7 +35,7 @@ class PopupNewModule extends Component {
     const reader = new FileReader();
     const file = files[0];
     const url = reader.readAsDataURL(file);
-    reader.onloadend = function (e) {
+    reader.onloadend = function(e) {
       this.setState({
         imgSrc: reader.result
       });
@@ -46,7 +46,7 @@ class PopupNewModule extends Component {
   };
 
   handleNewModule = async () => {
-    this.setState({ isLoading: true })
+    this.setState({ isLoading: true });
     const { title } = this.refs;
     const { description, fileToUpload } = this.state;
     let thumbnail = {};
@@ -87,7 +87,7 @@ class PopupNewModule extends Component {
 
   render() {
     const { isShow } = this.props;
-    const {isLoading} = this.state;
+    const { isLoading } = this.state;
     return (
       <div
         className={`modal bd-example-modal-lg fade ${isShow ? "show" : ""}`}
@@ -99,9 +99,9 @@ class PopupNewModule extends Component {
         style={
           isShow
             ? {
-              display: "block",
-              paddingRight: "15px"
-            }
+                display: "block",
+                paddingRight: "15px"
+              }
             : {}
         }
       >
@@ -173,7 +173,11 @@ class PopupNewModule extends Component {
                 onClick={this.handleNewModule}
                 disabled={isLoading}
               >
-                {isLoading ? <Loading color="#ffffff" classOption="align-center-spinner" /> : "Create"}
+                {isLoading ? (
+                  <Loading color="#ffffff" classOption="align-center-spinner" />
+                ) : (
+                  "Create"
+                )}
               </button>
               <button
                 type="button"
@@ -191,7 +195,4 @@ class PopupNewModule extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopupNewModule);
+export default connect(mapStateToProps, mapDispatchToProps)(PopupNewModule);
