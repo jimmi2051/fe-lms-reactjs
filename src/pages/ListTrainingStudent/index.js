@@ -77,7 +77,6 @@ class ListTraining extends Component {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${AuthStorage.token}`
         }
       }
     )
