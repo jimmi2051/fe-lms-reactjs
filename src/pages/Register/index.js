@@ -87,24 +87,19 @@ class Register extends Component {
         dateOfBirth: date,
         password: password.value
       };
-      registerUser(
-        payload,
-        () => {
-          const { registerUser } = this.props.store;
-          if (registerUser && registerUser.jwt) {
-            this.setState({ isSuccess: true });
-          }
-        },
-        err => {
-          let errors = {};
-          if (err.message) {
-            errors["token"] = err.message;
-            this.setState({
-              errors
-            });
-          }
+      registerUser(payload, () => {
+        const { registerUser } = this.props.store;
+        if (registerUser && registerUser.jwt) {
+          this.setState({ isSuccess: true });
         }
-      );
+        if (registerUser.message) {
+          let errors = {};
+          errors["token"] = registerUser.message;
+          this.setState({
+            errors
+          });
+        }
+      });
     }
   };
   handleValidation = (
@@ -116,6 +111,9 @@ class Register extends Component {
     role
   ) => {
     let reg = /^\d+$/;
+    const mediumRegex = new RegExp(
+      "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
+    );
     let formIsValid = true;
     let errors = {};
     //Validate username
@@ -153,6 +151,10 @@ class Register extends Component {
     if (!reg.test(telephone)) {
       formIsValid = false;
       errors["tel"] = "Phone is incorrect";
+    }
+    if (!mediumRegex.test(password)) {
+      formIsValid = false;
+      errors["password"] = "The password is too simple";
     }
     if (!confirmPassword || confirmPassword === "") {
       formIsValid = false;
