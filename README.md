@@ -48,6 +48,27 @@ Give an example
 Give an example
 ```
 
+## Running in local
+
+Change API config, config file `.env.development` 
+
+```
+REACT_APP_URL_API = http://localhost:1337
+```
+
+Run scripts:
+
+```
+npm install
+```
+
+Instal package plugin done, run scripts start project
+
+```
+npm run start
+```
+
+
 ## Deployment
 
 Deploy this on a live system with VPS Linux
