@@ -13,14 +13,14 @@ class VideoNormal extends Component {
     const currentUrl = this.processUrl(this.props.src);
     return (
       <div className="content-video-normal">
-        <h5 className="content-video-normal__title">Content: </h5>
+        {/* <h5 className="content-video-normal__title">Content: </h5>
         <ReactPlayer
           url={currentUrl}
           playing
           width="100%"
           height="100%"
           controls
-        />
+        /> */}
       </div>
     );
   }

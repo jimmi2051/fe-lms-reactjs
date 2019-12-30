@@ -34,7 +34,8 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
     "redux-saga": "^1.0.5",
-    "video-react": "^0.14.1"
+    "video-react": "^0.14.1",
+    "react-paypal-button-v2": "2.6.1"
   },
   "scripts": {
     "start": "react-scripts start",
