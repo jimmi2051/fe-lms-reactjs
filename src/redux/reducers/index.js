@@ -56,6 +56,9 @@ import listModulePaging, {
 import listContentPaging, {
   initialState as initListContentPaging
 } from "./content";
+
+import cart, { initialState as initCart } from "./cart";
+
 export const exampleInitialState = {
   user: initUser,
   auth: initialAuth,
@@ -86,7 +89,8 @@ export const exampleInitialState = {
   isUpdateActivity: initIsUpdateActivity,
   listCoursePaging: initListCoursePaging,
   listModulePaging: initListModulePaging,
-  listContentPaging: initListContentPaging
+  listContentPaging: initListContentPaging,
+  cart: initCart
 };
 
 export default {
@@ -119,5 +123,6 @@ export default {
   isUpdateActivity,
   listCoursePaging,
   listModulePaging,
-  listContentPaging
+  listContentPaging,
+  cart
 };

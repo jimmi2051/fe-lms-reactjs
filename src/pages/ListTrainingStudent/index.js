@@ -19,6 +19,7 @@ import { withRouter } from "react-router";
 import { ToastContainer } from "react-toastr";
 // import { PayPalButton } from "react-paypal-button-v2";
 import PayPalButton from "components/Paypal";
+import { addToCart } from "redux/action/cart";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
 function mapStateToProps(state) {
@@ -29,7 +30,8 @@ function mapStateToProps(state) {
       categoryAll: state.trainingAll.categoryAll.data,
       loadingCategoryAll: state.trainingAll.categoryAll.loading,
       isAddTraining: state.isAddTraining.isAddTraining.data,
-      loadingAddTraining: state.isAddTraining.isAddTraining.loading
+      loadingAddTraining: state.isAddTraining.isAddTraining.loading,
+      cart: state.cart.cart
     }
   };
 }
@@ -40,7 +42,8 @@ const mapDispatchToProps = dispatch => {
       {
         getAllTraining,
         getAllCategory,
-        addToMyTraining
+        addToMyTraining,
+        addToCart
       },
       dispatch
     )
@@ -196,15 +199,23 @@ class ListTraining extends Component {
     });
   };
 
+  handleAddToCart = training => {
+    const payload = {training};
+    const { addToCart } = this.props.action;
+    addToCart(payload);
+  }
+
   render() {
     const {
       loadingTrainingAll,
       trainingAll,
       loadingCategoryAll,
-      categoryAll
+      categoryAll,
+      cart
     } = this.props.store;
+    
     const { categoryId } = this.state;
-
+    console.log("cart>>>", cart);
     if (loadingCategoryAll) {
       return (
         <div className="page-header">
@@ -399,6 +410,7 @@ class ListTraining extends Component {
                                       type="button"
                                       onClick={() => {
                                         this.handleAddToMyTraining(item);
+                                        this.handleAddToCart(item);
                                       }}
                                       className="btn bg-root"
                                     >
