@@ -20,7 +20,7 @@ import PageNotFound from "pages/PageNotFound";
 import AdminModulePage from "pages/ModuleManage";
 import AdminContentPage from "pages/ContentManage";
 import ForgotPasswordPage from "pages/ForgotPassword";
-
+import CartPage from "pages/Cart";
 import StudentWarp from "layout/Student";
 
 export default function RootRoute() {
@@ -35,6 +35,7 @@ export default function RootRoute() {
         <Route exact path="/forgot-password" component={ForgotPasswordPage} />
         <StudentWarp>
           <Switch>
+            <Route exact path="/cart" component={CartPage} />
             <Route exact path="/training/:id" component={TrainingDetail} />
             <Route exact path="/my-training" component={MyTrainingPage} />
             <Route
