@@ -1,0 +1,43 @@
+.cart-bag{
+    .cart-show{
+        position: absolute;
+        width: 450px;
+        margin-left: -400px;
+        background: black;
+        padding: 15px;
+        .cart-item{
+            position: relative;
+            height: 100%;
+            justify-content: left;
+            align-items: center;
+            display: flex;
+            margin-bottom: 20px;
+            &-name{
+                width: 100%;
+            }
+            &-price{
+                width: 50px;
+                text-align: right;
+            }
+            p{
+                display: inline-block;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                line-height: 40px;
+                margin-bottom: 0px;
+            }
+            img{
+                width: auto;
+                height: 40px;
+                display: inline-block;
+                margin-top: auto;
+                margin-right: 15px;
+            }
+        }
+        .btn-view-cart
+        {
+            float: right;
+        }
+    }
+}

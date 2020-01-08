@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ReactPlayer from "react-player";
+// import ReactPlayer from "react-player";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 class VideoNormal extends Component {
   processUrl = url => {

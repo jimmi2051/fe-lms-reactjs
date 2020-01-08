@@ -6,10 +6,12 @@ import AuthStorage from "utils/AuthStorage";
 import { Link } from "react-router-dom";
 import { logoutRequest } from "redux/action/auth";
 import { withRouter } from "react-router";
+const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 function mapStateToProps(state) {
   return {
     store: {
-      auth: state.auth
+      auth: state.auth,
+      cart: state.cart.cart
     }
   };
 }
@@ -25,7 +27,7 @@ class Navbar extends Component {
     keySearch: "",
     isShowMobile: false
   };
-  componentDidMount() {}
+  componentDidMount() { }
   logout = () => {
     this.props.action.logoutRequest();
   };
@@ -38,6 +40,7 @@ class Navbar extends Component {
   render() {
     const { pathname } = this.props.location;
     const { keySearch, isShowMobile } = this.state;
+    const { cart } = this.props.store;
     return (
       <header className="site-header">
         <div className="top-header-bar">
@@ -95,19 +98,19 @@ class Navbar extends Component {
                         </li>
                       </>
                     ) : (
-                      <>
-                        <li>
-                          <Link to="/profile">
-                            {AuthStorage.userInfo.username}
+                        <>
+                          <li>
+                            <Link to="/profile">
+                              {AuthStorage.userInfo.username}
+                            </Link>
+                          </li>
+                          <li>
+                            <Link onClick={this.logout} to="/login">
+                              Log out
                           </Link>
-                        </li>
-                        <li>
-                          <Link onClick={this.logout} to="/login">
-                            Log out
-                          </Link>
-                        </li>
-                      </>
-                    )}
+                          </li>
+                        </>
+                      )}
                   </ul>
                 </div>
               </div>
@@ -133,7 +136,7 @@ class Navbar extends Component {
                 <nav
                   className={`site-navigation flex justify-content-end align-items-center ${
                     isShowMobile ? "show" : ""
-                  }`}
+                    }`}
                   style={{ width: "100%" }}
                 >
                   <ul className="flex flex-column flex-lg-row justify-content-lg-end align-content-center">
@@ -179,7 +182,7 @@ class Navbar extends Component {
                               pathname === "/admin/course"
                                 ? "current-menu-item"
                                 : ""
-                            } d-lg-none`}
+                              } d-lg-none`}
                           >
                             <Link to="/admin/course">Manage Course</Link>
                           </li>
@@ -188,7 +191,7 @@ class Navbar extends Component {
                               pathname === "/admin/module"
                                 ? "current-menu-item"
                                 : ""
-                            } d-lg-none`}
+                              } d-lg-none`}
                           >
                             <Link to="/admin/module">Manage Module</Link>
                           </li>
@@ -197,7 +200,7 @@ class Navbar extends Component {
                               pathname === "/admin/content"
                                 ? "current-menu-item"
                                 : ""
-                            } d-lg-none`}
+                              } d-lg-none`}
                           >
                             <Link to="/admin/content">Manage Content</Link>
                           </li>
@@ -235,7 +238,7 @@ class Navbar extends Component {
                             <a href="#">blog</a>
                           </li>
                           <li>
-                            <a href="#">Contact</a>
+                            <Link to="/cart">Cart</Link>
                           </li>
                         </>
                       )}
@@ -274,7 +277,7 @@ class Navbar extends Component {
                     }}
                     className={`hamburger-menu d-lg-none ${
                       isShowMobile ? "open" : ""
-                    }`}
+                      }`}
                   >
                     <span></span>
                     <span></span>
@@ -324,6 +327,22 @@ class Navbar extends Component {
                         </div>
                       </div>
                     )}
+                  <div className="cart-bag text-white">
+                    <span className="cart-number">{cart.length}</span>
+                    <i className="fa fa-cart-plus"></i>
+                    <div className="cart-show">
+                      {cart && cart.length > 0 && cart.map((item, index) => {
+                        return (
+                          <div className="cart-item">
+                            <img src={`${REACT_APP_URL_API}${item.thumbnail.url}`} alt="#" />
+                            <p className="cart-item-name">{item.name}</p>
+                            <p className="cart-item-price">50$</p>
+                          </div>
+                        )
+                      })}
+                      <Link className="btn bg-root btn-view-cart">View Cart</Link>
+                    </div>
+                  </div>
                 </nav>
               </div>
             </div>

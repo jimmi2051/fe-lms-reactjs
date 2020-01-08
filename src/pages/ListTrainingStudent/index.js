@@ -18,7 +18,6 @@ import Pagination from "react-js-pagination";
 import { withRouter } from "react-router";
 import { ToastContainer } from "react-toastr";
 // import { PayPalButton } from "react-paypal-button-v2";
-import PayPalButton from "components/Paypal";
 import { addToCart } from "redux/action/cart";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 const ENTER_KEY = 13;
@@ -65,7 +64,7 @@ class ListTraining extends Component {
     try {
       const { keySearch } = this.props.location.state;
       this.setState({ keySearch });
-    } catch {}
+    } catch { }
     this.handleGetTraining();
     this.handleGetCategory();
     this.handleGetTotalPage();
@@ -75,7 +74,7 @@ class ListTraining extends Component {
     const { keySearch, categoryId } = this.state;
     fetch(
       `https://be-lms.tk/trainings?${
-        keySearch !== "" ? `name_contains=${keySearch}&` : ``
+      keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }${categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""}`,
       {
         method: "GET",
@@ -97,7 +96,7 @@ class ListTraining extends Component {
     const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
     const payload = { keySearch, startItemPage, itemPerPage, categoryId };
     const { getAllTraining } = this.props.action;
-    getAllTraining(payload, () => {});
+    getAllTraining(payload, () => { });
   };
 
   handleGetCategory = () => {
@@ -200,7 +199,7 @@ class ListTraining extends Component {
   };
 
   handleAddToCart = training => {
-    const payload = {training};
+    const payload = { training };
     const { addToCart } = this.props.action;
     addToCart(payload);
   }
@@ -213,7 +212,7 @@ class ListTraining extends Component {
       categoryAll,
       cart
     } = this.props.store;
-    
+
     const { categoryId } = this.state;
     console.log("cart>>>", cart);
     if (loadingCategoryAll) {
@@ -296,7 +295,7 @@ class ListTraining extends Component {
                                 categoryId === item._id
                                   ? "font-weight-bold"
                                   : ""
-                              }`}
+                                }`}
                               to="#"
                               onClick={e => {
                                 e.preventDefault();
@@ -313,7 +312,7 @@ class ListTraining extends Component {
                         to="#"
                         className={`${
                           categoryId === "" ? "font-weight-bold" : ""
-                        }`}
+                          }`}
                         onClick={e => {
                           e.preventDefault();
                           this.fitlerCategory("");
@@ -377,8 +376,8 @@ class ListTraining extends Component {
                                         {item.users[0].lastName}{" "}
                                       </a>
                                     ) : (
-                                      <a href="#">Unknow author</a>
-                                    )}
+                                        <a href="#">Unknow author</a>
+                                      )}
                                   </div>
                                   <div className="course-date">
                                     {moment(item.createdAt).format(
@@ -402,23 +401,22 @@ class ListTraining extends Component {
                                     })}
                                 </div>
                                 {AuthStorage.loggedIn &&
-                                AuthStorage.userInfo.role.type === "creator" ? (
-                                  <></>
-                                ) : (
-                                  <div className="col-xl-12 pr-0 pt-3 text-right">
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        this.handleAddToMyTraining(item);
-                                        this.handleAddToCart(item);
-                                      }}
-                                      className="btn bg-root"
-                                    >
-                                      Add to my training
+                                  AuthStorage.userInfo.role.type === "creator" ? (
+                                    <></>
+                                  ) : (
+                                    <div className="col-xl-12 pr-0 pt-3 text-right">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          this.handleAddToMyTraining(item);
+                                          this.handleAddToCart(item);
+                                        }}
+                                        className="btn bg-root"
+                                      >
+                                        Add to my training
                                     </button>
-                                  </div>
-                                )}
-                                <PayPalButton />
+                                    </div>
+                                  )}
                               </footer>
                             </div>
                           </div>
@@ -426,10 +424,10 @@ class ListTraining extends Component {
                       );
                     })
                   ) : (
-                    <div className="col-xl-12">
-                      <Loading classOption="align-center-spinner" />
-                    </div>
-                  )}
+                      <div className="col-xl-12">
+                        <Loading classOption="align-center-spinner" />
+                      </div>
+                    )}
                 </div>
                 <div className="row">
                   <div className="col-xl-12">
