@@ -30,9 +30,9 @@ class Cart extends Component {
     errors: {},
     loading: false
   };
-  componentDidMount() {}
+  componentDidMount() { }
 
-  componentWillReceiveProps(nextProps) {}
+  componentWillReceiveProps(nextProps) { }
 
   handleLogin = e => {
     this.setState({ loading: true });
@@ -46,7 +46,7 @@ class Cart extends Component {
       };
       loginRequest(
         payload,
-        () => {},
+        () => { },
         err => {
           let errors = {};
           if (err.message) {
@@ -123,7 +123,7 @@ class Cart extends Component {
               </div>
             </div>
           </div>
-          <div className="row justify-content-center pt-5 pb-5">
+          <div className="row justify-content-center pb-5 pt-2">
             <div className="col-xl-12">
               <table className="table">
                 <thead>
@@ -161,8 +161,8 @@ class Cart extends Component {
                                 {item.users[0].lastName}{" "}
                               </a>
                             ) : (
-                              <a href="#">Unknow author</a>
-                            )}
+                                <a href="#">Unknow author</a>
+                              )}
                           </td>
                           <td>
                             <button>

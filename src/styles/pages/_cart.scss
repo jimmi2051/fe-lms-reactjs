@@ -1,10 +1,25 @@
 .cart-bag{
+  cursor: pointer;
+  &:hover > .cart-show{
+    display: block;
+  }
+  .cart-number, i {
+    color:white;
+   
+  }
+  i{
+    padding-right:10px;
+  }
+  p {
+    margin-bottom: 0px;
+  }
     .cart-show{
         position: absolute;
         width: 450px;
         margin-left: -400px;
-        background: black;
+        background: white;
         padding: 15px;
+        display: none;
         .cart-item{
             position: relative;
             height: 100%;
@@ -38,6 +53,22 @@
         .btn-view-cart
         {
             float: right;
+            color: white;
+        }
+    }
+    .cart-label{
+        font-size: 14px;
+        color: #a2a2a2;
+        position: relative;
+        margin-bottom: 10px;
+        &:after{
+          width: 80px;
+          position: absolute;
+          bottom: -5px;
+          left:0px;
+          height: 5px;
+          background: red;
+          content: ""
         }
     }
 }

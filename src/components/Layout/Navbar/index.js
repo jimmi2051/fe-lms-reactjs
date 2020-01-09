@@ -327,20 +327,25 @@ class Navbar extends Component {
                         </div>
                       </div>
                     )}
-                  <div className="cart-bag text-white">
-                    <span className="cart-number">{cart.length}</span>
+                  <div className="cart-bag">
                     <i className="fa fa-cart-plus"></i>
+                    <span className="cart-number">{cart.length}</span>
                     <div className="cart-show">
+                      <label className="cart-label">Your cart</label>
                       {cart && cart.length > 0 && cart.map((item, index) => {
                         return (
-                          <div className="cart-item">
-                            <img src={`${REACT_APP_URL_API}${item.thumbnail.url}`} alt="#" />
-                            <p className="cart-item-name">{item.name}</p>
-                            <p className="cart-item-price">50$</p>
-                          </div>
+                          <>
+                            <div className="cart-item">
+                              <img src={`${REACT_APP_URL_API}${item.thumbnail.url}`} alt="#" />
+                              <p className="cart-item-name">{item.name}</p>
+                              <p className="cart-item-price">50$</p>
+                            </div>
+                          </>
                         )
                       })}
-                      <Link className="btn bg-root btn-view-cart">View Cart</Link>
+                      {cart && cart.length > 0 ?
+                        <Link to="/cart" className="btn bg-root btn-view-cart">View Cart</Link> :
+                        <p>Your cart is empty. </p>}
                     </div>
                   </div>
                 </nav>
