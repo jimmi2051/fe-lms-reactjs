@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Header from "components/Layout/Header";
-import { loginRequest } from "redux/action/auth";
-import AuthStorage from "utils/AuthStorage";
+
 import { withRouter } from "react-router";
-import Loading from "components/Loading";
+
 import { Link } from "react-router-dom";
+import { removeCart } from "redux/action/cart";
 import _ from "lodash";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 function mapStateToProps(state) {
@@ -21,7 +21,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ loginRequest }, dispatch)
+    action: bindActionCreators({ removeCart }, dispatch)
   };
 };
 
@@ -34,72 +34,12 @@ class Cart extends Component {
 
   componentWillReceiveProps(nextProps) { }
 
-  handleLogin = e => {
-    this.setState({ loading: true });
-    e.preventDefault();
-    const { email, password } = this.refs;
-    if (this.handleValidation(email.value, password.value)) {
-      const { loginRequest } = this.props.action;
-      const payload = {
-        identifier: email.value,
-        password: password.value
-      };
-      loginRequest(
-        payload,
-        () => { },
-        err => {
-          let errors = {};
-          if (err.message) {
-            errors["token"] = err.message;
-            this.setState({
-              errors
-            });
-          }
-          this.setState({ loading: false });
-        }
-      );
-    } else {
-      this.setState({ loading: false });
-    }
-  };
-  handleValidation = (username, password) => {
-    let formIsValid = true;
-    let errors = {};
-    //Validate username
-    if (!username) {
-      formIsValid = false;
-      errors["username"] = "This field is required";
-    } else {
-      if (typeof username !== "undefined") {
-        let lastAtPos = username.lastIndexOf("@");
-        let lastDotPos = username.lastIndexOf(".");
-        if (
-          !(
-            lastAtPos < lastDotPos &&
-            lastAtPos > 0 &&
-            username.indexOf("@@") === -1 &&
-            lastDotPos > 2 &&
-            username.length - lastDotPos > 2
-          )
-        ) {
-          formIsValid = false;
-          errors["username"] = "Email is incorrect. ";
-        }
-      }
-    }
+  handleRemoveCart = training => {
+    const payload = { training };
+    const { removeCart } = this.props.action;
+    removeCart(payload);
+  }
 
-    //Validate password
-    if (!password) {
-      formIsValid = false;
-      errors["password"] = "This field is required";
-    }
-
-    this.setState({ errors: errors });
-    return formIsValid;
-  };
-  handleRefeshError = () => {
-    this.setState({ errors: {} });
-  };
   render() {
     const { loading } = this.state;
     const { cart } = this.props.store;
@@ -125,7 +65,7 @@ class Cart extends Component {
           </div>
           <div className="row justify-content-center pb-5 pt-2">
             <div className="col-xl-12">
-              <table className="table">
+              <table className="table table-cart">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -140,9 +80,9 @@ class Cart extends Component {
                     cart.length > 0 &&
                     cart.map((item, index) => {
                       return (
-                        <tr>
-                          <td>{index}</td>
-                          <td>{item.name}</td>
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td className="table-td-name">{item.name}</td>
                           <td>
                             <img
                               src={
@@ -151,7 +91,6 @@ class Cart extends Component {
                                   : `${REACT_APP_URL_API}${item.thumbnail.url}`
                               }
                               alt=""
-                            />
                             />
                           </td>
                           <td>
@@ -165,7 +104,7 @@ class Cart extends Component {
                               )}
                           </td>
                           <td>
-                            <button>
+                            <button className="btn bg-root" type="button" onClick={() => { this.handleRemoveCart(item) }}>
                               {" "}
                               <i className="fa fa-remove" />{" "}
                             </button>

@@ -6,6 +6,8 @@ import AuthStorage from "utils/AuthStorage";
 import { Link } from "react-router-dom";
 import { logoutRequest } from "redux/action/auth";
 import { withRouter } from "react-router";
+import { addToCart, removeCart } from "redux/action/cart";
+import _ from "lodash";
 const REACT_APP_URL_API = process.env.REACT_APP_URL_API;
 function mapStateToProps(state) {
   return {
@@ -18,7 +20,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    action: bindActionCreators({ logoutRequest }, dispatch)
+    action: bindActionCreators({ logoutRequest, addToCart, removeCart }, dispatch)
   };
 };
 
@@ -27,7 +29,30 @@ class Navbar extends Component {
     keySearch: "",
     isShowMobile: false
   };
-  componentDidMount() { }
+  componentDidMount() {
+    let localCart = JSON.parse(localStorage.getItem("cart"));
+    const { cart } = this.props.store;
+    if (!_.isEqual(cart, localCart) && !_.isNull(localCart) && localCart.length > 0) {
+      localCart.map((item, index) => {
+        this.handleAddToCart(item);
+      })
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+
+  }
+  handleAddToCart = training => {
+    const payload = { training };
+    const { addToCart } = this.props.action;
+    addToCart(payload);
+  }
+
+  handleRemoveCart = training => {
+    const payload = { training };
+    const { removeCart } = this.props.action;
+    removeCart(payload);
+  }
+
   logout = () => {
     this.props.action.logoutRequest();
   };
@@ -334,13 +359,14 @@ class Navbar extends Component {
                       <label className="cart-label">Your cart</label>
                       {cart && cart.length > 0 && cart.map((item, index) => {
                         return (
-                          <>
+                          <div key={index}>
                             <div className="cart-item">
                               <img src={`${REACT_APP_URL_API}${item.thumbnail.url}`} alt="#" />
                               <p className="cart-item-name">{item.name}</p>
                               <p className="cart-item-price">50$</p>
+                              <i className="fa fa-remove" onClick={() => { this.handleRemoveCart(item) }}></i>
                             </div>
-                          </>
+                          </div>
                         )
                       })}
                       {cart && cart.length > 0 ?

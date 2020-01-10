@@ -116,31 +116,33 @@ class ListTraining extends Component {
         "This training already exists in your list."
       );
     } else {
-      const user = AuthStorage.userInfo;
-      const { addToMyTraining } = this.props.action;
-      const payload = {
-        training,
-        user
-      };
-      addToMyTraining(payload, response => {
-        if (response._id) {
-          let nextActivityStorage = ActivityStorage.value;
-          let tempActivity = response;
-          tempActivity.training = tempActivity.training._id;
-          tempActivity.user = tempActivity.user._id;
-          nextActivityStorage.activityusers.push(tempActivity);
-          ActivityStorage.value = nextActivityStorage;
-          this.notifySuccess(
-            "Notification",
-            "Add training to store successfully."
-          );
-        } else {
-          this.notifyError(
-            "Notification",
-            "Something when wrong. Please wait a few minutes and try again. Thanks."
-          );
-        }
-      });
+      this.handleAddToCart(training);
+
+      //   const user = AuthStorage.userInfo;
+      //   const { addToMyTraining } = this.props.action;
+      //   const payload = {
+      //     training,
+      //     user
+      //   };
+      //   addToMyTraining(payload, response => {
+      //     if (response._id) {
+      //       let nextActivityStorage = ActivityStorage.value;
+      //       let tempActivity = response;
+      //       tempActivity.training = tempActivity.training._id;
+      //       tempActivity.user = tempActivity.user._id;
+      //       nextActivityStorage.activityusers.push(tempActivity);
+      //       ActivityStorage.value = nextActivityStorage;
+      //       this.notifySuccess(
+      //         "Notification",
+      //         "Add training to store successfully."
+      //       );
+      //     } else {
+      //       this.notifyError(
+      //         "Notification",
+      //         "Something when wrong. Please wait a few minutes and try again. Thanks."
+      //       );
+      //     }
+      //   });
     }
   };
 
@@ -201,7 +203,17 @@ class ListTraining extends Component {
   handleAddToCart = training => {
     const payload = { training };
     const { addToCart } = this.props.action;
-    addToCart(payload);
+    addToCart(payload, () => {
+      this.notifySuccess(
+        "Notification",
+        "Add training to cart successfully."
+      );
+    }, () => {
+      this.notifyError(
+        "Notification",
+        "This training already exists in your list."
+      );
+    });
   }
 
   render() {
@@ -214,7 +226,6 @@ class ListTraining extends Component {
     } = this.props.store;
 
     const { categoryId } = this.state;
-    console.log("cart>>>", cart);
     if (loadingCategoryAll) {
       return (
         <div className="page-header">
@@ -409,7 +420,6 @@ class ListTraining extends Component {
                                         type="button"
                                         onClick={() => {
                                           this.handleAddToMyTraining(item);
-                                          this.handleAddToCart(item);
                                         }}
                                         className="btn bg-root"
                                       >
