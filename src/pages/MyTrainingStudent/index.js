@@ -7,7 +7,7 @@ import {
   getAllTraining,
   getAllCategory,
   addToMyTraining,
-  getTrainingToLearn
+  getTrainingToLearn,
 } from "redux/action/training";
 import _ from "lodash";
 import AuthStorage from "utils/AuthStorage";
@@ -29,22 +29,22 @@ function mapStateToProps(state) {
       loadingAddTraining: state.isAddTraining.isAddTraining.loading,
       listTrainingLearn: state.listTrainingLearn.listTrainingLearn.data,
       loadingListTrainingLearn:
-        state.listTrainingLearn.listTrainingLearn.loading
-    }
+        state.listTrainingLearn.listTrainingLearn.loading,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     action: bindActionCreators(
       {
         getAllTraining,
         getAllCategory,
         addToMyTraining,
-        getTrainingToLearn
+        getTrainingToLearn,
       },
       dispatch
-    )
+    ),
   };
 };
 let toastr;
@@ -57,7 +57,7 @@ class ListTraining extends Component {
     itemPerPage: 4,
     totalPage: -1,
     activePage: 1,
-    categoryId: ""
+    categoryId: "",
   };
   componentDidMount() {
     this.handleGetMyTraining(AuthStorage.userInfo._id);
@@ -68,7 +68,7 @@ class ListTraining extends Component {
   handleGetTotalPage = () => {
     const { keySearch, categoryId } = this.state;
     fetch(
-      `https://be-lms.tk/trainings?${
+      `https://be-lms.herokuapp.com/trainings?${
         keySearch !== "" ? `name_contains=${keySearch}&` : ``
       }${
         categoryId !== "" ? `categorytrainings._id=${categoryId}&` : ""
@@ -78,29 +78,29 @@ class ListTraining extends Component {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${AuthStorage.token}`
-        }
+          Authorization: `Bearer ${AuthStorage.token}`,
+        },
       }
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(result => {
+      .then((result) => {
         this.setState({ totalPage: result.length });
       });
   };
 
-  handleGetMyTraining = userId => {
+  handleGetMyTraining = (userId) => {
     const { keySearch, startItemPage, itemPerPage, categoryId } = this.state;
     const payload = {
       keySearch,
       startItemPage,
       itemPerPage,
       userId,
-      categoryId
+      categoryId,
     };
     const { getTrainingToLearn } = this.props.action;
-    getTrainingToLearn(payload, response => {});
+    getTrainingToLearn(payload, (response) => {});
   };
 
   handleGetCategory = () => {
@@ -113,11 +113,11 @@ class ListTraining extends Component {
     this.setState({ addSuccess: false });
   };
 
-  handleInputSearch = e => {
+  handleInputSearch = (e) => {
     this.setState({ keySearch: e.target.value });
   };
 
-  beginSearch = e => {
+  beginSearch = (e) => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0 }, () => {
         this.handleGetTotalPage();
@@ -134,7 +134,7 @@ class ListTraining extends Component {
     });
   }
 
-  fitlerCategory = categoryId => {
+  fitlerCategory = (categoryId) => {
     this.setState({ categoryId, startItemPage: 0 }, () => {
       this.handleGetTotalPage();
       this.handleGetMyTraining(AuthStorage.userInfo._id);
@@ -143,12 +143,12 @@ class ListTraining extends Component {
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
   notifyError = (title, content) => {
     toastr.error(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
@@ -157,7 +157,7 @@ class ListTraining extends Component {
       loadingCategoryAll,
       categoryAll,
       listTrainingLearn,
-      loadingListTrainingLearn
+      loadingListTrainingLearn,
     } = this.props.store;
     const { categoryId } = this.state;
 
@@ -193,7 +193,7 @@ class ListTraining extends Component {
     return (
       <div className="page-header">
         <ToastContainer
-          ref={ref => (toastr = ref)}
+          ref={(ref) => (toastr = ref)}
           className="toast-top-right"
         />
         <Header titleHeader="MY TRAINING" />
@@ -241,7 +241,7 @@ class ListTraining extends Component {
                                   : ""
                               }`}
                               to="#"
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.preventDefault();
                                 this.fitlerCategory(item._id);
                               }}
@@ -257,7 +257,7 @@ class ListTraining extends Component {
                         className={`${
                           categoryId === "" ? "font-weight-bold" : ""
                         }`}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           this.fitlerCategory("");
                         }}
@@ -278,7 +278,7 @@ class ListTraining extends Component {
                     listTrainingLearn.data.trainings.map((item, index) => {
                       const idx = _.findIndex(
                         item.activityusers,
-                        activity =>
+                        (activity) =>
                           activity.user &&
                           activity.user._id === AuthStorage.userInfo._id
                       );
@@ -301,14 +301,14 @@ class ListTraining extends Component {
                                 to={{
                                   pathname: `training/${item._id}`,
                                   state: {
-                                    currentActivity: activityOfTraining
-                                  }
+                                    currentActivity: activityOfTraining,
+                                  },
                                 }}
                               >
                                 <img
                                   src={
                                     _.isEmpty(item.thumbnail)
-                                      ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                      ? "https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
                                       : `${REACT_APP_URL_API}${item.thumbnail.url}`
                                   }
                                   alt=""
@@ -323,8 +323,8 @@ class ListTraining extends Component {
                                     to={{
                                       pathname: `training/${item._id}`,
                                       state: {
-                                        currentActivity: activityOfTraining
-                                      }
+                                        currentActivity: activityOfTraining,
+                                      },
                                     }}
                                   >
                                     {item.name}
@@ -373,8 +373,8 @@ class ListTraining extends Component {
                                   to={{
                                     pathname: `training/${item._id}`,
                                     state: {
-                                      currentActivity: activityOfTraining
-                                    }
+                                      currentActivity: activityOfTraining,
+                                    },
                                   }}
                                 >
                                   <button

@@ -26,22 +26,22 @@ function mapStateToProps(state) {
       filterModuleByCourse: state.listModule.filterModuleByCourse.data,
       loadingModuleByCourse: state.listModule.filterModuleByCourse.loading,
       isCreatedLearningPath:
-        state.isCreatedLearningPath.isCreatedLearningPath.data
-    }
+        state.isCreatedLearningPath.isCreatedLearningPath.data,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     action: bindActionCreators(
       {
         getCourseByTraining,
         addCourseModule,
         getModuleByCourse,
-        removeModuleByCourse
+        removeModuleByCourse,
       },
       dispatch
-    )
+    ),
   };
 };
 
@@ -56,7 +56,7 @@ class Step3 extends Component {
     isShowListModule: false,
     updateCouse: false,
     currentTraining: {},
-    isLoading: false
+    isLoading: false,
   };
 
   componentDidMount() {
@@ -89,7 +89,7 @@ class Step3 extends Component {
     }
   }
 
-  handleFilterListCourse = training_id => {
+  handleFilterListCourse = (training_id) => {
     const payload = { id: training_id };
     const { getCourseByTraining } = this.props.action;
     getCourseByTraining(payload, () => {
@@ -102,17 +102,17 @@ class Step3 extends Component {
     });
   };
 
-  handleProcessData = listCourseFitler => {
+  handleProcessData = (listCourseFitler) => {
     let listCourse = [];
     listCourseFitler.map((item, index) => {
       listCourse.push({
         value: item.course,
-        label: item.course.name
+        label: item.course.name,
       });
     });
     this.setState({
       currentCourse: listCourse.length > 0 ? listCourseFitler[0].course : {},
-      listCourse
+      listCourse,
     });
   };
 
@@ -120,7 +120,7 @@ class Step3 extends Component {
     const { addCourseModule } = this.props.action;
     const { currentCourse } = this.state;
     const payload = { course, position, module };
-    addCourseModule(payload, response => {
+    addCourseModule(payload, (response) => {
       const { notifySuccess } = this.props;
       if (lastModule) {
         notifySuccess(
@@ -143,13 +143,13 @@ class Step3 extends Component {
     this.setState({ isShow: !isShow });
   };
 
-  handleGetModuleByCourse = course_id => {
+  handleGetModuleByCourse = (course_id) => {
     const { getModuleByCourse } = this.props.action;
     const payload = { id: course_id };
     getModuleByCourse(payload);
   };
 
-  handleChangeCourse = course => {
+  handleChangeCourse = (course) => {
     this.handleGetModuleByCourse(course._id);
     this.setState({ currentCourse: course });
   };
@@ -178,22 +178,22 @@ class Step3 extends Component {
     });
   };
 
-  handleChange = options => {
+  handleChange = (options) => {
     if (!_.isNull(options)) {
       this.handleChangeCourse(options.value);
       this.setState({ listModuleChoosen_ver2: [] });
     }
   };
 
-  handleAddModuleToCourse_ver2 = modulePicked => {
+  handleAddModuleToCourse_ver2 = (modulePicked) => {
     let { listModuleChoosen_ver2 } = this.state;
-    const index = _.findIndex(listModuleChoosen_ver2, item =>
+    const index = _.findIndex(listModuleChoosen_ver2, (item) =>
       _.isEqual(item, modulePicked)
     );
     if (index === -1) {
       listModuleChoosen_ver2.push(modulePicked);
       this.setState({
-        listModuleChoosen_ver2: listModuleChoosen_ver2
+        listModuleChoosen_ver2: listModuleChoosen_ver2,
       });
     }
   };
@@ -211,7 +211,7 @@ class Step3 extends Component {
     this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
   };
 
-  handleRemoveModule = index => {
+  handleRemoveModule = (index) => {
     let { listModuleChoosen_ver2 } = this.state;
     listModuleChoosen_ver2.splice(index, 1);
     this.setState({ listModuleChoosen_ver2: listModuleChoosen_ver2 });
@@ -225,13 +225,13 @@ class Step3 extends Component {
       listCourse,
       isShowListModule,
       listModuleChoosen_ver2,
-      isLoading
+      isLoading,
     } = this.state;
     const {
       listModuleByUser,
       loadingListModuleByUser,
       filterModuleByCourse,
-      loadingModuleByCourse
+      loadingModuleByCourse,
     } = this.props.store;
     return (
       <div className="row new-training-step3">
@@ -274,7 +274,7 @@ class Step3 extends Component {
               options={listCourse}
               defaultValue={listCourse[0]}
               isClearable={true}
-              noOptionsMessage={inputValue => "No course found"}
+              noOptionsMessage={(inputValue) => "No course found"}
               placeholder="-- Select course --"
             />
           </div>
@@ -308,7 +308,7 @@ class Step3 extends Component {
                           <img
                             src={
                               _.isEmpty(item.thumbnail)
-                                ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                ? "https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
                                 : `${REACT_APP_URL_API}${item.thumbnail.url}`
                             }
                             alt=""
@@ -338,7 +338,7 @@ class Step3 extends Component {
                               </label>
                               <select
                                 className="form-control col-sm-8"
-                                onChange={e =>
+                                onChange={(e) =>
                                   this.handleChangePosition(
                                     index,
                                     e.target.value
@@ -391,7 +391,7 @@ class Step3 extends Component {
                           <img
                             src={
                               item.module && _.isEmpty(item.module.thumbnail)
-                                ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                ? "https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
                                 : `${REACT_APP_URL_API}${item.module.thumbnail.url}`
                             }
                             alt=""

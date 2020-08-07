@@ -8,7 +8,7 @@ import {
   deleteContent,
   updateContentVer2,
   createContent,
-  getContent
+  getContent,
 } from "redux/action/content";
 import AuthStorage from "utils/AuthStorage";
 import { Link } from "react-router-dom";
@@ -31,12 +31,12 @@ function mapStateToProps(state) {
       listContentPaging: state.listContentPaging.listContentPaging.data,
       loading: state.listContentPaging.listContentPaging.loading,
       listContent: state.listContent.listContent.data,
-      loadingListContent: state.listContent.listContent.loading
-    }
+      loadingListContent: state.listContent.listContent.loading,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     action: bindActionCreators(
       {
@@ -45,10 +45,10 @@ const mapDispatchToProps = dispatch => {
         deleteContent,
         updateContentVer2,
         createContent,
-        getContent
+        getContent,
       },
       dispatch
-    )
+    ),
   };
 };
 class ModuleManage extends Component {
@@ -67,7 +67,7 @@ class ModuleManage extends Component {
     contentIdDelete: "",
     currentContent: {},
     isShowDetailContent: false,
-    isUpdateContent: false
+    isUpdateContent: false,
   };
   componentDidMount() {
     this.handleGetContent(AuthStorage.userInfo._id);
@@ -75,10 +75,10 @@ class ModuleManage extends Component {
   }
 
   //#region Handle Action Redux
-  handleDeleteContent = id => {
+  handleDeleteContent = (id) => {
     const payload = { id };
     const { deleteContent } = this.props.action;
-    deleteContent(payload, response => {
+    deleteContent(payload, (response) => {
       // console.log("response>>>", response);
       if (response._id) {
         this.handleGetContent(AuthStorage.userInfo._id);
@@ -100,10 +100,10 @@ class ModuleManage extends Component {
     const { contentId, nameChange } = this.state;
     const payload = {
       id: contentId,
-      name: nameChange
+      name: nameChange,
     };
     const { updateContentVer2 } = this.props.action;
-    updateContentVer2(payload, response => {
+    updateContentVer2(payload, (response) => {
       if (response._id) {
         // Refresh page
         this.handleGetContent(AuthStorage.userInfo._id);
@@ -116,7 +116,7 @@ class ModuleManage extends Component {
         // Reset state
         this.setState({
           contentId: "",
-          nameChange: ""
+          nameChange: "",
         });
       } else {
         this.notifyError(
@@ -127,7 +127,7 @@ class ModuleManage extends Component {
     });
   };
 
-  handleGetContent = userId => {
+  handleGetContent = (userId) => {
     this.handleGetTotalPage(userId);
     const { keySearch, startItemPage, itemPerPage, moduleId } = this.state;
     const payload = {
@@ -135,28 +135,28 @@ class ModuleManage extends Component {
       keySearch,
       startItemPage,
       itemPerPage,
-      moduleId
+      moduleId,
     };
     const { getListContent } = this.props.action;
     getListContent(payload);
   };
 
-  handleGetModule = userId => {
+  handleGetModule = (userId) => {
     const payload = {
       id: userId,
       keySearch: "",
       startItemPage: 0,
       itemPerPage: 999,
-      courseId: ""
+      courseId: "",
     };
     const { getListModule } = this.props.action;
     getListModule(payload);
   };
 
-  handleGetTotalPage = userId => {
+  handleGetTotalPage = (userId) => {
     const { keySearch, moduleId } = this.state;
     fetch(
-      `https://be-lms.tk/contents?${
+      `https://be-lms.herokuapp.com/contents?${
         moduleId !== "" ? `modules._id=${moduleId}&` : ``
       }${
         keySearch !== "" ? `name_contains=${keySearch}&` : ``
@@ -166,14 +166,14 @@ class ModuleManage extends Component {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${AuthStorage.token}`
-        }
+          Authorization: `Bearer ${AuthStorage.token}`,
+        },
       }
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(result => {
+      .then((result) => {
         this.setState({ totalPage: result.length });
       });
   };
@@ -181,11 +181,11 @@ class ModuleManage extends Component {
   //#endregion
 
   //#region Handle DOM
-  handleInputSearch = e => {
+  handleInputSearch = (e) => {
     this.setState({ keySearch: e.target.value });
   };
 
-  beginSearch = e => {
+  beginSearch = (e) => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0, activePage: 1 }, () => {
         this.handleGetContent(AuthStorage.userInfo._id);
@@ -204,7 +204,7 @@ class ModuleManage extends Component {
 
   handleOpenPopup = () => {
     this.setState({
-      isOpen: !this.state.isOpen
+      isOpen: !this.state.isOpen,
     });
   };
 
@@ -219,7 +219,7 @@ class ModuleManage extends Component {
     this.setState({ isOpen: false });
   };
 
-  handleEnableUpdate = name => {
+  handleEnableUpdate = (name) => {
     this.setState({ isUpdate: true, nameChange: name });
   };
 
@@ -231,11 +231,11 @@ class ModuleManage extends Component {
     this.setState({ isUpdate: false });
   };
 
-  handleChangeName = e => {
+  handleChangeName = (e) => {
     this.setState({ nameChange: e.target.value });
   };
 
-  handleChangeLevel = e => {
+  handleChangeLevel = (e) => {
     this.setState({ levelChange: e.target.value });
   };
 
@@ -244,18 +244,18 @@ class ModuleManage extends Component {
     this.setState({ isShow: !isShow });
   };
 
-  filterByModule = moduleId => {
+  filterByModule = (moduleId) => {
     this.setState({ moduleId, startItemPage: 0, activePage: 1 }, () => {
       this.handleGetContent(AuthStorage.userInfo._id);
       // this.handleGetTotalPage(AuthStorage.userInfo._id);
     });
   };
 
-  handleSetContentIdDelete = id => {
+  handleSetContentIdDelete = (id) => {
     this.setState({ contentIdDelete: id });
   };
 
-  handleViewDetailContent = content => {
+  handleViewDetailContent = (content) => {
     if (!content.relationData) {
       this.notifyWarining(
         "Notification",
@@ -274,7 +274,7 @@ class ModuleManage extends Component {
     this.setState({ isUpdateContent: !isUpdateContent });
   };
 
-  handleSetCurrentContent = content => {
+  handleSetCurrentContent = (content) => {
     this.setState({ currentContent: content });
   };
 
@@ -282,19 +282,19 @@ class ModuleManage extends Component {
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
   notifyWarining = (title, content) => {
     toastr.warning(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
   notifyError = (title, content) => {
     toastr.error(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
@@ -307,13 +307,13 @@ class ModuleManage extends Component {
       contentId,
       currentContent,
       isShowDetailContent,
-      isUpdateContent
+      isUpdateContent,
     } = this.state;
     const {
       loading,
       listContentPaging,
       loadingModule,
-      listModulePaging
+      listModulePaging,
     } = this.props.store;
     return (
       <div className="page-header">
@@ -349,7 +349,7 @@ class ModuleManage extends Component {
           handleCloseDetailContent={this.handleCloseDetailContent}
         />
         <ToastContainer
-          ref={ref => (toastr = ref)}
+          ref={(ref) => (toastr = ref)}
           className="toast-top-right"
         />
         <Header titleHeader="MANAGE CONTENT" />
@@ -396,7 +396,7 @@ class ModuleManage extends Component {
                                 moduleId === item._id ? "font-weight-bold" : ""
                               }`}
                               to="#"
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.preventDefault();
                                 this.filterByModule(item._id);
                               }}
@@ -412,7 +412,7 @@ class ModuleManage extends Component {
                         className={`${
                           moduleId === "" ? "font-weight-bold" : ""
                         }`}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           this.filterByModule("");
                         }}
@@ -461,7 +461,7 @@ class ModuleManage extends Component {
                                       <input
                                         style={{
                                           width: "100%",
-                                          display: "inline-block"
+                                          display: "inline-block",
                                         }}
                                         value={nameChange}
                                         onChange={this.handleChangeName}

@@ -6,7 +6,7 @@ import {
   getListModule,
   deleteModule,
   updateModule,
-  createModule
+  createModule,
 } from "redux/action/module";
 import { getListCourse } from "redux/action/course";
 import _ from "lodash";
@@ -29,12 +29,12 @@ function mapStateToProps(state) {
       listCoursePaging: state.listCoursePaging.listCoursePaging.data,
       loadingCourse: state.listCoursePaging.listCoursePaging.loading,
       listModulePaging: state.listModulePaging.listModulePaging.data,
-      loading: state.listModulePaging.listModulePaging.loading
-    }
+      loading: state.listModulePaging.listModulePaging.loading,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     action: bindActionCreators(
       {
@@ -42,10 +42,10 @@ const mapDispatchToProps = dispatch => {
         deleteModule,
         updateModule,
         createModule,
-        getListCourse
+        getListCourse,
       },
       dispatch
-    )
+    ),
   };
 };
 class ModuleManage extends Component {
@@ -62,7 +62,7 @@ class ModuleManage extends Component {
     nameChange: "",
     levelChange: "",
     trainingId: "",
-    moduleId: ""
+    moduleId: "",
   };
   componentDidMount() {
     this.handleGetModule(AuthStorage.userInfo._id);
@@ -77,7 +77,7 @@ class ModuleManage extends Component {
     const { createModule } = this.props.action;
     createModule(
       payload,
-      isCreatedModule => {
+      (isCreatedModule) => {
         if (!_.isUndefined(isCreatedModule.id)) {
           this.handleGetModule(AuthStorage.userInfo._id);
           this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -92,7 +92,7 @@ class ModuleManage extends Component {
           );
         }
       },
-      err => {
+      (err) => {
         this.notifyError(
           "Nofitication",
           "Error! Something when wrong. Please wait a few minutes and try again. Thanks"
@@ -101,10 +101,10 @@ class ModuleManage extends Component {
     );
   };
 
-  handleDeleteModule = id => {
+  handleDeleteModule = (id) => {
     const payload = { id };
     const { deleteModule } = this.props.action;
-    deleteModule(payload, response => {
+    deleteModule(payload, (response) => {
       if (response._id) {
         this.handleGetModule(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -125,10 +125,10 @@ class ModuleManage extends Component {
     const { moduleId, nameChange } = this.state;
     const payload = {
       id: moduleId,
-      name: nameChange
+      name: nameChange,
     };
     const { updateModule } = this.props.action;
-    updateModule(payload, response => {
+    updateModule(payload, (response) => {
       if (response._id) {
         // Refresh page
         this.handleGetModule(AuthStorage.userInfo._id);
@@ -142,7 +142,7 @@ class ModuleManage extends Component {
         this.setState({
           isUpdate: false,
           courseId: "",
-          nameChange: ""
+          nameChange: "",
         });
       } else {
         this.notifyError(
@@ -153,35 +153,35 @@ class ModuleManage extends Component {
     });
   };
 
-  handleGetModule = userId => {
+  handleGetModule = (userId) => {
     const { keySearch, startItemPage, itemPerPage, courseId } = this.state;
     const payload = {
       id: userId,
       keySearch,
       startItemPage,
       itemPerPage,
-      courseId
+      courseId,
     };
     const { getListModule } = this.props.action;
     getListModule(payload);
   };
 
-  handleGetCourse = userId => {
+  handleGetCourse = (userId) => {
     const payload = {
       id: userId,
       keySearch: "",
       startItemPage: 0,
       itemPerPage: 999,
-      trainingId: ""
+      trainingId: "",
     };
     const { getListCourse } = this.props.action;
     getListCourse(payload);
   };
 
-  handleGetTotalPage = userId => {
+  handleGetTotalPage = (userId) => {
     const { keySearch, courseId } = this.state;
     fetch(
-      `https://be-lms.tk/modules?${
+      `https://be-lms.herokuapp.com/modules?${
         courseId !== "" ? `relationcoursemodules.course=${courseId}&` : ``
       }${
         keySearch !== "" ? `name_contains=${keySearch}&` : ``
@@ -191,14 +191,14 @@ class ModuleManage extends Component {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${AuthStorage.token}`
-        }
+          Authorization: `Bearer ${AuthStorage.token}`,
+        },
       }
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(result => {
+      .then((result) => {
         this.setState({ totalPage: result.length });
       });
   };
@@ -206,11 +206,11 @@ class ModuleManage extends Component {
   //#endregion
 
   //#region Handle DOM
-  handleInputSearch = e => {
+  handleInputSearch = (e) => {
     this.setState({ keySearch: e.target.value });
   };
 
-  beginSearch = e => {
+  beginSearch = (e) => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0, activePage: 1 }, () => {
         this.handleGetModule(AuthStorage.userInfo._id);
@@ -219,11 +219,11 @@ class ModuleManage extends Component {
     }
   };
 
-  handleChangeName = e => {
+  handleChangeName = (e) => {
     this.setState({ nameChange: e.target.value });
   };
 
-  handleChangeLevel = e => {
+  handleChangeLevel = (e) => {
     this.setState({ levelChange: e.target.value });
   };
 
@@ -237,11 +237,11 @@ class ModuleManage extends Component {
 
   handleOpenPopup = () => {
     this.setState({
-      isOpen: !this.state.isOpen
+      isOpen: !this.state.isOpen,
     });
   };
 
-  handleSetModuleId = id => {
+  handleSetModuleId = (id) => {
     this.setState({ moduleId: id });
   };
 
@@ -252,7 +252,7 @@ class ModuleManage extends Component {
     this.setState({ isOpen: false });
   };
 
-  handleEnableUpdate = name => {
+  handleEnableUpdate = (name) => {
     this.setState({ isUpdate: true, nameChange: name });
   };
 
@@ -269,7 +269,7 @@ class ModuleManage extends Component {
     this.setState({ isShow: !isShow });
   };
 
-  filterByCourse = courseId => {
+  filterByCourse = (courseId) => {
     this.setState({ courseId, startItemPage: 0, activePage: 1 }, () => {
       this.handleGetModule(AuthStorage.userInfo._id);
       this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -280,13 +280,13 @@ class ModuleManage extends Component {
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
   notifyError = (title, content) => {
     toastr.error(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
@@ -297,13 +297,13 @@ class ModuleManage extends Component {
       nameChange,
       courseId,
       isShow,
-      moduleId
+      moduleId,
     } = this.state;
     const {
       loading,
       listModulePaging,
       loadingCourse,
-      listCoursePaging
+      listCoursePaging,
     } = this.props.store;
     return (
       <div className="page-header">
@@ -321,7 +321,7 @@ class ModuleManage extends Component {
           />
         )}
         <ToastContainer
-          ref={ref => (toastr = ref)}
+          ref={(ref) => (toastr = ref)}
           className="toast-top-right"
         />
         <Header titleHeader="MANAGE MODULE" />
@@ -368,7 +368,7 @@ class ModuleManage extends Component {
                                 courseId === item._id ? "font-weight-bold" : ""
                               }`}
                               to="#"
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.preventDefault();
                                 this.filterByCourse(item._id);
                               }}
@@ -384,7 +384,7 @@ class ModuleManage extends Component {
                         className={`${
                           courseId === "" ? "font-weight-bold" : ""
                         }`}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           this.filterByCourse("");
                         }}
@@ -467,7 +467,7 @@ class ModuleManage extends Component {
                                 src={`${
                                   item.thumbnail
                                     ? `${REACT_APP_URL_API}${item.thumbnail.url}`
-                                    : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
+                                    : `https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
                                 }`}
                                 alt=""
                               />
@@ -492,7 +492,7 @@ class ModuleManage extends Component {
                                   <div className="course-author">
                                     <a
                                       href="#"
-                                      onClick={e => e.preventDefault()}
+                                      onClick={(e) => e.preventDefault()}
                                     >
                                       {item.users[0].firstName}{" "}
                                       {item.users[0].lastName}{" "}

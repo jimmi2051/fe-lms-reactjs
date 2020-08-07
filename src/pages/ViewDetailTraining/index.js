@@ -6,7 +6,7 @@ import Header from "components/Layout/Header";
 import {
   getTrainingById,
   updateActivity,
-  addToMyTraining
+  addToMyTraining,
 } from "redux/action/training";
 import AuthStorage from "utils/AuthStorage";
 import ActivityStorage from "utils/ActivityStorage";
@@ -24,21 +24,21 @@ function mapStateToProps(state) {
     store: {
       training: state.training.training.data,
       loadingTraining: state.training.training.loading,
-      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data
-    }
+      isUpdateActivity: state.isUpdateActivity.isUpdateActivity.data,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     action: bindActionCreators(
       {
         getTrainingById,
         updateActivity,
-        addToMyTraining
+        addToMyTraining,
       },
       dispatch
-    )
+    ),
   };
 };
 let toastr;
@@ -55,7 +55,7 @@ class TrainingDetail extends Component {
     addTraining: {},
     training: {},
     currentTraining: {},
-    trainingExists: {}
+    trainingExists: {},
   };
   componentDidMount() {
     try {
@@ -78,13 +78,13 @@ class TrainingDetail extends Component {
     }
   }
 
-  handleGetTrainingById = id => {
+  handleGetTrainingById = (id) => {
     const payload = { id };
     const { getTrainingById } = this.props.action;
     getTrainingById(payload, () => {});
   };
 
-  handleChangeContent = currentContentChoosen => {
+  handleChangeContent = (currentContentChoosen) => {
     let { currentContent } = this.state;
     if (_.isEqual(currentContent, currentContentChoosen)) {
       this.setState({ currentContent: {} });
@@ -93,7 +93,7 @@ class TrainingDetail extends Component {
     }
   };
 
-  handleChangeCourse = currentCourseChoosen => {
+  handleChangeCourse = (currentCourseChoosen) => {
     let { currentCourse } = this.state;
     if (_.isEqual(currentCourse, currentCourseChoosen)) {
       this.setState({ currentCourse: {} });
@@ -102,7 +102,7 @@ class TrainingDetail extends Component {
     }
   };
 
-  handleChangeModule = currentModuleChoosen => {
+  handleChangeModule = (currentModuleChoosen) => {
     let { currentModule } = this.state;
     if (_.isEqual(currentModule, currentModuleChoosen)) {
       this.setState({ currentModule: {} });
@@ -111,7 +111,7 @@ class TrainingDetail extends Component {
     }
   };
 
-  processDataToListMenu = training => {
+  processDataToListMenu = (training) => {
     let listMenu = [];
     training.learningpaths.map((path, index) => {
       let menuLv1 = {};
@@ -145,31 +145,31 @@ class TrainingDetail extends Component {
     return listMenu;
   };
 
-  handeSelectMenu = item => {
+  handeSelectMenu = (item) => {
     if (item.level === 0) {
       this.setState({
         currentCourse: item.value,
         currentModule: {},
-        currentContent: {}
+        currentContent: {},
       });
     }
     if (item.level === 1) {
       this.setState({
         currentCourse: {},
         currentModule: item.value,
-        currentContent: {}
+        currentContent: {},
       });
     }
     if (item.level === 2) {
       this.setState({
         currentCourse: {},
         currentModule: {},
-        currentContent: item.value
+        currentContent: item.value,
       });
     }
   };
 
-  handleAddToMyTraining = training => {
+  handleAddToMyTraining = (training) => {
     if (!AuthStorage.loggedIn) {
       this.props.history.push("/login");
       return;
@@ -184,9 +184,9 @@ class TrainingDetail extends Component {
       const { addToMyTraining } = this.props.action;
       const payload = {
         training: training._id,
-        user: user._id
+        user: user._id,
       };
-      addToMyTraining(payload, response => {
+      addToMyTraining(payload, (response) => {
         if (response._id) {
           let nextActivityStorage = ActivityStorage.value;
           let tempActivity = response;
@@ -208,10 +208,10 @@ class TrainingDetail extends Component {
     }
   };
 
-  checkTrainingExists = trainingId => {
+  checkTrainingExists = (trainingId) => {
     const idx = _.findIndex(
       ActivityStorage.activityUsers,
-      activity => activity.training === trainingId
+      (activity) => activity.training === trainingId
     );
     if (idx > -1) {
       return true;
@@ -221,12 +221,12 @@ class TrainingDetail extends Component {
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
   notifyError = (title, content) => {
     toastr.error(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
@@ -273,7 +273,7 @@ class TrainingDetail extends Component {
     return (
       <div className="page-header">
         <ToastContainer
-          ref={ref => (toastr = ref)}
+          ref={(ref) => (toastr = ref)}
           className="toast-top-right"
         />
         <Header titleHeader={`Training "${detailTraining.name}" Detail `} />
@@ -290,7 +290,7 @@ class TrainingDetail extends Component {
                   <li>
                     <a
                       href=""
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
                         this.resetTraining();
                       }}
@@ -336,7 +336,7 @@ class TrainingDetail extends Component {
                 <div className="course-info flex flex-wrap align-items-center">
                   <div className="course-author flex flex-wrap align-items-center mt-3">
                     <img
-                      src="https://be-lms.tk/uploads/6a8cd6609b024ee5b3a7239eae0d3111.png"
+                      src="https://be-lms.herokuapp.com/uploads/6a8cd6609b024ee5b3a7239eae0d3111.png"
                       alt=""
                     />
 
@@ -379,7 +379,7 @@ class TrainingDetail extends Component {
                       <a
                         className="btn"
                         href="#"
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           this.handleAddToMyTraining(
                             this.state.currentTraining
@@ -397,7 +397,7 @@ class TrainingDetail extends Component {
                 <div
                   className="description"
                   dangerouslySetInnerHTML={{
-                    __html: detailTraining.description
+                    __html: detailTraining.description,
                   }}
                 />
                 <img

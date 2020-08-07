@@ -13,14 +13,14 @@ function mapStateToProps(state) {
   return {
     store: {
       listContent: state.listContent.listContent.data,
-      loadingListContent: state.listContent.listContent.loading
-    }
+      loadingListContent: state.listContent.listContent.loading,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    action: bindActionCreators({ updateContent }, dispatch)
+    action: bindActionCreators({ updateContent }, dispatch),
   };
 };
 
@@ -30,7 +30,7 @@ class PopupListContent extends Component {
   state = {
     description: "",
     selectedOption: null,
-    moduleSelected: {}
+    moduleSelected: {},
   };
 
   componentDidMount() {
@@ -38,7 +38,7 @@ class PopupListContent extends Component {
     this.processData(listModuleByUser);
   }
 
-  processData = listModuleByUser => {
+  processData = (listModuleByUser) => {
     options = [];
     listModuleByUser.map((item, index) => {
       options.push({ value: item, label: item.name });
@@ -50,7 +50,7 @@ class PopupListContent extends Component {
     this.props.handleShowPopup();
   };
 
-  handleChange = selectedOption => {
+  handleChange = (selectedOption) => {
     if (!_.isNull(selectedOption)) {
       this.setState({ selectedOption, moduleSelected: selectedOption.value });
     }
@@ -78,7 +78,7 @@ class PopupListContent extends Component {
           isShow
             ? {
                 display: "block",
-                paddingRight: "15px"
+                paddingRight: "15px",
               }
             : {}
         }
@@ -112,7 +112,7 @@ class PopupListContent extends Component {
                       options={options}
                       // defaultValue={options[0]}
                       isClearable={true}
-                      noOptionsMessage={inputValue => "No module found"}
+                      noOptionsMessage={(inputValue) => "No module found"}
                       placeholder="-- Search by module name --"
                     />
                   )}
@@ -130,7 +130,7 @@ class PopupListContent extends Component {
                               <img
                                 src={
                                   _.isEmpty(moduleSelected.thumbnail)
-                                    ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                    ? "https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
                                     : `${REACT_APP_URL_API}${moduleSelected.thumbnail.url}`
                                 }
                                 alt=""

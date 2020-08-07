@@ -6,7 +6,7 @@ import {
   getListCourse,
   deleteCourse,
   updateCourse,
-  createCourse
+  createCourse,
 } from "redux/action/course";
 import { getTrainingByUser } from "redux/action/training";
 import _ from "lodash";
@@ -29,12 +29,12 @@ function mapStateToProps(state) {
       listCoursePaging: state.listCoursePaging.listCoursePaging.data,
       loading: state.listCoursePaging.listCoursePaging.loading,
       listTraining: state.listTraining.listTraining.data,
-      loadingListTraining: state.listTraining.listTraining.loading
-    }
+      loadingListTraining: state.listTraining.listTraining.loading,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     action: bindActionCreators(
       {
@@ -42,10 +42,10 @@ const mapDispatchToProps = dispatch => {
         deleteCourse,
         updateCourse,
         createCourse,
-        getTrainingByUser
+        getTrainingByUser,
       },
       dispatch
-    )
+    ),
   };
 };
 class ListTraining extends Component {
@@ -61,7 +61,7 @@ class ListTraining extends Component {
     isUpdate: false,
     nameChange: "",
     levelChange: "",
-    trainingId: ""
+    trainingId: "",
   };
   componentDidMount() {
     this.handleGetCourse(AuthStorage.userInfo._id);
@@ -70,13 +70,13 @@ class ListTraining extends Component {
   }
 
   //#region Handle Action Redux
-  handleGetTraining = userId => {
+  handleGetTraining = (userId) => {
     const payload = {
       id: userId,
       keySearch: "",
       startItemPage: 0,
       itemPerPage: 999,
-      categoryId: ""
+      categoryId: "",
     };
     const { getTrainingByUser } = this.props.action;
     getTrainingByUser(payload);
@@ -85,7 +85,7 @@ class ListTraining extends Component {
   handleCreateCourse = (name, description, thumbnail, user) => {
     const payload = { name, description, thumbnail, user };
     const { createCourse } = this.props.action;
-    createCourse(payload, isCreatedCourse => {
+    createCourse(payload, (isCreatedCourse) => {
       if (!_.isUndefined(isCreatedCourse.id)) {
         this.handleGetCourse(AuthStorage.userInfo._id);
         this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -102,10 +102,10 @@ class ListTraining extends Component {
     });
   };
 
-  handleDeleteCourse = id => {
+  handleDeleteCourse = (id) => {
     const payload = { id };
     const { deleteCourse } = this.props.action;
-    deleteCourse(payload, response => {
+    deleteCourse(payload, (response) => {
       // console.log("response>>>", response);
       if (response._id) {
         this.handleGetCourse(AuthStorage.userInfo._id);
@@ -127,10 +127,10 @@ class ListTraining extends Component {
     const { courseId, nameChange } = this.state;
     const payload = {
       id: courseId,
-      name: nameChange
+      name: nameChange,
     };
     const { updateCourse } = this.props.action;
-    updateCourse(payload, response => {
+    updateCourse(payload, (response) => {
       if (response._id) {
         // Refresh page
         this.handleGetCourse(AuthStorage.userInfo._id);
@@ -144,7 +144,7 @@ class ListTraining extends Component {
         this.setState({
           isUpdate: false,
           courseId: "",
-          nameChange: ""
+          nameChange: "",
         });
       } else {
         this.notifyError(
@@ -155,10 +155,10 @@ class ListTraining extends Component {
     });
   };
 
-  handleGetTotalPage = userId => {
+  handleGetTotalPage = (userId) => {
     const { keySearch, trainingId } = this.state;
     fetch(
-      `https://be-lms.tk/courses?${
+      `https://be-lms.herokuapp.com/courses?${
         trainingId !== "" ? `learningpaths.training=${trainingId}&` : ``
       }${
         keySearch !== "" ? `name_contains=${keySearch}&` : ``
@@ -168,26 +168,26 @@ class ListTraining extends Component {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${AuthStorage.token}`
-        }
+          Authorization: `Bearer ${AuthStorage.token}`,
+        },
       }
     )
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(result => {
+      .then((result) => {
         this.setState({ totalPage: result.length });
       });
   };
 
-  handleGetCourse = userId => {
+  handleGetCourse = (userId) => {
     const { keySearch, startItemPage, itemPerPage, trainingId } = this.state;
     const payload = {
       id: userId,
       keySearch,
       startItemPage,
       itemPerPage,
-      trainingId
+      trainingId,
     };
     const { getListCourse } = this.props.action;
     getListCourse(payload);
@@ -195,11 +195,11 @@ class ListTraining extends Component {
   //#endregion
 
   //#region Handle DOM
-  handleInputSearch = e => {
+  handleInputSearch = (e) => {
     this.setState({ keySearch: e.target.value });
   };
 
-  beginSearch = e => {
+  beginSearch = (e) => {
     if (e.keyCode === ENTER_KEY) {
       this.setState({ startItemPage: 0, activePage: 1 }, () => {
         this.handleGetCourse(AuthStorage.userInfo._id);
@@ -216,7 +216,7 @@ class ListTraining extends Component {
     });
   }
 
-  fitlerCategory = categoryId => {
+  fitlerCategory = (categoryId) => {
     this.setState({ categoryId, startItemPage: 0, activePage: 1 }, () => {
       this.handleGetCourse(AuthStorage.userInfo._id);
       this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -225,11 +225,11 @@ class ListTraining extends Component {
 
   handleOpenPopup = () => {
     this.setState({
-      isOpen: !this.state.isOpen
+      isOpen: !this.state.isOpen,
     });
   };
 
-  handleSetCourseId = id => {
+  handleSetCourseId = (id) => {
     this.setState({ courseId: id });
   };
 
@@ -240,7 +240,7 @@ class ListTraining extends Component {
     this.setState({ isOpen: false });
   };
 
-  handleEnableUpdate = name => {
+  handleEnableUpdate = (name) => {
     this.setState({ isUpdate: true, nameChange: name });
   };
 
@@ -252,11 +252,11 @@ class ListTraining extends Component {
     this.setState({ isUpdate: false });
   };
 
-  handleChangeName = e => {
+  handleChangeName = (e) => {
     this.setState({ nameChange: e.target.value });
   };
 
-  handleChangeLevel = e => {
+  handleChangeLevel = (e) => {
     this.setState({ levelChange: e.target.value });
   };
   handleShowPopup = () => {
@@ -264,7 +264,7 @@ class ListTraining extends Component {
     this.setState({ isShow: !isShow });
   };
 
-  fitlerTrainingId = trainingId => {
+  fitlerTrainingId = (trainingId) => {
     this.setState({ trainingId, startItemPage: 0, activePage: 1 }, () => {
       this.handleGetCourse(AuthStorage.userInfo._id);
       this.handleGetTotalPage(AuthStorage.userInfo._id);
@@ -274,13 +274,13 @@ class ListTraining extends Component {
 
   notifySuccess = (title, content) => {
     toastr.success(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
   notifyError = (title, content) => {
     toastr.error(content, title, {
-      closeButton: true
+      closeButton: true,
     });
   };
 
@@ -291,13 +291,13 @@ class ListTraining extends Component {
       nameChange,
       courseId,
       isShow,
-      trainingId
+      trainingId,
     } = this.state;
     const {
       loading,
       listCoursePaging,
       loadingListTraining,
-      listTraining
+      listTraining,
     } = this.props.store;
     return (
       <div className="page-header">
@@ -315,7 +315,7 @@ class ListTraining extends Component {
           />
         )}
         <ToastContainer
-          ref={ref => (toastr = ref)}
+          ref={(ref) => (toastr = ref)}
           className="toast-top-right"
         />
         <Header titleHeader="MANAGE COURSE" />
@@ -364,7 +364,7 @@ class ListTraining extends Component {
                                   : ""
                               }`}
                               to="#"
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.preventDefault();
                                 this.fitlerTrainingId(item._id);
                               }}
@@ -380,7 +380,7 @@ class ListTraining extends Component {
                         className={`${
                           trainingId === "" ? "font-weight-bold" : ""
                         }`}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           this.fitlerTrainingId("");
                         }}
@@ -463,7 +463,7 @@ class ListTraining extends Component {
                                 src={`${
                                   item.thumbnail
                                     ? `${REACT_APP_URL_API}${item.thumbnail.url}`
-                                    : `https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
+                                    : `https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png`
                                 }`}
                                 alt=""
                               />
@@ -488,7 +488,7 @@ class ListTraining extends Component {
                                   <div className="course-author">
                                     <a
                                       href="#"
-                                      onClick={e => e.preventDefault()}
+                                      onClick={(e) => e.preventDefault()}
                                     >
                                       {item.users[0].firstName}{" "}
                                       {item.users[0].lastName}{" "}

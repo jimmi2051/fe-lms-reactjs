@@ -23,14 +23,14 @@ function mapStateToProps(state) {
       loadingListCourseUser: state.isCreatedCourse.listCourseByUser.loading,
       isCreatedLearningPath: state.isCreatedTraining.isCreatedLearningPath.data,
       loadingCreatedLearningPath:
-        state.isCreatedTraining.isCreatedLearningPath.loading
-    }
+        state.isCreatedTraining.isCreatedLearningPath.loading,
+    },
   };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    action: bindActionCreators({ addLearningPath }, dispatch)
+    action: bindActionCreators({ addLearningPath }, dispatch),
   };
 };
 class Step2 extends Component {
@@ -39,7 +39,7 @@ class Step2 extends Component {
     isLoading: false,
     isShowListCourse: false,
     listCourseChoosen_ver2: [],
-    messageErr: ""
+    messageErr: "",
   };
   componentDidMount() {
     this.props.handleGetListCourseByUser(AuthStorage.userInfo._id);
@@ -56,7 +56,7 @@ class Step2 extends Component {
     const { notifySuccess, notifyError, trainingCreated } = this.props;
     const { addLearningPath } = this.props.action;
     const payload = { training, course, position, markForCourse, isRequired };
-    addLearningPath(payload, response => {
+    addLearningPath(payload, (response) => {
       if (lastCourse) {
         this.props.handleStepTwo();
         notifySuccess(
@@ -67,28 +67,28 @@ class Step2 extends Component {
     });
   };
   // Version 2
-  handleAddCourseToPath_ver2 = coursePicked => {
+  handleAddCourseToPath_ver2 = (coursePicked) => {
     let { listCourseChoosen_ver2 } = this.state;
-    const index = _.findIndex(listCourseChoosen_ver2, item =>
+    const index = _.findIndex(listCourseChoosen_ver2, (item) =>
       _.isEqual(item.course, coursePicked)
     );
     if (index === -1) {
       listCourseChoosen_ver2.push({
         course: coursePicked,
         mark: 0,
-        required: false
+        required: false,
       });
       this.setState({
-        listCourseChoosen_ver2: listCourseChoosen_ver2
+        listCourseChoosen_ver2: listCourseChoosen_ver2,
       });
     }
   };
 
-  handleRemoveCourseToPath_ver2 = index => {
+  handleRemoveCourseToPath_ver2 = (index) => {
     let { listCourseChoosen_ver2 } = this.state;
     listCourseChoosen_ver2.splice(index, 1);
     this.setState({
-      listCourseChoosen_ver2: listCourseChoosen_ver2
+      listCourseChoosen_ver2: listCourseChoosen_ver2,
     });
   };
 
@@ -163,9 +163,9 @@ class Step2 extends Component {
     }
   };
 
-  validateCourse = listCourse => {
+  validateCourse = (listCourse) => {
     let isValidate = false;
-    const findIndex = _.findIndex(listCourse, item => item.required === true);
+    const findIndex = _.findIndex(listCourse, (item) => item.required === true);
     if (findIndex > -1) {
       isValidate = true;
     }
@@ -199,7 +199,7 @@ class Step2 extends Component {
       isShowListCourse,
       listCourseChoosen_ver2,
       messageErr,
-      isLoading
+      isLoading,
     } = this.state;
     const { listCourseByUser, loadingListCourseUser } = this.props.store;
     return (
@@ -261,7 +261,7 @@ class Step2 extends Component {
                           <img
                             src={
                               _.isEmpty(item.course.thumbnail)
-                                ? "https://be-lms.tk/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
+                                ? "https://be-lms.herokuapp.com/uploads/9ee513ab17ae4d2ca9a7fa3feb3b2d67.png"
                                 : `${REACT_APP_URL_API}${item.course.thumbnail.url}`
                             }
                             alt=""
@@ -287,7 +287,7 @@ class Step2 extends Component {
                             <div className="form-row">
                               <div className="form-group col-md-6">
                                 <input
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     this.handeChangleMark(e, index)
                                   }
                                   type="text"
@@ -301,7 +301,7 @@ class Step2 extends Component {
                                     className="form-check-input"
                                     type="checkbox"
                                     defaultChecked={false}
-                                    onChange={e =>
+                                    onChange={(e) =>
                                       this.handleChangeRequired(e, index)
                                     }
                                   />
@@ -322,7 +322,7 @@ class Step2 extends Component {
                               </label>
                               <select
                                 className="form-control col-sm-8"
-                                onChange={e =>
+                                onChange={(e) =>
                                   this.handleChangePosition(
                                     index,
                                     e.target.value

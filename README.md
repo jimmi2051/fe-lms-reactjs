@@ -1,4 +1,4 @@
-# LMS System - Demo 
+# LMS System - Demo
 
 One Paragraph of project description goes here
 
@@ -50,7 +50,7 @@ Give an example
 
 ## Running in local
 
-Change API config, config file `.env.development` 
+Change API config, config file `.env.development`
 
 ```
 REACT_APP_URL_API = http://localhost:1337
@@ -67,7 +67,6 @@ Instal package plugin done, run scripts start project
 ```
 npm run start
 ```
-
 
 ## Deployment
 
@@ -129,10 +128,10 @@ Install react-scripts globally
 sudo npm install react-scripts -g
 ```
 
-Change API config, config file `.env.production` 
+Change API config, config file `.env.production`
 
 ```
-REACT_APP_URL_API = https://be-lms.tk/
+REACT_APP_URL_API = https://be-lms.herokuapp.com/
 ```
 
 Change the IP and port to the destination DNS of LMS BE.
